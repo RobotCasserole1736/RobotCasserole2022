@@ -1,0 +1,33 @@
+[data-tooltip]:before {
+    /* needed - do not touch */
+    content: attr(data-tooltip);
+    position: absolute;
+    opacity: 0;
+    
+    /* customizable */
+    transition-timing-function: linear;
+    transition-duration: 0.1s;
+    transition-property: all;
+    transition-delay: 0.0s;
+    padding: 0.5vw;
+    color: #333;
+    border-radius: 0.3vw;
+    box-shadow: 2px 2px 1px silver;    
+    font-size: 1vw;
+    z-index: 99;
+}
+
+[data-tooltip]:hover:before {
+    /* needed - do not touch */
+    opacity: 1;
+    
+    /* customizable */
+    background: yellow;
+    margin-top: -3vw;
+    margin-left: 0.5vw;    
+    transition-delay: 0.5s;
+}
+
+[data-tooltip]:not([data-tooltip-persistent]):before {
+    pointer-events: none;
+}

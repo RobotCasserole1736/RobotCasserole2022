@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="tooltip.css">
+    <link rel="stylesheet" href="dropdown.css">
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <div class="mainDrawArea">
+        <!-- main drawing area for dashboard -->
+        ${WIDGETS_HTML}
+        
+    </div>
+
+    <script type="module" src="./dashboard.js"></script>
+
+</body>
+
+<footer>
+
+</footer>
+
+</html>

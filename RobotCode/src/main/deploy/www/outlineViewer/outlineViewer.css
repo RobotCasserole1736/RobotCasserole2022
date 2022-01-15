@@ -1,0 +1,28 @@
+td {
+    padding-left: 1em;
+    padding-right: 1em;
+    font-family: monospace;
+    border-collapse: collapse;
+}
+
+tr {
+    margin: 1em;
+    background-color: #111111;
+    border-collapse: collapse;
+}
+
+tr:hover {
+    background-color: #333333;
+
+}
+
+th {
+    border: 2px solid white;
+    border-collapse: collapse;
+
+}
+
+table {
+    padding: 1em;
+    width: 100%;
+}

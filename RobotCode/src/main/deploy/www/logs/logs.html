@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="logs.css">
+    <title>Log Files</title>
+</head>
+
+<body>
+    <topLevelContainer>
+        <!-- main table area for logs -->
+
+        <!-- buttons and controls area-->
+        <buttonsContainer class="outlined">
+            <buttonGroup class="outline flexGrow">
+                <div id="connectionStatusDiv" class="statusDiv"> </div>
+            </buttonGroup>
+            <buttonGroup class="outlined flexGrow"> 
+                <button id="delete_all_btn" type="button" onclick="deleteAll()">Delete All</button>
+                <button id="download_all_btn" type="button" onclick="downloadAll()">Download All</button>
+            </buttonGroup>
+        </buttonsContainer>
+
+        <buttonsContainer class="outlined">
+            <buttonGroup class="outline flexGrow">
+                <div id="statusDiv" class="statusDiv"> </div>
+            </buttonGroup>
+        </buttonsContainer>
+
+
+
+        <!-- main table area for calibrations -->
+        <table class="logListingTable" id="logListingTable">
+        </table>
+    </topLevelContainer>
+
+    <script type="module" src="./logs.js"></script>
+
+</body>
+
+<footer>
+
+</footer>
+
+</html>

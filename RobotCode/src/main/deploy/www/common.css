@@ -1,0 +1,85 @@
+
+@font-face {
+    font-family: 'localMichroma';
+    src: url('/fonts/Michroma-Regular.ttf')  format('truetype'), 
+         url('/fonts/michroma-regular-webfont.woff2') format('woff2'),
+         url('/fonts/michroma-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+.outlined{
+    border: 1px solid #FFFFFF;
+    margin: 1px;
+}
+
+
+body {
+    background: black;
+    padding: 0.25em;
+    margin: 0;
+    font-size: 16px;
+    font-family: localMichroma, Verdana, sans-serif;
+    color: white;
+}
+
+/* Ensure we use up the full screen space with our content */
+html,body {
+    height: 99vh;
+}
+
+/* Fancy schmancy buttons */
+button {
+    background: #222222;
+    padding: 6.5px 10px;
+    margin: 6.5px 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: white;
+    font-size: 13px;
+    font-family: "localMichroma", monospace;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor:pointer;
+ }
+ button:hover {
+    background: #444;
+    color: white;
+ }
+ button:active {
+    background: #333;
+ }
+ button:disabled {
+    background: black;
+    color: #555;
+ }
+
+
+topLevelContainer {
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    height:100%;
+}
+
+buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 0;
+}
+
+buttonGroup {
+    display: flex;
+    flex-grow: 0;
+    flex-direction: row;
+}
+
+.flexGrow {
+    flex-grow: 1;
+}
+
+.hidden {
+    display: none;
+}

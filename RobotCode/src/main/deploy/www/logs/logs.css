@@ -1,0 +1,38 @@
+topLevelContainer {
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    height:100%;
+}
+
+div.statusDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height:100%;
+    font-family: monospace;
+    flex-grow: 1;
+}
+
+div.connected {
+    background-color: #225522;
+}
+
+div.disconnected {
+    background-color: #552222;  
+}
+
+td.tableText {
+    padding-left: 1em;
+    font-family: monospace;
+}
+
+tr.logFileRow {
+    margin: 1em;
+    background-color: #333333;
+}
+
+table {
+    padding: 1em;
+    width: 100%;
+}

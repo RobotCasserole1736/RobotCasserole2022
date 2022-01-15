@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="50mm"
+   height="50mm"
+   viewBox="0 0 50 50"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)"
+   sodipodi:docname="vision.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="99.236095"
+     inkscape:cy="147.96495"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1918"
+     inkscape:window-height="2088"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path2937"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.366646px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 24.261277,11.039881 c -8.004743,0.05771 -15.9940139,5.040092 -23.0826881,14.773321 14.1572151,17.211813 32.7785311,16.06294 46.2585181,0 C 40.286334,15.849135 32.266022,10.98217 24.261277,11.039881 Z m -0.245605,5.994029 a 6.0416222,7.0547306 0 0 1 6.041775,7.054907 6.0416222,7.0547306 0 0 1 -6.041775,7.054909 6.0416222,7.0547306 0 0 1 -6.041773,-7.054909 6.0416222,7.0547306 0 0 1 6.041773,-7.054907 z" />
+    <circle
+       style="fill:#000000;stroke-width:2.66073;stroke-linecap:round;stroke-linejoin:round"
+       id="path3550"
+       cx="24"
+       cy="24"
+       r="3" />
+  </g>
+</svg>

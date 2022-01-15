@@ -1,0 +1,156 @@
+dataContainer{
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+plotsContainer{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;  
+}
+
+signalListContainer{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;  
+    width:250px;
+    max-height:92vh;
+    overflow-y: scroll;
+}
+
+selectableSignalContainer{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;  
+    width:100%;
+}
+
+div.filePickerGroup{
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;  
+    align-items: center;
+    justify-content: center;
+}
+
+div.filePickerElem{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;  
+    align-items: center;
+    justify-content: center;
+}
+
+.selectableSignal{
+    flex-direction: row;
+    flex-grow: 0;  
+    width:auto;
+    height:auto;
+    text-align: left;
+    font-family: monospace;
+    margin:4px 1px;
+    padding: 2px;
+}
+
+
+plot {
+    display: flex;
+    flex-direction: row;
+    flex-grow:1;
+    min-height: 250px;
+    max-height: 600px;
+}
+
+plotHighchartsContainer {
+    flex-grow:1;
+    background-color: #151515;
+}
+
+plotSignalInfoContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow:0;
+    font-family: monospace;
+    width: 300px;
+}
+
+plottedSignalInfo {
+    display: flex;
+    flex-direction: row;
+    flex-grow:0;
+    height:auto;
+}
+
+plottedSignalName {
+    flex-direction: column;
+    flex-grow:1;
+}
+
+plottedSignalUnits {
+    flex-direction: column;
+    flex-grow:0;
+    width: 50px;
+    padding: 3;
+}
+
+plottedSignalValue {
+    flex-direction: column;
+    flex-grow:0;
+    width: 75px;
+    margin: 1px;
+    padding: 3;
+}
+
+chartDrawDiv {
+    position:absolute;
+    width:1;
+    height:1;
+}
+
+div.statusDisp {
+    text-align: center;
+    font-family: monospace;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;  
+    align-items: center;
+    justify-content: center;
+}
+
+
+.expandable {
+    flex-grow: 1;
+}
+
+input.filterTextInput{
+    width:95%;
+    margin:1px;
+    flex-grow:0;
+
+}
+
+
+.drag-over{
+    border: 1px solid #FFFF00;
+}
+
+.selectedText{
+    font-weight:bolder;
+    border: 1px solid #FFFF00;
+}
+
+
+
+div.jsColorChooser{
+    position: absolute;
+    width: 14em;
+    height: 3em;
+    z-index: 9999; /*always on top*/
+    background-color: black;
+    border-width: 2px;
+    border-style: solid;
+    border-color: white;
+    margin: 0.5em;
+}

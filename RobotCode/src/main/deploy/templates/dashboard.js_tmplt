@@ -1,0 +1,56 @@
+import { CircularGauge } from './circularGauge.js'
+import { Icon } from './icon.js'
+import { Camera } from './camera.js'
+import { LineGauge } from './lineGauge.js'
+import { Text } from './text.js'
+import { AutoChooser } from './autoChooser.js'
+import { SwerveState } from './swerveState.js'
+import { FieldPose } from './fieldPose.js'
+import { Sound } from './sound.js'
+import { NT4_Client } from "../interfaces/nt4.js";
+
+//////////////////////////////////////////////////
+// Logic to run on page load
+//////////////////////////////////////////////////
+
+var nt4Client = new NT4_Client(window.location.hostname, 
+                    doNothing,
+                    doNothing,
+                    handleNewData,
+                    doNothing,
+                    onDisconnect
+                    );
+
+//Start NT4 connection
+nt4Client.ws_connect();
+
+// Instantiate all widgets and subscribe
+${WIDGETS_INSTANTIATE}
+
+// Start up rendering (never returns)
+mainRenderLoop();
+
+//////////////////////////////////////////////////
+// Render & Animation Loop Functions
+//////////////////////////////////////////////////
+
+function doNothing(){}
+
+
+function handleNewData(topic, timestamp, value){
+    var name = topic.name;
+    ${WIDGETS_SET_VALUE}
+}
+
+function onDisconnect(){
+    ${WIDGETS_SET_NO_DATA}
+}
+
+function mainRenderLoop(){
+
+    ${WIDGETS_UPDATE}
+
+    requestAnimationFrame(mainRenderLoop);
+}
+
+${WIDGETS_CALLBACK}

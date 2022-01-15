@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="toggleSw/toggleSw.css">
+    <link rel="stylesheet" href="../utils/jslists/jsLists.css"/>
+    <link rel="stylesheet" href="stripchart.css">
+    <title>Stripchart</title>
+</head>
+
+<body>
+
+    <topLevelContainer>
+
+        <!-- buttons area-->
+        <buttonsContainer class="outlined">
+            <buttonGroup class="outlined">
+                <button id="add_chart_btn" type="button" onclick="handleAddChartBtnClick()">Add Chart</button>
+                <button id="rm_chart_btn" type="button" onclick="handleRmChartBtnClick()">Remove Chart</button>
+            </buttonGroup>
+            <buttonGroup class="outlined">
+                <button id="zoom_full_btn" type="button" onclick="handleZoomFullBtnClick()">Zoom Full</button>
+            </buttonGroup>
+            <buttonGroup class="outlined">
+                <button id="unselect_all_btn" type="button" onclick="unselectAllBtnClick()">Unselect All</button>
+            </buttonGroup>
+            <buttonGroup class="outlined"> 
+                <div class="sliderParts">Live</div>
+                
+                <div class="sliderParts">
+                    <label class="switch">
+                        <input id="modeCheckbox" type="checkbox" onclick="handleModeChange()">
+                        <div class="slider"></div>
+                    </label>
+                </div>
+
+                <div class="sliderParts">File</div>
+            </buttonGroup>
+            <buttonGroup class="outlined">
+                <button  id="start_btn" type="button" onclick="handleStartBtnClick()">Start</button>
+                <button  id="stop_btn"  type="button" onclick="handleStopBtnClick()">Stop</button>
+                <div id="fileSelector" class="hidden">
+                    <div class="filePickerGroup">
+                        <div class="filePickerElem">
+                            <button onclick="document.getElementById('filePickerCtrl').click();">Open</button>
+                            <input id="filePickerCtrl" type="file" name="name" style="display: none;" onchange="handleFileSelect(this.files)" accept=".csv" autofocus="autofocus" />
+                        </div>
+                        <div id="filePickerStatus" class="statusDisp filePickerElem"> </div>
+                    </div>
+                    
+                </div>
+            </buttonGroup>
+            <buttonGroup class="outlined">
+                <div id="daqStatus" class="statusDisp">
+                </div>
+            </buttonGroup>
+
+        </buttonsContainer>
+
+
+        <dataContainer>
+            <!-- Chart Draw area-->
+            <plotsContainer  class="outlined" id="plotsContainer">
+                <!-- gets populated by javascript-->
+            </plotsContainer>
+
+            <!-- Signal List / Selection Area-->
+            <signalListContainer class="outlined">
+                <input class="filterTextInput" id="filterTextInput" type="text" placeholder="Filter"
+                onkeyup="filterChangeHandler(this.value)">
+                <selectableSignalContainer id="selectableSignalContainer">
+                    
+                </selectableSignalContainer>
+            </signalListContainer>
+
+        </dataContainer>
+
+    </topLevelContainer>
+
+
+
+    <script type="module" src="./stripchart.js"></script>
+
+</body>
+
+<footer>
+
+</footer>
+
+</html>
