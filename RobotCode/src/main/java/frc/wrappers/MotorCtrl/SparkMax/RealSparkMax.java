@@ -92,4 +92,10 @@ public class RealSparkMax extends AbstractSimmableMotorController {
     }
 
 
+    @Override
+    public double getAppliedVoltage_V() {
+        return m_motor.getAppliedOutput() * m_motor.getBusVoltage();
+    }
+
+
 }

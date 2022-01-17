@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import edu.wpi.first.math.util.Units;
 import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
-import frc.wrappers.SimCANDeviceBank;
+import frc.wrappers.SimDeviceBanks;
 import frc.wrappers.MotorCtrl.AbstractSimmableMotorController;
 
 /**
@@ -34,7 +34,7 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
     private double curPos_rad;
 
     public SimSmartMotor(int can_id){
-        SimCANDeviceBank.add(this, can_id);
+        SimDeviceBanks.addCANDevice(this, can_id);
     }
 
 
@@ -144,6 +144,11 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
             throw new IllegalArgumentException(leader.getClass().toString() + " cannot be followed by a " + this.getClass().toString());
         }
 
+    }
+
+    @Override
+    public double getAppliedVoltage_V() {
+        return curWindingVoltage;
     }
 
     

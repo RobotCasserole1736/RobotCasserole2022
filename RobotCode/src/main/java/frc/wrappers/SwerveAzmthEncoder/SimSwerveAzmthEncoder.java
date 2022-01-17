@@ -1,5 +1,7 @@
 package frc.wrappers.SwerveAzmthEncoder;
 
+import frc.wrappers.SimDeviceBanks;
+
 public class SimSwerveAzmthEncoder extends AbstractSwerveAzmthEncoder {
  
     double curAngle_rad;
@@ -7,7 +9,7 @@ public class SimSwerveAzmthEncoder extends AbstractSwerveAzmthEncoder {
     double STEPS_PER_REV = 4096.0; //Simulate quantization
 
     public SimSwerveAzmthEncoder(int port){
-        //TODO
+        SimDeviceBanks.addDIDevice(this, port);
     }
 
     public void setRawAngle(double curAngle_rad) {

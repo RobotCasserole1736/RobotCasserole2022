@@ -1,11 +1,16 @@
 package frc.wrappers.ADXRS453;
 
 import frc.Constants;
+import frc.wrappers.SimDeviceBanks;
 
 public class SimADXRS453 extends AbstractADXRS453 {
 
     double rate; // in rad/sec
     double angle; // in rad
+
+    public SimADXRS453(){
+        SimDeviceBanks.addSPIDevice(this, 0); //todo are we actually on CS 0?
+    }
 
     @Override
     public void reset() {

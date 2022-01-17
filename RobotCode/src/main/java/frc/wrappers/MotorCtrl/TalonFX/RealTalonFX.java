@@ -108,11 +108,15 @@ public class RealTalonFX extends AbstractSimmableMotorController {
         }
     }
 
-
     @Override
     public double getPosition_rad() {
         var posRev = CTRENativeUnitstoRev(_talon.getSelectedSensorPosition(0));
         return posRev * 2 * Math.PI;
+    }
+
+    @Override
+    public double getAppliedVoltage_V() {
+        return _talon.getMotorOutputVoltage();
     }
 
     double RPMtoCTRENativeUnits(double in_rpm){
@@ -130,6 +134,7 @@ public class RealTalonFX extends AbstractSimmableMotorController {
     double CTRENativeUnitstoRev(double in_native){
         return in_native / NATIVE_UNITS_PER_REV;
     }
+
     
     
 }

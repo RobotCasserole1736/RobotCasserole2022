@@ -13,6 +13,7 @@ public abstract class AbstractSimmableMotorController {
     public abstract double getCurrent_A();
     public abstract double getVelocity_radpersec();
     public abstract double getPosition_rad();
+    public abstract double getAppliedVoltage_V();
     public abstract void follow(Object leader);
 
 }
