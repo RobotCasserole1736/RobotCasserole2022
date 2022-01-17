@@ -1,11 +1,16 @@
 package frc.wrappers.MotorCtrl;
 
+import frc.lib.Calibration.Calibration;
 import frc.robot.Robot;
 import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;
 import frc.wrappers.MotorCtrl.SparkMax.RealSparkMax;
 import frc.wrappers.MotorCtrl.TalonFX.RealTalonFX;
 
-public class CANMotorCtrl {
+public class CasseroleCANMotorCtrl {
+
+    Calibration kP_cal;
+    Calibration kI_cal;
+    Calibration kD_cal;
 
     AbstractSimmableMotorController ctrl;
 
@@ -14,7 +19,7 @@ public class CANMotorCtrl {
         SPARK_MAX
     }
 
-    public CANMotorCtrl(int can_id, CANMotorCtrlType type){
+    public CasseroleCANMotorCtrl(String prefix, int can_id, CANMotorCtrlType type){
         if(Robot.isSimulation()){
             ctrl = new SimSmartMotor(can_id);
         } else {
@@ -27,6 +32,10 @@ public class CANMotorCtrl {
                     break;
             }
         }
+
+        kP_cal = new Calibration(prefix + "_kP", "", 0);
+        kI_cal = new Calibration(prefix + "_kI", "", 0);
+        kD_cal = new Calibration(prefix + "_kD", "", 0);
     }
     
     ///////////////////////////////////////////////////////////////////////////////////
@@ -37,12 +46,17 @@ public class CANMotorCtrl {
     //  I'm avoiding it for now.
     ///////////////////////////////////////////////////////////////////////////////////
 
+    public void update(){
+        // TODO Look for changes to gains
+        // TODO update telemetry
+    }
+
     public void setInverted(boolean invert){
         ctrl.setInverted(invert);
     }
 
     public void setClosedLoopGains(double p, double i, double d){
-        ctrl.setClosedLoopGains(p, i, d);
+        //TODO update the coontroller's pid gains
     }
 
     public void setClosedLoopCmd(double velocityCmd_radpersec, double arbFF_V){

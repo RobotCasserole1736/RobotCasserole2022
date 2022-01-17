@@ -2,19 +2,17 @@ package frc.wrappers.ADXRS453;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
-public class RealADXRS453 extends CasseroleADXRS453 {
+public class RealADXRS453 extends AbstractADXRS453 {
 
     ADXRS450_Gyro realGyro;
-    double offset = 0;
 
     public RealADXRS453(){
         realGyro = new ADXRS450_Gyro();
     }
 
     @Override
-    public void reset(double curAngle_deg) {
+    public void reset() {
         realGyro.reset();
-        offset = curAngle_deg;
     }
 
     @Override
@@ -28,8 +26,8 @@ public class RealADXRS453 extends CasseroleADXRS453 {
     }
 
     @Override
-    public double getAngle() {
-        return realGyro.getAngle() + offset;
+    public double getRawAngle() {
+        return realGyro.getAngle();
     }
 
     @Override

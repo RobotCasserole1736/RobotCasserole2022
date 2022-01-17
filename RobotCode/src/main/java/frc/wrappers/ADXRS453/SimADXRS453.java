@@ -2,17 +2,15 @@ package frc.wrappers.ADXRS453;
 
 import frc.Constants;
 
-public class SimADXRS453 extends CasseroleADXRS453 {
+public class SimADXRS453 extends AbstractADXRS453 {
 
-    double rate;
-    double angle;
-    double offset = 0;
+    double rate; // in rad/sec
+    double angle; // in rad
 
     @Override
-    public void reset(double curAngle_deg) {
+    public void reset() {
         rate = 0;
         angle = 0;
-        offset = curAngle_deg;
     }
 
     @Override
@@ -27,8 +25,8 @@ public class SimADXRS453 extends CasseroleADXRS453 {
     }
 
     @Override
-    public double getAngle() {
-        return angle + offset;
+    public double getRawAngle() {
+        return angle;
     }
 
     @Override
@@ -36,14 +34,14 @@ public class SimADXRS453 extends CasseroleADXRS453 {
         return true;
     }
 
-    public void simUpdate(double newRate){
-        rate = newRate;
-        angle += newRate * Constants.Ts;
+    public void simUpdate(double newRate_radpersec){
+        rate = newRate_radpersec;
+        angle += newRate_radpersec * Constants.Ts;
     }   
 
-    public void simSetAngle(double newAngle){
+    public void simSetAngle(double newAngle_rad){
         rate = 0;
-        angle = newAngle;
+        angle = newAngle_rad;
     }   
     
 }

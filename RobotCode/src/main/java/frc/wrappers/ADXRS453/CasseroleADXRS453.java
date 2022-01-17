@@ -1,18 +1,53 @@
 package frc.wrappers.ADXRS453;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
+import frc.lib.Signal.Annotations.Signal;
+import frc.robot.Robot;
 
-public abstract class CasseroleADXRS453 {
+public class CasseroleADXRS453  {
 
-    public abstract void reset(double curAngle_deg);
-    public abstract void calibrate();
-    public abstract double getRate();
-    public abstract double getAngle();
-    public abstract boolean isConnected();
+    AbstractADXRS453 gyro;
+    double offset_rad = 0;
+
+
+    @Signal(units = "rad")
+    private double curAngle_rad;
+
+    public CasseroleADXRS453(){
+        if(Robot.isReal()){
+            gyro = new RealADXRS453();
+        } else {
+            gyro = new SimADXRS453();
+        }
+    }
+
+    public void update(){
+        curAngle_rad = gyro.getRawAngle() + offset_rad;
+    }
+
+    public void reset(double curAngle_rad) {
+        offset_rad = curAngle_rad;
+        gyro.reset();
+    }
+
+    public void calibrate() {
+        gyro.calibrate();
+    }
+
+    public double getRate_radpersec() {
+        return gyro.getRate();
+    }
+
+    public double getAngle_rad() {
+        return curAngle_rad;
+    }
+
+    public boolean isConnected() {
+        return gyro.isConnected();
+    }
 
     public Rotation2d getRotation2d() {
-        return new Rotation2d(Units.degreesToRadians(this.getAngle()));
+        return new Rotation2d(this.getAngle_rad());
     }
     
 }
