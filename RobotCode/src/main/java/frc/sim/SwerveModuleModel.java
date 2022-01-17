@@ -83,6 +83,11 @@ class SwerveModuleModel{
 
     
     public void update(boolean isDisabled, double batteryVoltage){
+
+        wheelMotorCtrl.sim_setSupplyVoltage(batteryVoltage);
+        azmthMotorCtrl.sim_setSupplyVoltage(batteryVoltage);
+
+
         double wheelCmd = 0;
         double azmthCmd = 0;
 
@@ -93,7 +98,11 @@ class SwerveModuleModel{
 
         motionModel(wheelCmd, azmthCmd, batteryVoltage); 
 
-        angleMotorEncoder.setRawAngle(Units.rotationsToRadians(azmthMotor.getPosition_Rev()));
+        angleMotorEncoder.setRawAngle(Units.rotationsToRadians(azmthMotor.getAzmthShaftPosition_Rev()));
+
+        wheelMotorCtrl.sim_setActualPosition(Units.rotationsToRadians(wheelMotor.getMotorPosition_Rev()));
+        azmthMotorCtrl.sim_setActualPosition(Units.rotationsToRadians(azmthMotor.getMotorPosition_Rev()));
+
     }
 
     /** Implements the main motion model for the module */
@@ -109,7 +118,7 @@ class SwerveModuleModel{
         azmthMotor.update(batteryVoltage_v, angleCmd);
 
         // Assume idealized azimuth control - no "twist" force at contact patch from friction or robot motion.
-        curAzmthAngle = Rotation2d.fromDegrees(azmthMotor.getPosition_Rev() * 360);
+        curAzmthAngle = Rotation2d.fromDegrees(azmthMotor.getAzmthShaftPosition_Rev() * 360);
     }
 
     /** Get total current draw for the module */

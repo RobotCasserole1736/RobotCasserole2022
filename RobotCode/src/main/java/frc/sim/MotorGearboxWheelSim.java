@@ -57,8 +57,12 @@ public class MotorGearboxWheelSim {
         motorSpeed_RPM = Units.radiansPerSecondToRotationsPerMinute(motorRotationalSpeed_radPerSec);
     }
 
-    public double getPosition_Rev(){
+    public double getWheelPosition_Rev(){
         return wheelRotations_rad / 2 / Math.PI;
+    }
+
+    public double getMotorPosition_Rev(){
+        return this.getWheelPosition_Rev() * gearRatio;
     }
 
     public double getGroundForce_N(){

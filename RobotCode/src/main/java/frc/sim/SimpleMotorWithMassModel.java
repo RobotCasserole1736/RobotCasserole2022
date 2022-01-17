@@ -15,9 +15,11 @@ class SimpleMotorWithMassModel {
     double curDisplacement_Rev;
 
     FlywheelSim fwSim;
+    double gearing;
 
     public SimpleMotorWithMassModel(DCMotor motor, double gearing, double moi){
         fwSim = new FlywheelSim(motor, gearing, moi);
+        this.gearing = gearing;
     }
 
     /**
@@ -63,10 +65,18 @@ class SimpleMotorWithMassModel {
 
     /**
      * 
-     * @return The present displacement in Revolutions
+     * @return The present displacement of the azimuth module in Revolutions
      */
-    double getPosition_Rev(){
+    double getAzmthShaftPosition_Rev(){
         return curDisplacement_Rev;
+    }
+
+        /**
+     * 
+     * @return The present displacement of the motor shaft in Revolutions
+     */
+    double getMotorPosition_Rev(){
+        return getAzmthShaftPosition_Rev() * gearing;
     }
 
 

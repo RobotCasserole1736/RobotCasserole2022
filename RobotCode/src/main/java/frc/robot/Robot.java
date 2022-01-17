@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.Constants;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.lib.Signal.SignalWrangler;
@@ -13,6 +14,9 @@ import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
 import frc.sim.RobotModel;
+import frc.wrappers.ADXRS453.CasseroleADXRS453;
+import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
+import frc.wrappers.SwerveAzmthEncoder.CasseroleSwerveAzmthEncoder;
 
 
 /**
@@ -38,6 +42,22 @@ public class Robot extends TimedRobot {
   Autonomous auto;
   PoseTelemetry pt;
 
+  //TEMPORARY DRIVETRAIN OBJECTS
+  // These are just here to keep the sim happy while we test
+  // They should be deleted/moved/modified/whatever as the drivetrain classes are actually developed
+  CasseroleADXRS453 gyro = new CasseroleADXRS453();
+  CasseroleCANMotorCtrl fl_wheel = new CasseroleCANMotorCtrl("FL_Wheel", Constants.FL_WHEEL_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
+  CasseroleCANMotorCtrl fl_azmth = new CasseroleCANMotorCtrl("FL_Azmth", Constants.FL_AZMTH_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  CasseroleCANMotorCtrl fr_wheel = new CasseroleCANMotorCtrl("FR_Wheel", Constants.FR_WHEEL_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
+  CasseroleCANMotorCtrl fr_azmth = new CasseroleCANMotorCtrl("FR_Azmth", Constants.FR_AZMTH_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  CasseroleCANMotorCtrl bl_wheel = new CasseroleCANMotorCtrl("BL_Wheel", Constants.BL_WHEEL_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
+  CasseroleCANMotorCtrl bl_azmth = new CasseroleCANMotorCtrl("BL_Azmth", Constants.BL_AZMTH_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  CasseroleCANMotorCtrl br_wheel = new CasseroleCANMotorCtrl("BR_Wheel", Constants.BR_WHEEL_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
+  CasseroleCANMotorCtrl br_azmth = new CasseroleCANMotorCtrl("BR_Azmth", Constants.BR_AZMTH_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  CasseroleSwerveAzmthEncoder fl_azmth_enc = new CasseroleSwerveAzmthEncoder("FL", Constants.FL_AZMTH_ENC_IDX, 0);
+  CasseroleSwerveAzmthEncoder fr_azmth_enc = new CasseroleSwerveAzmthEncoder("FR", Constants.FR_AZMTH_ENC_IDX, 0);
+  CasseroleSwerveAzmthEncoder bl_azmth_enc = new CasseroleSwerveAzmthEncoder("BL", Constants.BL_AZMTH_ENC_IDX, 0);
+  CasseroleSwerveAzmthEncoder br_azmth_enc = new CasseroleSwerveAzmthEncoder("BR", Constants.BR_AZMTH_ENC_IDX, 0);
 
   // ... 
   // But before here
