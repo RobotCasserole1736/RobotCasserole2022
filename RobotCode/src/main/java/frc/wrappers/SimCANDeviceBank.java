@@ -9,10 +9,9 @@ import java.util.HashMap;
  * but is a best-practice we'll use on our team.
  */
 public class SimCANDeviceBank {
-    private static HashMap<Integer, SimCANDevice> bank = new HashMap<Integer, SimCANDevice>();
+    private static HashMap<Integer, Object> bank = new HashMap<Integer, Object>();
 
-    public static void add(SimCANDevice newDevice){
-        int id = newDevice.can_id;
+    public static void add(Object newDevice, int id){
 
         if(bank.containsKey(id)){
             throw new IllegalStateException("CAN ID " + id + " has already been allocated!");
@@ -21,7 +20,7 @@ public class SimCANDeviceBank {
         bank.put(id, newDevice);
     }
 
-    public static SimCANDevice get(int id){
+    public static Object get(int id){
         if(!bank.containsKey(id)){
             throw new IllegalStateException("CAN ID " + id + " is not a device on the CAN bus!");
         }
