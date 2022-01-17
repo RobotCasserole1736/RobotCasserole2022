@@ -12,6 +12,7 @@ import frc.lib.Signal.SignalWrangler;
 import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
+import frc.sim.RobotModel;
 
 
 /**
@@ -145,21 +146,23 @@ public class Robot extends TimedRobot {
   // Simulation Support
   //////////////////////////////////////////////////////////////////////////////////////////
 
+  RobotModel plant;
 
   public void simulationSetup(){
-    // TODO - add simulation plant
+    plant = new RobotModel();
   }
 
   public void syncSimPoseToEstimate(){
     if(Robot.isSimulation()){
       //TODO update plant pose to match current estimator
-      //m_plant.m_dt.resetPose(dt.getCurPoseEst());
+      //plant.reset(dt.getCurPoseEst());
+      
     }
   }
 
   @Override
   public void simulationPeriodic(){
-
+    plant.update(this.isDisabled());
   }
 
 
