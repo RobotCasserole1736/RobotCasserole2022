@@ -52,7 +52,7 @@ export class FieldPose {
 
         // Set up drawing canvas within provided div
         this.canvas = document.createElement('canvas');
-        this.canvas.style.backgroundImage = "url('fields/2020.png')";
+        this.canvas.style.backgroundImage = "url('fields/2022.png')";
         this.canvas.style.backgroundSize = "cover";
         this.docElem = document.getElementById(this.draw_div_id );
         this.canvas.id = this.draw_div_id + "_canvas";
