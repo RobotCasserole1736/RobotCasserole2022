@@ -34,9 +34,9 @@ class SimpleMotorWithMassModel {
      * @param supplyVoltage_in Present battery supply voltage to the controller. Nominally 12.5 or so, but reduce to simulatle a dying battery
      * @param motorCommand_in Speed controller command - 1.0 = full fwd, 0.0 = stop, -1.0 = full reverse
      */
-    public void update(double supplyVoltage_in, double motorCommand_in){
+    public void update(double motorVoltage_in){
 
-        fwSim.setInputVoltage(supplyVoltage_in * motorCommand_in);
+        fwSim.setInputVoltage(motorVoltage_in);
 
         fwSim.update(Constants.SIM_SAMPLE_RATE_SEC);
 

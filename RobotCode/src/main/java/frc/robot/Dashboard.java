@@ -4,6 +4,7 @@ import frc.lib.Signal.SignalUtils;
 import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Webserver2.Webserver2;
 import frc.lib.Webserver2.DashboardConfig.DashboardConfig;
+import frc.lib.Webserver2.DashboardConfig.SwerveStateTopicSet;
 import frc.robot.Autonomous.Autonomous;
 
 
@@ -37,7 +38,7 @@ public class Dashboard {
         final double ROW4 = 85;
 
         //d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_systemPressure"), "System Press", "PSI", 0.0, 150.0, 90.0, 130, LEFT_COL, ROW1, 1.0);
-        d.addLineGauge(SignalUtils.nameToNT4ValueTopic("db_visionTargetAngle"), "Vision Tgt Angle", "deg", -30, 30, -2.5, 2.5, CENTER_COL, ROW1, 1.0);
+        //d.addLineGauge(SignalUtils.nameToNT4ValueTopic("db_visionTargetAngle"), "Vision Tgt Angle", "deg", -30, 30, -2.5, 2.5, CENTER_COL, ROW1, 1.0);
         //d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_shooterSpeed"), "Shooter Speed", "RPM", 0, 6000, 4500, 5700, RIGHT_COL, ROW1, 1.0);
 
         //d.addText(SignalUtils.nameToNT4ValueTopic("db_shotsTaken"), "Shots Taken", CENTER_COL, ROW1+10, 1.0);
@@ -46,7 +47,13 @@ public class Dashboard {
         //d.addCamera("cam1", "http://10.17.36.10:1181/stream.mjpg", LEFT_COL, ROW2, 0.75);
         //d.addCamera("cam2", "http://10.17.36.10:1182/stream.mjpg", RIGHT_COL, ROW2, 0.75);
 
-        d.addFieldPose("pose", "Field", LEFT_COL, ROW2, 0.75);
+        d.addFieldPose("pose", "Field", LEFT_COL, ROW1, 0.75);
+        SwerveStateTopicSet[] topicList = new SwerveStateTopicSet[4];
+        topicList[0] = new SwerveStateTopicSet("modFL",0);
+        topicList[1] = new SwerveStateTopicSet("modFR",1);
+        topicList[2] = new SwerveStateTopicSet("modBL",2);
+        topicList[3] = new SwerveStateTopicSet("modBR",3);
+        d.addSwerveState(topicList, "SwerveState Test", RIGHT_COL, ROW1, 1.0);
 
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_masterCaution"),"Master Caution", "#FF0000", "icons/alert.svg", CENTER_COL-6, ROW2, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_visionTargetVisible"),"Vision Target Visible", "#00FF00", "icons/vision.svg", CENTER_COL, ROW2, 1.0);

@@ -38,6 +38,9 @@ public class Robot extends TimedRobot {
   // Things
   CasseroleRIOLoadMonitor loadMon;
 
+  // DriverInput
+  DriverInput di;
+
   // Autonomous Control Utilities
   Autonomous auto;
   PoseTelemetry pt;
@@ -79,6 +82,10 @@ public class Robot extends TimedRobot {
     db = new Dashboard(webserver);
 
     auto = Autonomous.getInstance();
+
+    loadMon = new CasseroleRIOLoadMonitor();
+
+    di = new DriverInput();
 
     if(Robot.isSimulation()){
       simulationSetup();
@@ -125,6 +132,18 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    di.update();
+
+    fl_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
+    fr_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
+    bl_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
+    br_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
+
+    fl_azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
+    fr_azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
+    bl_azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
+    br_azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
+
   }
 
 
@@ -157,6 +176,7 @@ public class Robot extends TimedRobot {
 
   private void telemetryUpdate(){
     double time = Timer.getFPGATimestamp();
+    
     pt.update(time);
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
@@ -183,6 +203,7 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic(){
     plant.update(this.isDisabled());
+    pt.setActualPose(plant.getCurActPose());
   }
 
 

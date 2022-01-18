@@ -36,12 +36,12 @@ public class MotorGearboxWheelSim {
         gearboxFricCoef_NmPerRadPerSec = gearboxFricCoef_NmPerRadPerSec_in;
     }
 
-    public void update(double groundVelocity_mps, double supplyVoltage_in, double motorCommand_in){
+    public void update(double groundVelocity_mps, double motorVoltage_in){
 
         double wheelRotationalSpeed_radPerSec = groundVelocity_mps / wheelRadius_m;
         double motorRotationalSpeed_radPerSec = wheelRotationalSpeed_radPerSec * gearRatio;
 
-        motor.update(motorRotationalSpeed_radPerSec, supplyVoltage_in*motorCommand_in);
+        motor.update(motorRotationalSpeed_radPerSec, motorVoltage_in);
 
         //TODO - rotating members are currently massless
         double gearboxFrictionalTorque_Nm = motorRotationalSpeed_radPerSec * gearboxFricCoef_NmPerRadPerSec;

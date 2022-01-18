@@ -88,15 +88,15 @@ class SwerveModuleModel{
         azmthMotorCtrl.sim_setSupplyVoltage(batteryVoltage);
 
 
-        double wheelCmd = 0;
-        double azmthCmd = 0;
+        double wheelVoltage = 0;
+        double azmthVoltage = 0;
 
         if(!isDisabled){
-            wheelCmd = wheelMotorCtrl.getAppliedVoltage_V();
-            azmthCmd = azmthMotorCtrl.getAppliedVoltage_V();
+            wheelVoltage = wheelMotorCtrl.getAppliedVoltage_V();
+            azmthVoltage = azmthMotorCtrl.getAppliedVoltage_V();
         }
 
-        motionModel(wheelCmd, azmthCmd, batteryVoltage); 
+        motionModel(wheelVoltage, azmthVoltage, batteryVoltage); 
 
         angleMotorEncoder.setRawAngle(Units.rotationsToRadians(azmthMotor.getAzmthShaftPosition_Rev()));
 
@@ -106,7 +106,7 @@ class SwerveModuleModel{
     }
 
     /** Implements the main motion model for the module */
-    private void motionModel(double wheelCmd, double angleCmd, double batteryVoltage_v){
+    private void motionModel(double wheelVoltage, double azmthVoltage, double batteryVoltage_v){
 
         Vector2d azimuthUnitVec = new Vector2d(1,0);
         azimuthUnitVec.rotate(curAzmthAngle.getDegrees());
@@ -114,8 +114,8 @@ class SwerveModuleModel{
         // Assume the wheel does not lose traction along its wheel direction (on-tread)
         double velocityAlongAzimuth = getModuleRelativeTranslationVelocity().dot(azimuthUnitVec);
 
-        wheelMotor.update(velocityAlongAzimuth, batteryVoltage_v, wheelCmd);
-        azmthMotor.update(batteryVoltage_v, angleCmd);
+        wheelMotor.update(velocityAlongAzimuth, wheelVoltage);
+        azmthMotor.update(azmthVoltage);
 
         // Assume idealized azimuth control - no "twist" force at contact patch from friction or robot motion.
         curAzmthAngle = Rotation2d.fromDegrees(azmthMotor.getAzmthShaftPosition_Rev() * 360);
