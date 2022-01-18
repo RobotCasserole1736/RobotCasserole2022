@@ -162,3 +162,4 @@ bin/
 *-window.json
 
 buildinfo.html
+sim_data_captures/*.csv
