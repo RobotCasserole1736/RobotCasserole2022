@@ -251,9 +251,9 @@ public class SignalFileLogger {
             String filename = "";
             // Determine a unique file name
             if (Robot.isReal()) {
-                filename = "log_" + DriverStation.getInstance().getEventName() + "_"
-                        + DriverStation.getInstance().getMatchType() + "_"
-                        + Integer.toString(DriverStation.getInstance().getMatchNumber()) + "_" + getDateTimeString()
+                filename = "log_" + DriverStation.getEventName() + "_"
+                        + DriverStation.getMatchType() + "_"
+                        + Integer.toString(DriverStation.getMatchNumber()) + "_" + getDateTimeString()
                         + "_" + logPrefix + ".csv";
             } else {
                 filename = "log_" + getDateTimeString() + "_" + logPrefix + ".csv";

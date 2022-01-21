@@ -7,11 +7,11 @@ public class DriverInput {
     
     XboxController driverController;
 
-    @Signal
+    @Signal(units="cmd")
     double curFwdRevCmd;
-    @Signal
+    @Signal(units="cmd")
     double curRotCmd;
-    @Signal
+    @Signal(units="cmd")
     double curSideToSideCmd;
 
     public DriverInput(){

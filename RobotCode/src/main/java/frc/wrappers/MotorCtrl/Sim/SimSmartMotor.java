@@ -22,15 +22,15 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
     double kI;
     double kD;
 
-    @Signal
+    @Signal(units="V")
     private double curWindingVoltage;
-    @Signal
+    @Signal(units="A")
     private double curCurrent;
-    @Signal
+    @Signal(units="radpersec")
     private double curVel_radpersec;
-    @Signal
+    @Signal(units="V")
     private double curSupplyVoltage = 12.0;
-    @Signal
+    @Signal(units="rad")
     private double curPos_rad;
 
     public SimSmartMotor(int can_id){
