@@ -1,5 +1,7 @@
 package frc.lib.Webserver2.DashboardConfig;
 
+import frc.lib.Signal.SignalUtils;
+
 public class SwerveStateTopicSet {
     String azmthDesTopic = "";
     String azmthActTopic = "";
@@ -10,10 +12,10 @@ public class SwerveStateTopicSet {
 
 
     public SwerveStateTopicSet(String root, int modIdx_in){
-        azmthDesTopic = root + "_azmthDes";
-        azmthActTopic = root + "_azmthAct";
-        speedDesTopic = root + "_speedDes";
-        speedActTopic = root + "_speedAct";
+        azmthDesTopic = SignalUtils.nameToNT4ValueTopic(root + "_azmthDes");
+        azmthActTopic = SignalUtils.nameToNT4ValueTopic(root + "_azmthAct");
+        speedDesTopic = SignalUtils.nameToNT4ValueTopic(root + "_speedDes");
+        speedActTopic = SignalUtils.nameToNT4ValueTopic(root + "_speedAct");
         modIdx = modIdx_in;
     }
 

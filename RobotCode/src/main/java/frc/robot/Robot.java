@@ -13,8 +13,8 @@ import frc.lib.Signal.SignalWrangler;
 import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
+import frc.robot.Drivetrain.DrivetrainControl;
 import frc.sim.RobotModel;
-import frc.wrappers.ADXRS453.CasseroleADXRS453;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 import frc.wrappers.SwerveAzmthEncoder.CasseroleSwerveAzmthEncoder;
 
@@ -41,6 +41,9 @@ public class Robot extends TimedRobot {
   // DriverInput
   DriverInput di;
 
+  //Drivetrain and drivetrain accessories
+  DrivetrainControl dt;
+
   // Autonomous Control Utilities
   Autonomous auto;
   PoseTelemetry pt;
@@ -48,7 +51,6 @@ public class Robot extends TimedRobot {
   //TEMPORARY DRIVETRAIN OBJECTS
   // These are just here to keep the sim happy while we test
   // They should be deleted/moved/modified/whatever as the drivetrain classes are actually developed
-  CasseroleADXRS453 gyro = new CasseroleADXRS453();
   CasseroleCANMotorCtrl fl_wheel = new CasseroleCANMotorCtrl("FL_Wheel", Constants.FL_WHEEL_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
   CasseroleCANMotorCtrl fl_azmth = new CasseroleCANMotorCtrl("FL_Azmth", Constants.FL_AZMTH_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
   CasseroleCANMotorCtrl fr_wheel = new CasseroleCANMotorCtrl("FR_Wheel", Constants.FR_WHEEL_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
@@ -87,9 +89,15 @@ public class Robot extends TimedRobot {
 
     di = new DriverInput();
 
+    dt = DrivetrainControl.getInstance();
+
     if(Robot.isSimulation()){
       simulationSetup();
     }
+
+    //Autonomous might overwrite this, but pick a default starting pose for now?
+    // Maybe this is unnecessary?
+    dt.pe.setKnownPose(Constants.DFLT_START_POSE);
 
     SignalWrangler.getInstance().registerSignals(this);
     webserver.startServer();
@@ -134,6 +142,9 @@ public class Robot extends TimedRobot {
 
     di.update();
 
+    // TEMPORARY LOGIC to send some voltages to motors
+    // This isn't correct and should be done inside the drivetrain classes
+    // But, just for demonstration, for now.... here it be.
     fl_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
     fr_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
     bl_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
@@ -170,12 +181,21 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
+    dt.update();
+
     db.updateDriverView();
     telemetryUpdate();
   }
 
   private void telemetryUpdate(){
     double time = Timer.getFPGATimestamp();
+
+    dt.updateTelemetry();
+
+    pt.setDesiredPose(dt.getCurDesiredPose());
+  
+    //TODO - send drivetrain pose estimate to the pt (pose telemetry) object
+
     
     pt.update(time);
     SignalWrangler.getInstance().sampleAllSignals(time);
@@ -194,7 +214,8 @@ public class Robot extends TimedRobot {
 
   public void syncSimPoseToEstimate(){
     if(Robot.isSimulation()){
-      //TODO update plant pose to match current estimator
+      //TODO update plant pose to match current estimate
+      //This needs the drivetrain pose estimator class functional first before it works
       //plant.reset(dt.getCurPoseEst());
       
     }

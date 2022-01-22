@@ -1,17 +1,17 @@
 package frc.robot.Drivetrain;
 
-import org.photonvision.PhotonCamera;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Transform2d;
-import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpiutil.math.VecBuilder;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+
 import frc.Constants;
-import frc.lib.DataServer.Annotations.Signal;
+import frc.lib.Signal.Annotations.Signal;
+import frc.wrappers.ADXRS453.CasseroleADXRS453;
 
 public class DrivetrainPoseEstimator {
 
@@ -26,16 +26,7 @@ public class DrivetrainPoseEstimator {
 
     Pose2d curEstPose = new Pose2d(Constants.DFLT_START_POSE.getTranslation(), Constants.DFLT_START_POSE.getRotation());
 
-    //Pose2d fieldPose = new Pose2d(); //Field-referenced orign
-
-    //Pose2d visionEstPose = null; //Camera-reported raw pose. null if no pose available.
-
-    //PhotonCamera cam;
-
-    WrapperedADXRS450 gyro;
-
-    boolean pointedDownfield = false;
-
+    CasseroleADXRS453 gyro;
 
     SwerveDrivePoseEstimator m_poseEstimator;
 
@@ -43,8 +34,7 @@ public class DrivetrainPoseEstimator {
     double curSpeed = 0;
 
     private DrivetrainPoseEstimator(){
-        gyro = new WrapperedADXRS450();
-        cam = new PhotonCamera(Constants.PHOTON_CAM_NAME);
+        gyro = new CasseroleADXRS453();
 
         //Trustworthiness of the internal model of how motors should be moving
         // Measured in expected standard deviation (meters of position and degrees of rotation)
@@ -64,9 +54,7 @@ public class DrivetrainPoseEstimator {
                                                        stateStdDevs, 
                                                        localMeasurementStdDevs, 
                                                        visionMeasurementStdDevs, 
-                                                       Constants.CTRLS_SAMPLE_RATE_SEC);
-
-        setKnownPose(Constants.DFLT_START_POSE);
+                                                       Constants.Ts);
 
     }
 
@@ -78,12 +66,10 @@ public class DrivetrainPoseEstimator {
         DrivetrainControl.getInstance().resetWheelEncoders();
         //No need to reset gyro, pose estimator does that.
         m_poseEstimator.resetPosition(in, getGyroHeading());
-        updateDownfieldFlag();
         curEstPose = in;
     }
 
     public Pose2d getEstPose(){ return curEstPose; }
-    public Pose2d getVisionEstPose(){ return visionEstPose; }
 
     public void update(){
 
@@ -92,40 +78,18 @@ public class DrivetrainPoseEstimator {
         Pose2d prevEstPose = curEstPose;
         curEstPose = m_poseEstimator.update(getGyroHeading(), states[0], states[1], states[2], states[3]);
 
-        //If we see a vision target, adjust our pose estimate
-        var res = cam.getLatestResult();
-        if(res.hasTargets()){
-
-            double observationTime = Timer.getFPGATimestamp() - res.getLatencyMillis();
-
-            Transform2d camToTargetTrans = res.getBestTarget().getCameraToTarget();
-            Pose2d targetPose = fieldPose.transformBy(pointedDownfield ? Constants.fieldToFarVisionTargetTrans:Constants.fieldToCloseVisionTargetTrans);
-            Pose2d camPose = targetPose.transformBy(camToTargetTrans.inverse());
-            visionEstPose = camPose.transformBy(Constants.robotToCameraTrans.inverse());            
-
-            m_poseEstimator.addVisionMeasurement(visionEstPose, observationTime);
-        } else {
-            visionEstPose = null;
-        }
-        
         //Calculate a "speedometer" velocity in ft/sec
         Transform2d deltaPose = new Transform2d(prevEstPose, curEstPose);
-        curSpeed = Units.metersToFeet(deltaPose.getTranslation().getNorm()) / Constants.CTRLS_SAMPLE_RATE_SEC;
+        curSpeed = Units.metersToFeet(deltaPose.getTranslation().getNorm()) / Constants.Ts;
 
-        updateDownfieldFlag();
     }
 
     public Rotation2d getGyroHeading(){
-        return gyro.getAngle().times(-1.0);
+        return gyro.getRotation2d();
     }
 
     public double getSpeedFtpSec(){
         return curSpeed;
-    }
-
-    public void updateDownfieldFlag(){
-        double curRotDeg = curEstPose.getRotation().getDegrees();
-        pointedDownfield = (curRotDeg > -90 && curRotDeg < 90);
     }
 
 

@@ -2,9 +2,6 @@ package frc.lib.Webserver2.DashboardConfig;
 
 public class SwerveStateConfig extends VisibleWidgetConfig {
     
-    double nominalWidth  = 30;
-    double nominalHeight = 30;
-
     SwerveStateTopicSet FLTopics;
     SwerveStateTopicSet FRTopics;
     SwerveStateTopicSet BLTopics;

@@ -27,6 +27,8 @@ public class DrivetrainControl {
     SwerveModuleControl moduleBL;
     SwerveModuleControl moduleBR;
 
+    public DrivetrainPoseEstimator pe;
+
     HolonomicDriveController hdc = new HolonomicDriveController(
         new PIDController(8.0, 0, 0), //Fwd/Rev Trajectory Tracking PID Controller
         new PIDController(8.0, 0, 0), //Left/Right Trajectory Tracking PID Controller
@@ -43,20 +45,22 @@ public class DrivetrainControl {
 
         hdc.setEnabled(true);
 
-        moduleFL = new SwerveModuleControl("FL", Constants.FL_WHEEL_MOTOR_CANID,Constants.FL_AZMTH_MOTOR_CANID,Constants.FL_WHEEL_ENC_A_IDX,Constants.FL_AZMTH_ENC_IDX);
-        moduleFR = new SwerveModuleControl("FR", Constants.FR_WHEEL_MOTOR_CANID,Constants.FR_AZMTH_MOTOR_CANID,Constants.FR_WHEEL_ENC_A_IDX,Constants.FR_AZMTH_ENC_IDX);
-        moduleBL = new SwerveModuleControl("BL", Constants.BL_WHEEL_MOTOR_CANID,Constants.BL_AZMTH_MOTOR_CANID,Constants.BL_WHEEL_ENC_A_IDX,Constants.BL_AZMTH_ENC_IDX);
-        moduleBR = new SwerveModuleControl("BR", Constants.BR_WHEEL_MOTOR_CANID,Constants.BR_AZMTH_MOTOR_CANID,Constants.BR_WHEEL_ENC_A_IDX,Constants.BR_AZMTH_ENC_IDX);          
+        moduleFL = new SwerveModuleControl("FL", Constants.FL_WHEEL_MOTOR_CANID,Constants.FL_AZMTH_MOTOR_CANID,Constants.FL_AZMTH_ENC_IDX);
+        moduleFR = new SwerveModuleControl("FR", Constants.FR_WHEEL_MOTOR_CANID,Constants.FR_AZMTH_MOTOR_CANID,Constants.FR_AZMTH_ENC_IDX);
+        moduleBL = new SwerveModuleControl("BL", Constants.BL_WHEEL_MOTOR_CANID,Constants.BL_AZMTH_MOTOR_CANID,Constants.BL_AZMTH_ENC_IDX);
+        moduleBR = new SwerveModuleControl("BR", Constants.BR_WHEEL_MOTOR_CANID,Constants.BR_AZMTH_MOTOR_CANID,Constants.BR_AZMTH_ENC_IDX);          
+
+        pe = DrivetrainPoseEstimator.getInstance();
 
     }
 
     public void setInputs(double fwdRevCmd, double strafeCmd, double rotateCmd){
         desChSpd = new ChassisSpeeds(fwdRevCmd, strafeCmd, rotateCmd);
-        curDesPose = DrivetrainPoseEstimator.getInstance().getEstPose();
+        curDesPose = pe.getEstPose();
     }
 
     public void setInputs(Trajectory.State desTrajState, Rotation2d desAngle){
-        desChSpd = hdc.calculate(DrivetrainPoseEstimator.getInstance().getEstPose(), desTrajState, desAngle);
+        desChSpd = hdc.calculate(pe.getEstPose(), desTrajState, desAngle);
         curDesPose = new Pose2d(desTrajState.poseMeters.getTranslation(), desAngle);
     }
 
@@ -87,7 +91,7 @@ public class DrivetrainControl {
 
         double worstError = getMaxErrorMag();
 
-        var curActualSpeed_ftpersec = DrivetrainPoseEstimator.getInstance().getSpeedFtpSec();
+        var curActualSpeed_ftpersec = pe.getSpeedFtpSec();
 
         moduleFL.update(curActualSpeed_ftpersec, worstError);
         moduleFR.update(curActualSpeed_ftpersec, worstError);
@@ -114,10 +118,11 @@ public class DrivetrainControl {
 
     public double getMaxErrorMag(){
         double maxErr = 0;
-        maxErr = Math.max(maxErr, moduleFL.azmthCtrl.getErrMag_deg());
-        maxErr = Math.max(maxErr, moduleFR.azmthCtrl.getErrMag_deg());
-        maxErr = Math.max(maxErr, moduleBL.azmthCtrl.getErrMag_deg());
-        maxErr = Math.max(maxErr, moduleFR.azmthCtrl.getErrMag_deg());
+        // TODO after swerve modules have an azimuth controller, read each one's absolute value to figure out which one is most "misalighned"
+        // maxErr = Math.max(maxErr, moduleFL.azmthCtrl.getErrMag_deg());
+        // maxErr = Math.max(maxErr, moduleFR.azmthCtrl.getErrMag_deg());
+        // maxErr = Math.max(maxErr, moduleBL.azmthCtrl.getErrMag_deg());
+        // maxErr = Math.max(maxErr, moduleFR.azmthCtrl.getErrMag_deg());
         return maxErr;
     }
 
@@ -127,10 +132,18 @@ public class DrivetrainControl {
     }
 
     public void resetWheelEncoders() {
-        moduleFL.wheelEnc.reset();
-        moduleFR.wheelEnc.reset();
-        moduleBL.wheelEnc.reset();
-        moduleBR.wheelEnc.reset();
+        //TODO - do we actually need to do anything here? It's not clear to me :(
+        //moduleFL.wheelEnc.reset();
+        //moduleFR.wheelEnc.reset();
+        //moduleBL.wheelEnc.reset();
+        //moduleBR.wheelEnc.reset();
+    }
+
+    public void updateTelemetry(){
+        moduleFL.updateTelemetry();
+        moduleFR.updateTelemetry();
+        moduleBL.updateTelemetry();
+        moduleBR.updateTelemetry();
     }
 
 }

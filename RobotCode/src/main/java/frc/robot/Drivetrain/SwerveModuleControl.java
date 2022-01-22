@@ -1,22 +1,10 @@
 package frc.robot.Drivetrain;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import frc.Constants;
-import frc.UnitUtils;
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Signal.Annotations.Signal;
-import frc.lib.Util.MapLookup2D;
-import frc.robot.LoopTiming;
 
 class SwerveModuleControl {
-
-    Spark wheelMotorCtrl;
-    Spark azmthMotorCtrl;
-    Encoder wheelEnc;
-    Encoder azmthEnc;
 
     SwerveModuleState desState = new SwerveModuleState();
     SwerveModuleState actState = new SwerveModuleState();
@@ -34,81 +22,55 @@ class SwerveModuleControl {
     @Signal(units = "cmd")
     double wheelMotorCmd;
 
-    AzimuthAngleController azmthCtrl;
-
-    MapLookup2D wheelCmdLimitTbl;
+    //TODO create an "Azimuth Controller" which calculates steer motor voltage commands from actual/desired angles
 
 
-    final double WHEEL_MAX_SPEED_RPM = 620; //determined empirically
 
-    PIDController wheelPIDCtrl = new PIDController(0.011, 0, 0.000);
+    public SwerveModuleControl(String posId, int wheelMotorIdx, int azmthMotorIdx, int azmthEncoderIdx){
 
+        //TODO make casserole motors for the azimuth (steer) and drive motors
 
-    public SwerveModuleControl(String posId, int wheelMotorIdx, int azmthMotorIdx, int wheelEncoderIdx, int azmthEncoderIdx){
+        //TODO make casserole azimuth encoder to measure steer angle
 
-        wheelMotorCtrl = new Spark(wheelMotorIdx);
-        azmthMotorCtrl = new Spark(azmthMotorIdx);
-        wheelEnc = new Encoder(wheelEncoderIdx, wheelEncoderIdx + 1); //Always assume channel B is one after channel A.
-        azmthEnc = new Encoder(azmthEncoderIdx, azmthEncoderIdx + 1);
-
-        wheelEnc.setDistancePerPulse(Constants.WHEEL_ENC_WHEEL_REVS_PER_COUNT);
-        azmthEnc.setDistancePerPulse(Constants.AZMTH_ENC_MODULE_REVS_PER_COUNT);
-
-        wheelSpdDesSig = new frc.lib.Signal.Signal("DtModule" + posId + "WheelSpdDes", "RPM");
-        wheelSpdActSig = new frc.lib.Signal.Signal("DtModule" + posId + "WheelSpdAct", "RPM");
-        azmthPosDesSig = new frc.lib.Signal.Signal("DtModule" + posId + "AzmthPosDes", "deg");
-        azmthPosActSig = new frc.lib.Signal.Signal("DtModule" + posId + "AzmthPosAct", "deg");
-
-        wheelCmdLimitTbl = new MapLookup2D();
-        wheelCmdLimitTbl.insertNewPoint(0.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(5.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(7.0, 0.8);
-        wheelCmdLimitTbl.insertNewPoint(15.0, 0.5);
-        wheelCmdLimitTbl.insertNewPoint(30.0, 0.1);
-        wheelCmdLimitTbl.insertNewPoint(45.0, 0.0);
-        wheelCmdLimitTbl.insertNewPoint(90.0, 0.0);
-
-        azmthCtrl = new AzimuthAngleController();
+        wheelSpdDesSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthDes", "RPM");
+        wheelSpdActSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthAct", "RPM");
+        azmthPosDesSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_speedDes", "deg");
+        azmthPosActSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_speedAct", "deg");
 
     }
 
     public void update(double curSpeedFtPerSec, double maxAzmthErr_deg){
 
-        azmthPosAct_deg = azmthEnc.getDistance() * 360.0;
+        //TODO read the azimuth angle
 
-        azmthCtrl.setInputs(desState.angle.getDegrees(), azmthPosAct_deg, curSpeedFtPerSec);
-        azmthCtrl.update();
+        //TODO calcualte desired wheel speed
 
-        //Calcaulte desired speed from input state, azimuth controller reversal command, and worst-case azimuth module error.
-        wheelMotorSpeedDes_RPM = UnitUtils.DtMPerSectoRPM(desState.speedMetersPerSecond)*(azmthCtrl.getInvertWheelCmd()?-1.0:1.0);
-        wheelMotorSpeedDes_RPM *= wheelCmdLimitTbl.lookupVal(maxAzmthErr_deg);
 
-        wheelMotorSpeedAct_RPM = wheelEnc.getRate() * 60;
+        //TODO invert the wheel speed if needed
 
-        //Closed-loop control of wheel velocity
-        wheelPIDCtrl.setSetpoint(wheelMotorSpeedDes_RPM);
-        double wheelFFCmd = wheelMotorSpeedDes_RPM/WHEEL_MAX_SPEED_RPM;
-        double wheelFBCmd = wheelPIDCtrl.calculate(wheelMotorSpeedAct_RPM);
-        wheelMotorCmd = UnitUtils.limitMotorCmd(wheelFFCmd+wheelFBCmd);
+        //TODO scale back the wheel speed if our azimuth angle isn't on target
 
-        wheelMotorCtrl.set(wheelMotorCmd); 
-        azmthMotorCtrl.set(azmthCtrl.getMotorCmd()); 
+        //TODO measure the actual wheel speed from the drive motor
 
-        actState.angle = Rotation2d.fromDegrees(azmthPosAct_deg);
-        actState.speedMetersPerSecond = UnitUtils.DtRPMtoMPerSec(wheelMotorSpeedAct_RPM);
+        //TODO calculate feed-forward drivetrain 
 
-        updateTelemetry();
+        //TODO send the voltage or speed commands to the motors
+
+        //TODO update the "actualState" object with this module's present steer angle and speed in meters per second
+
     }
 
     /**
      * Broadcast signals specific to the visualiation
      */
     public void updateTelemetry(){
-        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec() * 1000;
-        wheelSpdDesSig.addSample(sampleTimeMs, wheelMotorSpeedDes_RPM);
-        wheelSpdActSig.addSample(sampleTimeMs, wheelMotorSpeedAct_RPM);
-        azmthPosDesSig.addSample(sampleTimeMs, azmthCtrl.getSetpoint_deg());
-        azmthPosActSig.addSample(sampleTimeMs, azmthPosAct_deg);
+        double sampleTime = Timer.getFPGATimestamp(); //TODO - this should actually be coming from the loop timing utility, whenever Lucas finishes it up.
+        wheelSpdDesSig.addSample(sampleTime, wheelMotorSpeedDes_RPM);
+        wheelSpdActSig.addSample(sampleTime, wheelMotorSpeedAct_RPM);
+
+        //TODO - forward azimuth controller information on to the signals
+        azmthPosDesSig.addSample(sampleTime, 0);
+        azmthPosActSig.addSample(sampleTime, 0);
     }
 
     //TODO - test mode update for PID tuning azimuth motor velocity
