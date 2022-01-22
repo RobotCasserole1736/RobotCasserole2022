@@ -1,10 +1,8 @@
 package frc.lib.Util;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -56,7 +54,7 @@ public class CrashTracker {
     
     private static String getMatchString() {
         String retval= "";
-        switch (DriverStation.getInstance().getMatchType()) {
+        switch (DriverStation.getMatchType()) {
             case Practice:
                 retval += "P";
             case Qualification:
@@ -66,9 +64,9 @@ public class CrashTracker {
             default:
                 retval += "N";
         }
-        retval += Integer.toString(DriverStation.getInstance().getMatchNumber());
+        retval += Integer.toString(DriverStation.getMatchNumber());
         retval += "R";
-        retval += Integer.toString(DriverStation.getInstance().getReplayNumber());
+        retval += Integer.toString(DriverStation.getReplayNumber());
         
         return retval;
     }

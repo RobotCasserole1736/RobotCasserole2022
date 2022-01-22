@@ -93,7 +93,7 @@ public class SignalWrangler extends LocalClient{
             return; //Stop, no more tree to traverse
         }
 
-        if (rootPkg.toString().contains("frc.sim") || rootPkg.toString().contains("frc.robot")) {
+        if (rootPkg.toString().contains("frc.sim") || rootPkg.toString().contains("frc.robot") || rootPkg.toString().contains("frc.wrappers")) {
             // If we've got a valid package name inside of our FRC code, go through all the
             // fields in the associated class.
             for (Field field : rootClass.getDeclaredFields()) {
