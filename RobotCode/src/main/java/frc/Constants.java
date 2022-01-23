@@ -71,7 +71,7 @@ public class Constants {
     static public final int BL_AZMTH_MOTOR_CANID = 7;
     static public final int BR_WHEEL_MOTOR_CANID = 8;
     static public final int BR_AZMTH_MOTOR_CANID = 9;
-    //static public final int UNUSED = 10;
+    static public final int SHOOTER_MOTOR_CANID = 10;
     //static public final int UNUSED = 11;
     //static public final int UNUSED = 12;
     //static public final int UNUSED = 13;

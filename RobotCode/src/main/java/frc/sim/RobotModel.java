@@ -9,6 +9,7 @@ import frc.lib.Signal.Annotations.Signal;
 public class RobotModel {
 
     DrivetrainModel dt;
+    ShooterSim shooter;
 
     PDPSim pdp;
 
@@ -27,6 +28,7 @@ public class RobotModel {
 
     public RobotModel(){
         dt = new DrivetrainModel();
+        shooter = new ShooterSim();
         pdp = new PDPSim();
         reset(Constants.DFLT_START_POSE);
     }
@@ -46,8 +48,9 @@ public class RobotModel {
             isDisabled |= isBrownedOut;
 
             dt.update(isDisabled, batteryVoltage_V);
+            shooter.update(isDisabled, batteryVoltage_V);
 
-            currentDraw_A = QUIESCENT_CURRENT_DRAW_A + dt.getCurrentDraw();
+            currentDraw_A = QUIESCENT_CURRENT_DRAW_A + dt.getCurrentDraw() + shooter.getCurrentDraw_A();
 
             //batteryVoltage_V = BatterySim.calculateLoadedBatteryVoltage(BATTERY_NOMINAL_VOLTAGE, BATTERY_NOMINAL_RESISTANCE, currentDraw_A);
 
