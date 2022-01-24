@@ -4,9 +4,8 @@ import static org.junit.Assert.*;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.REVPHSim;
-import frc.Constants;
-import frc.UnitUtils;
 import frc.sim.IntakeSim;
+import frc.wrappers.SimDeviceBanks;
 import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;
 
 import org.junit.*;
@@ -20,17 +19,18 @@ public class IntakeSimTest {
   public void setup() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
     ctrl = new SimSmartMotor(Constants.INTAKE_MOTOR_CANID);
+    ctrl.sim_setSupplyVoltage(12.0);
     intk = new IntakeSim();
     phSim = new REVPHSim();
   }
 
   @After // this method will run after each test
   public void shutdown() throws Exception {
-
+    SimDeviceBanks.clearAllBanks();
   }
 
   @Test
-  public void cycleTest() {
+  public void extendRetractCycleTest() {
     // Set cylender to extend
     phSim.setSolenoidOutput(Constants.INTAKE_SOLENOID, true);
     run(0.1);
@@ -57,6 +57,24 @@ public class IntakeSimTest {
     // Make sure we've hit the endstop
     assertTrue(intk.getCylPos_m() < 0.1);
     assertTrue(intk.getCylFlow_lps() < 0.1);
+  }
+
+  @Test
+  public void ingestTest() {
+    ctrl.setVoltageCmd(12.0);
+    run(2.0);
+    assertTrue(ctrl.getVelocity_radpersec() > 0);
+    assertTrue(ctrl.getCurrent_A() > 0);
+    assertTrue(intk.getCurrentDraw_A() > 0);
+  }
+
+  @Test
+  public void ejectTest() {
+    ctrl.setVoltageCmd(-12.0);
+    run(2.0);
+    assertTrue(ctrl.getVelocity_radpersec() < 0);
+    assertTrue(ctrl.getCurrent_A() > 0);
+    assertTrue(intk.getCurrentDraw_A() > 0);
   }
 
   private void run(double duration_s) {

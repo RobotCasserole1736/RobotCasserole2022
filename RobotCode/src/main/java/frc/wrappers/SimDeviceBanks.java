@@ -72,4 +72,10 @@ public class SimDeviceBanks {
         return SPIBank.get(cs);
     }
 
+    public static void clearAllBanks(){
+        DIBank.clear();
+        SPIBank.clear();
+        CANBank.clear();
+    }
+
 }

@@ -48,10 +48,11 @@ public class ShooterSim {
 
         speed = motorWithRotatingMass.getAngularVelocityRadPerSec();
         shooterMotor.sim_setActualVelocity(speed * SHOOTER_GEAR_RATIO);
+        shooterMotor.sim_setCurrent(motorWithRotatingMass.getCurrentDrawAmps());
     }
 
     public double getCurrentDraw_A(){
-        return motorWithRotatingMass.getCurrentDrawAmps();
+        return shooterMotor.getCurrent_A();
     }
 
 }

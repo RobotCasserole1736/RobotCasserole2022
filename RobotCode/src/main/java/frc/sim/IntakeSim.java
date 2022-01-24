@@ -66,6 +66,7 @@ public class IntakeSim {
 
         speed = motorWithRotatingMass.getAngularVelocityRadPerSec();
         intakeMotor.sim_setActualVelocity(speed * INTAKE_GEAR_RATIO);
+        intakeMotor.sim_setCurrent(motorWithRotatingMass.getCurrentDrawAmps());
 
         // Pushy
         boolean shouldExtend = pneumaticsHub.getSolenoidOutput(Constants.INTAKE_SOLENOID) & !isDisabled;
@@ -87,7 +88,7 @@ public class IntakeSim {
     }
 
     public double getCurrentDraw_A(){
-        return motorWithRotatingMass.getCurrentDrawAmps();
+        return intakeMotor.getCurrent_A();
     }
 
     public double getCylFlow_lps(){

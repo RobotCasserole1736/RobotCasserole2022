@@ -67,6 +67,7 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
     }
 
 
+    // Returns the current draw of the motor controller from the rest of the electrical system.
     @Override
     public double getCurrent_A() {
         return curCurrent;
@@ -98,8 +99,9 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
         curSupplyVoltage = supply_V;
     }
 
+    // Set the current flowing through the motor windings
     public void sim_setCurrent(double cur_A){
-        curCurrent = cur_A;
+        curCurrent = cur_A * Math.signum(curSupplyVoltage); //H bridge will reverse current flow
     }
 
     private double limitVoltage(double in){

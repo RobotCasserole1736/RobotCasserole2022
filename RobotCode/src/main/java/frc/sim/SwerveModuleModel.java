@@ -103,6 +103,9 @@ class SwerveModuleModel{
         wheelMotorCtrl.sim_setActualPosition(Units.rotationsToRadians(wheelMotor.getMotorPosition_Rev()));
         azmthMotorCtrl.sim_setActualPosition(Units.rotationsToRadians(azmthMotor.getMotorPosition_Rev()));
 
+        wheelMotorCtrl.sim_setCurrent(wheelMotor.getCurrent_A());
+        azmthMotorCtrl.sim_setCurrent(azmthMotor.getCurrent_A());
+
     }
 
     /** Implements the main motion model for the module */
@@ -123,7 +126,7 @@ class SwerveModuleModel{
 
     /** Get total current draw for the module */
     public double getCurrentDraw_A(){
-        return wheelMotor.getCurrent_A() + azmthMotor.getCurrent_A();
+        return wheelMotorCtrl.getCurrent_A() + azmthMotorCtrl.getCurrent_A();
     }
 
     /** Get current azimuth mechanism angle relative to module housing */
