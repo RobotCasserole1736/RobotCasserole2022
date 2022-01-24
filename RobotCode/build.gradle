@@ -4,7 +4,6 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2022.2.1"
     id 'com.diffplug.spotless' version '6.1.0'
-
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -92,7 +91,7 @@ dependencies {
 
 // Enable unit tests
 test {
-   useJUnit()
+    useJUnit()
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -132,7 +131,7 @@ task genMetaData(){
         String git_wd_clean = ""
         String git_tag_list = ""
 
-        //Get the user's name. Shouldn't throw errors, just "null" if 
+        //Get the user's name. Shouldn't throw errors, just "null" if
         // it can't figure out who you are.
         build_uname = System.getProperty("user.name")
 
@@ -171,7 +170,7 @@ task genMetaData(){
                 for(tag_obj in tag_list){
                     git_tag_list += tag_obj.getName()+","
                 }
-                
+
             } else {
                 git_tag_list = "none"
             }
@@ -199,7 +198,7 @@ task genMetaData(){
         filecontents += "<tr><td>Git Branch         </td><td> ${git_branch}   </td></tr>\n"
         filecontents += "<tr><td>Git SHA1           </td><td> ${git_sha1}     </td></tr>\n"
         filecontents += "<tr><td>Working Dir Clean? </td><td> ${git_wd_clean} </td></tr>\n"
-        filecontents += "</table>\n" 
+        filecontents += "</table>\n"
         filecontents += "</body></html>\n"
 
         new File(BUILD_INFO_FILE).text = filecontents
@@ -214,44 +213,44 @@ simulateExternalJavaRelease.dependsOn genMetaData
 
 // Configure spotless code formatter
 spotless {
-   java {
-      target fileTree('.') {
+    java {
+        target fileTree('.') {
             include '**/*.java'
             exclude '**/build/**', '**/build-*/**'
-      }
-      toggleOffOn()
-      googleJavaFormat()
-      removeUnusedImports()
-      trimTrailingWhitespace()
-      endWithNewline()
-   }
-   groovyGradle {
-      target fileTree('.') {
+        }
+        toggleOffOn()
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
             include '**/*.gradle'
             exclude '**/build/**', '**/build-*/**'
-      }
-      greclipse()
-      indentWithSpaces(4)
-      trimTrailingWhitespace()
-      endWithNewline()
-   }
-   format 'xml', {
-      target fileTree('.') {
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'xml', {
+        target fileTree('.') {
             include '**/*.xml'
             exclude '**/build/**', '**/build-*/**'
-      }
-      eclipseWtp('xml')
-      trimTrailingWhitespace()
-      indentWithSpaces(2)
-      endWithNewline()
-   }
-   format 'misc', {
-      target fileTree('.') {
+        }
+        eclipseWtp('xml')
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
             include '**/*.md', '**/.gitignore'
             exclude '**/build/**', '**/build-*/**'
-      }
-      trimTrailingWhitespace()
-      indentWithSpaces(2)
-      endWithNewline()
-   }
+        }
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
 }

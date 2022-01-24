@@ -7,77 +7,63 @@ import frc.lib.Signal.Annotations.Signal;
 
 class SimpleMotorWithMassModel {
 
-    @Signal(units="RPM")
-    double speedAct_RPM;
-    @Signal(units="A")
-    double current_A;
-    @Signal(units="rev")
-    double curDisplacement_Rev;
+  @Signal(units = "RPM")
+  double speedAct_RPM;
 
-    FlywheelSim fwSim;
-    double gearing;
+  @Signal(units = "A")
+  double current_A;
 
-    public SimpleMotorWithMassModel(DCMotor motor, double gearing, double moi){
-        fwSim = new FlywheelSim(motor, gearing, moi);
-        this.gearing = gearing;
-    }
+  @Signal(units = "rev")
+  double curDisplacement_Rev;
 
-    /**
-     * Set the motor back to zero speed and zero current draw.
-     */
-    public void modelReset(){
-        
-    }
+  FlywheelSim fwSim;
+  double gearing;
 
-    /**
-     * Step through one loop of simulation for the motor
-     * @param supplyVoltage_in Present battery supply voltage to the controller. Nominally 12.5 or so, but reduce to simulatle a dying battery
-     * @param motorCommand_in Speed controller command - 1.0 = full fwd, 0.0 = stop, -1.0 = full reverse
-     */
-    public void update(double motorVoltage_in){
+  public SimpleMotorWithMassModel(DCMotor motor, double gearing, double moi) {
+    fwSim = new FlywheelSim(motor, gearing, moi);
+    this.gearing = gearing;
+  }
 
-        fwSim.setInputVoltage(motorVoltage_in);
+  /** Set the motor back to zero speed and zero current draw. */
+  public void modelReset() {}
 
-        fwSim.update(Constants.SIM_SAMPLE_RATE_SEC);
+  /**
+   * Step through one loop of simulation for the motor
+   *
+   * @param supplyVoltage_in Present battery supply voltage to the controller. Nominally 12.5 or so,
+   *     but reduce to simulatle a dying battery
+   * @param motorCommand_in Speed controller command - 1.0 = full fwd, 0.0 = stop, -1.0 = full
+   *     reverse
+   */
+  public void update(double motorVoltage_in) {
 
-        speedAct_RPM = fwSim.getAngularVelocityRPM();
-        current_A = fwSim.getCurrentDrawAmps();
+    fwSim.setInputVoltage(motorVoltage_in);
 
-        curDisplacement_Rev += speedAct_RPM / 60 * Constants.SIM_SAMPLE_RATE_SEC;
+    fwSim.update(Constants.SIM_SAMPLE_RATE_SEC);
 
-    }
+    speedAct_RPM = fwSim.getAngularVelocityRPM();
+    current_A = fwSim.getCurrentDrawAmps();
 
-    /**
-     * 
-     * @return The present speed of the rotating mass
-     */
-    double getSpeed_RPM(){
-        return speedAct_RPM;
-    }
+    curDisplacement_Rev += speedAct_RPM / 60 * Constants.SIM_SAMPLE_RATE_SEC;
+  }
 
-    /**
-     * 
-     * @return The present current draw of the mechanism
-     */
-    double getCurrent_A(){
-        return current_A;
-    }
+  /** @return The present speed of the rotating mass */
+  double getSpeed_RPM() {
+    return speedAct_RPM;
+  }
 
-    /**
-     * 
-     * @return The present displacement of the azimuth module in Revolutions
-     */
-    double getAzmthShaftPosition_Rev(){
-        return curDisplacement_Rev;
-    }
+  /** @return The present current draw of the mechanism */
+  double getCurrent_A() {
+    return current_A;
+  }
 
-        /**
-     * 
-     * @return The present displacement of the motor shaft in Revolutions
-     */
-    double getMotorPosition_Rev(){
-        return getAzmthShaftPosition_Rev() * gearing;
-    }
+  /** @return The present displacement of the azimuth module in Revolutions */
+  double getAzmthShaftPosition_Rev() {
+    return curDisplacement_Rev;
+  }
 
-
+  /** @return The present displacement of the motor shaft in Revolutions */
+  double getMotorPosition_Rev() {
+    return getAzmthShaftPosition_Rev() * gearing;
+  }
 }

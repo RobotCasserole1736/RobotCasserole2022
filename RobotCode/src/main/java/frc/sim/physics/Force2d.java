@@ -1,36 +1,32 @@
 package frc.sim.physics;
 
-import java.util.Objects;
-
 import edu.wpi.first.math.geometry.Rotation2d;
+import java.util.Objects;
 
 public class Force2d {
   public Vector2d vec;
 
-  /**
-   * Constructs a Force2d with X and Y components equal to zero.
-   */
+  /** Constructs a Force2d with X and Y components equal to zero. */
   public Force2d() {
     this(0.0, 0.0);
   }
 
   /**
-   * Constructs a Force2d with the X and Y components equal to the
-   * provided values.
+   * Constructs a Force2d with the X and Y components equal to the provided values.
    *
    * @param x The x component of the force.
    * @param y The y component of the force.
    */
-  public Force2d( double x, double y) {
+  public Force2d(double x, double y) {
     vec = new Vector2d(x, y);
   }
 
   /**
-   * Constructs a Force2d with the provided force magnitude and angle. This is
-   * essentially converting from polar coordinates to Cartesian coordinates.
+   * Constructs a Force2d with the provided force magnitude and angle. This is essentially
+   * converting from polar coordinates to Cartesian coordinates.
    *
-   * @param mag The magnititude of the force 
-   * @param angle    The angle from the x-axis to the force vector.
+   * @param mag The magnititude of the force
+   * @param angle The angle from the x-axis to the force vector.
    */
   public Force2d(double mag, Rotation2d angle) {
     this(mag * angle.getCos(), mag * angle.getSin());
@@ -41,7 +37,6 @@ public class Force2d {
    *
    * @return The x component of the force.
    */
-
   public double getX() {
     return vec.x;
   }
@@ -51,7 +46,6 @@ public class Force2d {
    *
    * @return The y component of the force.
    */
-
   public double getY() {
     return vec.y;
   }
@@ -65,41 +59,32 @@ public class Force2d {
     return Math.hypot(vec.x, vec.y);
   }
 
-  /**
-   * 
-   * @return a unit vector in the directino this force points
-   */
+  /** @return a unit vector in the directino this force points */
   public Vector2d getUnitVector() {
-    return new Vector2d(this.getX()/this.getNorm(), this.getY()/this.getNorm());
+    return new Vector2d(this.getX() / this.getNorm(), this.getY() / this.getNorm());
   }
 
   /**
    * Applies a rotation to the force in 2d space.
    *
-   * <p>This multiplies the force vector by a counterclockwise rotation
-   * matrix of the given angle.
-   * [x_new]   [other.cos, -other.sin][x]
-   * [y_new] = [other.sin,  other.cos][y]
+   * <p>This multiplies the force vector by a counterclockwise rotation matrix of the given angle.
+   * [x_new] [other.cos, -other.sin][x] [y_new] = [other.sin, other.cos][y]
    *
-   * <p>For example, rotating a Force2d of {2, 0} by 90 degrees will return a
-   * Force2d of {0, 2}.
+   * <p>For example, rotating a Force2d of {2, 0} by 90 degrees will return a Force2d of {0, 2}.
    *
    * @param other The rotation to rotate the force by.
    * @return The new rotated force.
    */
   public Force2d rotateBy(Rotation2d other) {
     return new Force2d(
-            vec.x * other.getCos() - vec.y * other.getSin(),
-            vec.x * other.getSin() + vec.y * other.getCos()
-    );
+        vec.x * other.getCos() - vec.y * other.getSin(),
+        vec.x * other.getSin() + vec.y * other.getCos());
   }
 
   /**
-   * Adds two forces in 2d space and returns the sum. This is similar to
-   * vector addition.
+   * Adds two forces in 2d space and returns the sum. This is similar to vector addition.
    *
-   * <p>For example, Force2d{1.0, 2.5} + Force2d{2.0, 5.5} =
-   * Force2d{3.0, 8.0}
+   * <p>For example, Force2d{1.0, 2.5} + Force2d{2.0, 5.5} = Force2d{3.0, 8.0}
    *
    * @param other The force to add.
    * @return The sum of the forces.
@@ -111,7 +96,6 @@ public class Force2d {
   /**
    * Accumulates another force into this force
    *
-   *
    * @param other The force to add.
    * @return nothing (acts on this force in-place)
    */
@@ -121,11 +105,9 @@ public class Force2d {
   }
 
   /**
-   * Subtracts the other force from the other force and returns the
-   * difference.
+   * Subtracts the other force from the other force and returns the difference.
    *
-   * <p>For example, Force2d{5.0, 4.0} - Force2d{1.0, 2.0} =
-   * Force2d{4.0, 2.0}
+   * <p>For example, Force2d{5.0, 4.0} - Force2d{1.0, 2.0} = Force2d{4.0, 2.0}
    *
    * @param other The force to subtract.
    * @return The difference between the two forces.
@@ -135,9 +117,8 @@ public class Force2d {
   }
 
   /**
-   * Returns the inverse of the current force. This is equivalent to
-   * rotating by 180 degrees, flipping the point over both axes, or simply
-   * negating both components of the force.
+   * Returns the inverse of the current force. This is equivalent to rotating by 180 degrees,
+   * flipping the point over both axes, or simply negating both components of the force.
    *
    * @return The inverse of the current force.
    */

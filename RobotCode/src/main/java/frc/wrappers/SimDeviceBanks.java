@@ -3,79 +3,77 @@ package frc.wrappers;
 import java.util.HashMap;
 
 /**
- * Implements a CAN device which can be accessed in simulation. Used for wrappering
- * devices which don't directly support WPIlib's HAL layer simulation style.
- * Enforces a unique CAN ID per device - this isn't actually required on a robot,
- * but is a best-practice we'll use on our team.
+ * Implements a CAN device which can be accessed in simulation. Used for wrappering devices which
+ * don't directly support WPIlib's HAL layer simulation style. Enforces a unique CAN ID per device -
+ * this isn't actually required on a robot, but is a best-practice we'll use on our team.
  */
 public class SimDeviceBanks {
 
-    // CAN DEVICES
-    private static HashMap<Integer, Object> CANBank = new HashMap<Integer, Object>();
+  // CAN DEVICES
+  private static HashMap<Integer, Object> CANBank = new HashMap<Integer, Object>();
 
-    public static void addCANDevice(Object newDevice, int id){
+  public static void addCANDevice(Object newDevice, int id) {
 
-        if(CANBank.containsKey(id)){
-            throw new IllegalStateException("CAN ID " + id + " has already been allocated!");
-        }
-
-        CANBank.put(id, newDevice);
+    if (CANBank.containsKey(id)) {
+      throw new IllegalStateException("CAN ID " + id + " has already been allocated!");
     }
 
-    public static Object getCANDevice(int id){
-        if(!CANBank.containsKey(id)){
-            throw new IllegalStateException("CAN ID " + id + " is not a device on the CAN bus!");
-        }
+    CANBank.put(id, newDevice);
+  }
 
-        return CANBank.get(id);
+  public static Object getCANDevice(int id) {
+    if (!CANBank.containsKey(id)) {
+      throw new IllegalStateException("CAN ID " + id + " is not a device on the CAN bus!");
     }
 
-    //Digital Input Devices (Encoders)
-    private static HashMap<Integer, Object> DIBank = new HashMap<Integer, Object>();
+    return CANBank.get(id);
+  }
 
-    public static void addDIDevice(Object newDevice, int port){
+  // Digital Input Devices (Encoders)
+  private static HashMap<Integer, Object> DIBank = new HashMap<Integer, Object>();
 
-        if(DIBank.containsKey(port)){
-            throw new IllegalStateException("Digital Input Port " + port + " has already been allocated!");
-        }
+  public static void addDIDevice(Object newDevice, int port) {
 
-        DIBank.put(port, newDevice);
+    if (DIBank.containsKey(port)) {
+      throw new IllegalStateException(
+          "Digital Input Port " + port + " has already been allocated!");
     }
 
-    public static Object getDIDevice(int port){
-        if(!DIBank.containsKey(port)){
-            throw new IllegalStateException("Digital Input Port " + port + " is not a connected device!");
-        }
+    DIBank.put(port, newDevice);
+  }
 
-        return DIBank.get(port);
+  public static Object getDIDevice(int port) {
+    if (!DIBank.containsKey(port)) {
+      throw new IllegalStateException("Digital Input Port " + port + " is not a connected device!");
     }
 
+    return DIBank.get(port);
+  }
 
-    //SPI Devices (Gyros, etc.)
-    //Digital Input Devices (Encoders)
-    private static HashMap<Integer, Object> SPIBank = new HashMap<Integer, Object>();
+  // SPI Devices (Gyros, etc.)
+  // Digital Input Devices (Encoders)
+  private static HashMap<Integer, Object> SPIBank = new HashMap<Integer, Object>();
 
-    public static void addSPIDevice(Object newDevice, int cs){
+  public static void addSPIDevice(Object newDevice, int cs) {
 
-        if(SPIBank.containsKey(cs)){
-            throw new IllegalStateException("SPI cs " + cs + " has already been allocated!");
-        }
-
-        SPIBank.put(cs, newDevice);
+    if (SPIBank.containsKey(cs)) {
+      throw new IllegalStateException("SPI cs " + cs + " has already been allocated!");
     }
 
-    public static Object getSPIDevice(int cs){
-        if(!SPIBank.containsKey(cs)){
-            throw new IllegalStateException("SPI cs " + cs + " is not a connected device!");
-        }
+    SPIBank.put(cs, newDevice);
+  }
 
-        return SPIBank.get(cs);
+  public static Object getSPIDevice(int cs) {
+    if (!SPIBank.containsKey(cs)) {
+      throw new IllegalStateException("SPI cs " + cs + " is not a connected device!");
     }
 
-    public static void clearAllBanks(){
-        DIBank.clear();
-        SPIBank.clear();
-        CANBank.clear();
-    }
+    return SPIBank.get(cs);
+  }
 
+  public static void clearAllBanks() {
+    DIBank.clear();
+    SPIBank.clear();
+    CANBank.clear();
+  }
 }

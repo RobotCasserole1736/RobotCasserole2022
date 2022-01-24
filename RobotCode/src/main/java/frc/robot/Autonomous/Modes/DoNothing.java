@@ -5,10 +5,8 @@ import frc.lib.Autonomous.AutoMode;
 
 public class DoNothing extends AutoMode {
 
-    @Override
-    public void addStepsToSequencer(AutoSequencer seq) {
-        return; //nothing indeed
-    }
-    
+  @Override
+  public void addStepsToSequencer(AutoSequencer seq) {
+    return; // nothing indeed
+  }
 }
-

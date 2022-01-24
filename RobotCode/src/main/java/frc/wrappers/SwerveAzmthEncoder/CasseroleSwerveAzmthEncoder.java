@@ -5,35 +5,33 @@ import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 import frc.robot.Robot;
 
-public class CasseroleSwerveAzmthEncoder  {
+public class CasseroleSwerveAzmthEncoder {
 
-    AbstractSwerveAzmthEncoder enc;
+  AbstractSwerveAzmthEncoder enc;
 
-    @Signal(units="rad")
-    double curAngleRad;
+  @Signal(units = "rad")
+  double curAngleRad;
 
-    Calibration mountingOffsetCal;
+  Calibration mountingOffsetCal;
 
-
-    public CasseroleSwerveAzmthEncoder(String prefix, int port, double dfltMountingOffset_rad){
-        if(Robot.isReal()){
-            enc = new RealSwerveAzmthEncoder(port);
-        } else {
-            enc = new SimSwerveAzmthEncoder(port);
-        }
-        mountingOffsetCal = new Calibration(prefix + "MountingOffset", "rad", dfltMountingOffset_rad);
+  public CasseroleSwerveAzmthEncoder(String prefix, int port, double dfltMountingOffset_rad) {
+    if (Robot.isReal()) {
+      enc = new RealSwerveAzmthEncoder(port);
+    } else {
+      enc = new SimSwerveAzmthEncoder(port);
     }
+    mountingOffsetCal = new Calibration(prefix + "MountingOffset", "rad", dfltMountingOffset_rad);
+  }
 
-    public void update(){
-        curAngleRad = enc.getRawAngle_rad() - mountingOffsetCal.get();
-    }
+  public void update() {
+    curAngleRad = enc.getRawAngle_rad() - mountingOffsetCal.get();
+  }
 
-    public double getAngle_rad(){
-        return curAngleRad;
-    }
+  public double getAngle_rad() {
+    return curAngleRad;
+  }
 
-    public Rotation2d getRotation2d() {
-        return new Rotation2d(this.getAngle_rad());
-    }
-    
+  public Rotation2d getRotation2d() {
+    return new Rotation2d(this.getAngle_rad());
+  }
 }

@@ -10,9 +10,9 @@ package frc.lib.AutoSequencer;
  *
  * Non-legally-binding statement from Team 1736:
  *  Thank you for taking the time to read through our software! We hope you
- *   find it educational and informative! 
+ *   find it educational and informative!
  *  Please feel free to snag our software for your own use in whatever project
- *   you have going on right now! We'd love to be able to help out! Shoot us 
+ *   you have going on right now! We'd love to be able to help out! Shoot us
  *   any questions you may have, all our contact info should be on our website
  *   (listed above).
  *  If you happen to end up using our software to make money, that is wonderful!
@@ -20,9 +20,8 @@ package frc.lib.AutoSequencer;
  *   if you would consider donating to our club to help further STEM education.
  */
 
-import java.util.ArrayList;
-
 import edu.wpi.first.wpilibj.Timer;
+import java.util.ArrayList;
 
 /**
  * Casserole Autonomous mode event sequencer. Provides an infrastructure for defining autonomous
@@ -36,200 +35,199 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class AutoSequencer {
 
-    ArrayList<AutoEvent> events = new ArrayList<AutoEvent>();
+  ArrayList<AutoEvent> events = new ArrayList<AutoEvent>();
 
-    AutoEvent activeEvent = null;
+  AutoEvent activeEvent = null;
 
-    long globalUpdateCount = 0;
+  long globalUpdateCount = 0;
 
-    int globalEventIndex = 0;
+  int globalEventIndex = 0;
 
-    String name;
+  String name;
 
+  public AutoSequencer() {
+    commonConstructor("Auto");
+  }
 
-    public AutoSequencer(){
-        commonConstructor("Auto");
+  public AutoSequencer(String name_in) {
+    commonConstructor(name_in);
+  }
+
+  private void commonConstructor(String name_in) {
+    name = name_in;
+  }
+
+  /**
+   * Add sequential event to the primary timeline.
+   *
+   * @param event_in
+   */
+  public void addEvent(AutoEvent event_in) {
+    events.add(event_in);
+    System.out.println("[" + name + "] New event registered - " + event_in.getClass().getName());
+    if (event_in.childEvents.size() > 0) {
+      System.out.println("[" + name + "] Child Events: ");
+      for (AutoEvent child : event_in.childEvents) {
+        System.out.println("[" + name + "]       " + child.getClass().getName());
+      }
+    }
+  }
+
+  public void clearAllEvents() {
+    events.clear();
+    System.out.println("[" + name + "] Cleared event list");
+  }
+
+  /** Reset to the start of the autonomous sequence. */
+  public void start() {
+    globalEventIndex = 0;
+    globalUpdateCount = 0;
+
+    System.out.println("[" + name + "] Starting...");
+
+    if (events.size() > 0) {
+      activeEvent = events.get(globalEventIndex);
+      startEvent(activeEvent);
+    }
+  }
+
+  /**
+   * Stop anything which might be running now. Will call the userForceStop() on any presently
+   * running events.
+   */
+  public void stop() {
+    // if something is running, we'll need to stop it.
+    if (activeEvent != null) {
+
+      // Force stop this event and its children
+      activeEvent.forceStopAllChildren();
+      activeEvent.userForceStop();
+      System.out.println("[" + name + "] Stopped.");
     }
 
-    public AutoSequencer(String name_in){
-        commonConstructor(name_in);
-    }
+    // Set activeEvent to nothing running state.
+    activeEvent = null;
+  }
 
-    private void commonConstructor(String name_in){
-        name = name_in;
-    }
+  public void update() {
 
+    // Don't bother to do anything if there is no active event right now.
+    if (activeEvent != null) {
 
-    /**
-     * Add sequential event to the primary timeline.
-     * 
-     * @param event_in
-     */
-    public void addEvent(AutoEvent event_in) {
-        events.add(event_in);
-        System.out.println("["+name+"] New event registered - " + event_in.getClass().getName());
-        if(event_in.childEvents.size() > 0) {
-        	System.out.println("["+name+"] Child Events: ");
-        	for(AutoEvent child : event_in.childEvents) {
-        		System.out.println("["+name+"]       " + child.getClass().getName());
-        	}
-        }
-    }
-    
-    public void clearAllEvents() {
-        events.clear();
-        System.out.println("["+name+"] Cleared event list");
-    }
+      // Update the active event. This will probably set motors or stuff like that.
+      activeEvent.update();
 
+      // Check if there are any children to update.
+      if (activeEvent.childEvents.size() > 0) {
+        for (AutoEvent child : activeEvent.childEvents) {
 
-    /**
-     * Reset to the start of the autonomous sequence.
-     */
-    public void start() {
-        globalEventIndex = 0;
-        globalUpdateCount = 0;
-        
-        System.out.println("["+name+"] Starting...");
-
-        if (events.size() > 0) {
-            activeEvent = events.get(globalEventIndex);
-            startEvent(activeEvent);
-        }
-    }
-
-
-    /**
-     * Stop anything which might be running now. Will call the userForceStop() on any presently
-     * running events.
-     */
-    public void stop() {
-        // if something is running, we'll need to stop it.
-        if (activeEvent != null) {
-
-            // Force stop this event and its children
-            activeEvent.forceStopAllChildren();
-            activeEvent.userForceStop();
-            System.out.println("["+name+"] Stopped.");
-        }
-        
-
-        // Set activeEvent to nothing running state.
-        activeEvent = null;
-    }
-
-
-    public void update() {
-
-        // Don't bother to do anything if there is no active event right now.
-        if (activeEvent != null) {
-
-            // Update the active event. This will probably set motors or stuff like that.
-            activeEvent.update();
-
-            // Check if there are any children to update.
-            if (activeEvent.childEvents.size() > 0) {
-                for (AutoEvent child : activeEvent.childEvents) {
-
-                    // Evaluate if child needs to start running
-                	if(!child.completed) {
-	                    if (child.isRunning == false & child.isTriggered()) {
-	                        child.isRunning = true;
-	                        System.out.println("["+name+"] Starting new child auto event " + child.getClass().getName());
-	                        child.userStart();
-	                    }
-	                    // Call update if the child is running
-	                    if (child.isRunning == true) {
-	                        child.update();
-	                    }
-	                    // Evaluate if the child needs to be stopped
-	                    if (child.isRunning == true & child.isDone()) {
-	                        child.isRunning = false;
-	                        child.completed = true;
-	                        System.out.println("["+name+"] Finished child auto event " + child.getClass().getName());
-	                    }
-                	}
-
-                }
+          // Evaluate if child needs to start running
+          if (!child.completed) {
+            if (child.isRunning == false & child.isTriggered()) {
+              child.isRunning = true;
+              System.out.println(
+                  "[" + name + "] Starting new child auto event " + child.getClass().getName());
+              child.userStart();
             }
+            // Call update if the child is running
+            if (child.isRunning == true) {
+              child.update();
+            }
+            // Evaluate if the child needs to be stopped
+            if (child.isRunning == true & child.isDone()) {
+              child.isRunning = false;
+              child.completed = true;
+              System.out.println(
+                  "[" + name + "] Finished child auto event " + child.getClass().getName());
+            }
+          }
+        }
+      }
 
-            // Check if active event has completed. Move on to the next one if this one is done.
-            // Note this sequence guarantees each event's update is called at least once.
-            if (activeEvent.isDone() && allChildrenDone(activeEvent)) {
-            	//This event is done - determine if we are done with auto, or need to do the next event.
-            	
-                globalEventIndex++;
-                
-                // See what our new current event is.
-                if (globalEventIndex >= events.size()) {
-                    // terminal condition. we have no more states to run. Stop running things.
-                    activeEvent = null;
-                    System.out.println("["+name+"] Finished all events in sequence.");
-                    return;
-                } 
-                
-                activeEvent = events.get(globalEventIndex);
-                startEvent(activeEvent);
-            }
-            
-	        if(globalUpdateCount % 50 == 0){
-	        	System.out.println("["+name+"] Running. timestep = " + Double.toString(globalUpdateCount*0.02) + "s | ActualTime = " + Double.toString(Timer.getFPGATimestamp()));
-            }
-            
-            globalUpdateCount++;
+      // Check if active event has completed. Move on to the next one if this one is done.
+      // Note this sequence guarantees each event's update is called at least once.
+      if (activeEvent.isDone() && allChildrenDone(activeEvent)) {
+        // This event is done - determine if we are done with auto, or need to do the next event.
+
+        globalEventIndex++;
+
+        // See what our new current event is.
+        if (globalEventIndex >= events.size()) {
+          // terminal condition. we have no more states to run. Stop running things.
+          activeEvent = null;
+          System.out.println("[" + name + "] Finished all events in sequence.");
+          return;
         }
 
+        activeEvent = events.get(globalEventIndex);
+        startEvent(activeEvent);
+      }
+
+      if (globalUpdateCount % 50 == 0) {
+        System.out.println(
+            "["
+                + name
+                + "] Running. timestep = "
+                + Double.toString(globalUpdateCount * 0.02)
+                + "s | ActualTime = "
+                + Double.toString(Timer.getFPGATimestamp()));
+      }
+
+      globalUpdateCount++;
     }
-    
-    /**
-     * Checks if all children of an event are no longer running
-     * @param event
-     * @return
-     */
-    private  boolean allChildrenDone(AutoEvent event) {
-        if (event.childEvents.size() > 0) {
-            for (AutoEvent child : event.childEvents) {
-            	if(child.isRunning) {
-            		return false;
-            	}
-            }
+  }
+
+  /**
+   * Checks if all children of an event are no longer running
+   *
+   * @param event
+   * @return
+   */
+  private boolean allChildrenDone(AutoEvent event) {
+    if (event.childEvents.size() > 0) {
+      for (AutoEvent child : event.childEvents) {
+        if (child.isRunning) {
+          return false;
         }
-        	
-        return true;
-    }
-    
-    /**
-     * Performs all actions required to start an event.
-     * @param event
-     */
-    private  void startEvent(AutoEvent event) {
-        System.out.println("["+name+"] Starting new auto event " + activeEvent.getClass().getName());
-        activeEvent.userStart();
-    	
-        if (event.childEvents.size() > 0) {
-            for (AutoEvent child : event.childEvents) {
-            	child.completed = false;
-            	child.isRunning = false;
-            }
-        }
+      }
     }
 
+    return true;
+  }
 
-    /**
-     * Determine if the sequencer is active. As long as this is true, any calls to update() will
-     * trigger various events run.
-     * 
-     * @return True if the auto sequencer is executing something, false otherwise
-     */
-    public boolean isRunning() {
-        return activeEvent != null;
+  /**
+   * Performs all actions required to start an event.
+   *
+   * @param event
+   */
+  private void startEvent(AutoEvent event) {
+    System.out.println(
+        "[" + name + "] Starting new auto event " + activeEvent.getClass().getName());
+    activeEvent.userStart();
+
+    if (event.childEvents.size() > 0) {
+      for (AutoEvent child : event.childEvents) {
+        child.completed = false;
+        child.isRunning = false;
+      }
     }
+  }
 
-    public int getEventIndex(){
-        if(activeEvent != null){
-            return globalEventIndex;
-        } else {
-            return -1;
-        }
+  /**
+   * Determine if the sequencer is active. As long as this is true, any calls to update() will
+   * trigger various events run.
+   *
+   * @return True if the auto sequencer is executing something, false otherwise
+   */
+  public boolean isRunning() {
+    return activeEvent != null;
+  }
+
+  public int getEventIndex() {
+    if (activeEvent != null) {
+      return globalEventIndex;
+    } else {
+      return -1;
     }
-
+  }
 }

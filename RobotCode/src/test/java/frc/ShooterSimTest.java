@@ -4,9 +4,8 @@ import static org.junit.Assert.*;
 
 import edu.wpi.first.hal.HAL;
 import frc.sim.ShooterSim;
-import frc.wrappers.SimDeviceBanks;
 import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;
-
+import frc.wrappers.SimDeviceBanks;
 import org.junit.*;
 
 public class ShooterSimTest {
@@ -46,5 +45,4 @@ public class ShooterSimTest {
       shooter.update(false, 12.0);
     }
   }
-
 }

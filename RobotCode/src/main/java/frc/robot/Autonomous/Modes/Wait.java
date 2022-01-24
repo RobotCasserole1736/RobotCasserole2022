@@ -6,18 +6,16 @@ import frc.robot.Autonomous.Events.AutoEventWait;
 
 public class Wait extends AutoMode {
 
-    private double duration = 0;
+  private double duration = 0;
 
-    public Wait(double duration){
-        super();
-        this.duration = duration;
-        this.humanReadableName = Double.toString(duration) + "s";
-    }
+  public Wait(double duration) {
+    super();
+    this.duration = duration;
+    this.humanReadableName = Double.toString(duration) + "s";
+  }
 
-    @Override
-    public void addStepsToSequencer(AutoSequencer seq) {
-        seq.addEvent(new AutoEventWait(duration));
-    }
-    
+  @Override
+  public void addStepsToSequencer(AutoSequencer seq) {
+    seq.addEvent(new AutoEventWait(duration));
+  }
 }
-

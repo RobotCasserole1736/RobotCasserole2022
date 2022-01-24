@@ -5,9 +5,8 @@ import static org.junit.Assert.*;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.REVPHSim;
 import frc.sim.IntakeSim;
-import frc.wrappers.SimDeviceBanks;
 import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;
-
+import frc.wrappers.SimDeviceBanks;
 import org.junit.*;
 
 public class IntakeSimTest {
@@ -82,5 +81,4 @@ public class IntakeSimTest {
       intk.update(false, 12.0, UnitUtils.psiTokPa(60.0));
     }
   }
-
 }

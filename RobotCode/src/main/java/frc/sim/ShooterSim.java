@@ -5,54 +5,53 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
-import frc.wrappers.SimDeviceBanks;
 import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;
+import frc.wrappers.SimDeviceBanks;
 
 public class ShooterSim {
 
-    FlywheelSim motorWithRotatingMass;
+  FlywheelSim motorWithRotatingMass;
 
-    SimSmartMotor shooterMotor;
+  SimSmartMotor shooterMotor;
 
-    private final double SHOOTER_GEAR_RATIO = 1.0;
-    private final double SHOOTER_WHEEL_MASS_kg = Units.lbsToKilograms(5.0);
-    private final double SHOOTER_WHEEL_RADIUS_m = Units.inchesToMeters(6.0);
+  private final double SHOOTER_GEAR_RATIO = 1.0;
+  private final double SHOOTER_WHEEL_MASS_kg = Units.lbsToKilograms(5.0);
+  private final double SHOOTER_WHEEL_RADIUS_m = Units.inchesToMeters(6.0);
 
-    DCMotor drivingMotor = DCMotor.getNEO(1);
+  DCMotor drivingMotor = DCMotor.getNEO(1);
 
-    @Signal(units="V")
-    double appliedVoltage = 0;
+  @Signal(units = "V")
+  double appliedVoltage = 0;
 
-    @Signal(units="radPerSec")
-    double speed = 0;
+  @Signal(units = "radPerSec")
+  double speed = 0;
 
-    public ShooterSim(){
+  public ShooterSim() {
 
-        double moi = 0.5 * SHOOTER_WHEEL_MASS_kg * SHOOTER_WHEEL_RADIUS_m * SHOOTER_WHEEL_RADIUS_m;
-        motorWithRotatingMass = new FlywheelSim(drivingMotor, SHOOTER_GEAR_RATIO, moi);
-        shooterMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.SHOOTER_MOTOR_CANID);
+    double moi = 0.5 * SHOOTER_WHEEL_MASS_kg * SHOOTER_WHEEL_RADIUS_m * SHOOTER_WHEEL_RADIUS_m;
+    motorWithRotatingMass = new FlywheelSim(drivingMotor, SHOOTER_GEAR_RATIO, moi);
+    shooterMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.SHOOTER_MOTOR_CANID);
+  }
+
+  public void update(boolean isDisabled, double batteryVoltage) {
+    shooterMotor.sim_setSupplyVoltage(batteryVoltage);
+
+    if (isDisabled) {
+      appliedVoltage = 0;
+    } else {
+      appliedVoltage = shooterMotor.getAppliedVoltage_V();
     }
 
-    public void update(boolean isDisabled, double batteryVoltage){
-        shooterMotor.sim_setSupplyVoltage(batteryVoltage);
+    motorWithRotatingMass.setInputVoltage(appliedVoltage);
 
-        if(isDisabled){
-            appliedVoltage = 0;
-        } else {
-            appliedVoltage = shooterMotor.getAppliedVoltage_V();
-        }
+    motorWithRotatingMass.update(Constants.SIM_SAMPLE_RATE_SEC);
 
-        motorWithRotatingMass.setInputVoltage(appliedVoltage);
+    speed = motorWithRotatingMass.getAngularVelocityRadPerSec();
+    shooterMotor.sim_setActualVelocity(speed * SHOOTER_GEAR_RATIO);
+    shooterMotor.sim_setCurrent(motorWithRotatingMass.getCurrentDrawAmps());
+  }
 
-        motorWithRotatingMass.update(Constants.SIM_SAMPLE_RATE_SEC);
-
-        speed = motorWithRotatingMass.getAngularVelocityRadPerSec();
-        shooterMotor.sim_setActualVelocity(speed * SHOOTER_GEAR_RATIO);
-        shooterMotor.sim_setCurrent(motorWithRotatingMass.getCurrentDrawAmps());
-    }
-
-    public double getCurrentDraw_A(){
-        return shooterMotor.getCurrent_A();
-    }
-
+  public double getCurrentDraw_A() {
+    return shooterMotor.getCurrent_A();
+  }
 }

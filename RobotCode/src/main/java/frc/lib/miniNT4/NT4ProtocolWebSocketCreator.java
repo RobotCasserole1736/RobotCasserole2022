@@ -5,26 +5,19 @@ import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 
 public class NT4ProtocolWebSocketCreator implements WebSocketCreator {
-    
-    public NT4ProtocolWebSocketCreator()
-    {
 
+  public NT4ProtocolWebSocketCreator() {}
+
+  @Override
+  public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
+    for (String subprotocol : req.getSubProtocols()) {
+      if ("networktables.first.wpi.edu".equals(subprotocol)) {
+        resp.setAcceptedSubProtocol(subprotocol);
+        return new Socket();
+      }
     }
 
-    @Override
-    public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp)
-    {
-        for (String subprotocol : req.getSubProtocols())
-        {
-            if ("networktables.first.wpi.edu".equals(subprotocol))
-            {
-                resp.setAcceptedSubProtocol(subprotocol);
-                return new Socket();
-            }
-        }
-
-        // No valid subprotocol in request, ignore the request
-        return null;
-    }
-
+    // No valid subprotocol in request, ignore the request
+    return null;
+  }
 }

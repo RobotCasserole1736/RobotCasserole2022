@@ -8,22 +8,20 @@ import frc.robot.Autonomous.Events.AutoTrajectoryConstants;
 
 public class DriveFwd extends AutoMode {
 
-    AutoEventJSONTrajectory driveEvent = null;
+  AutoEventJSONTrajectory driveEvent = null;
 
-    @Override
-    public void addStepsToSequencer(AutoSequencer seq) {
-        driveEvent = new AutoEventJSONTrajectory("driveFwd.wpilib.json");
-        seq.addEvent(driveEvent); 
-    }
+  @Override
+  public void addStepsToSequencer(AutoSequencer seq) {
+    driveEvent = new AutoEventJSONTrajectory("driveFwd.wpilib.json");
+    seq.addEvent(driveEvent);
+  }
 
-    @Override
-    public Pose2d getInitialPose(){
-        if(driveEvent != null){
-            return driveEvent.trajectory.getInitialPose();
-        } else {
-            return AutoTrajectoryConstants.DEFAULT_START_POSE;
-        }
+  @Override
+  public Pose2d getInitialPose() {
+    if (driveEvent != null) {
+      return driveEvent.trajectory.getInitialPose();
+    } else {
+      return AutoTrajectoryConstants.DEFAULT_START_POSE;
     }
-    
+  }
 }
-

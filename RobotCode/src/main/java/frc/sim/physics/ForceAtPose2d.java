@@ -1,49 +1,45 @@
 package frc.sim.physics;
 
-import java.util.Objects;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import java.util.Objects;
 
 public class ForceAtPose2d {
   public Force2d force;
   public Pose2d pos;
 
-  /**
-   * Constructs a ForceAtDistance2d that's all zeroed out
-   */
-  public ForceAtPose2d () {
+  /** Constructs a ForceAtDistance2d that's all zeroed out */
+  public ForceAtPose2d() {
     this(new Force2d(), new Pose2d());
   }
 
   /**
-   * Constructs a Force2d with the X and Y components equal to the
-   * provided values.
+   * Constructs a Force2d with the X and Y components equal to the provided values.
    *
    * @param x The x component of the force.
    * @param y The y component of the force.
    */
-  public ForceAtPose2d ( Force2d force_in, Pose2d pos_in) {
+  public ForceAtPose2d(Force2d force_in, Pose2d pos_in) {
     force = force_in;
     pos = pos_in;
   }
 
-  /** 
-   * Returns the torque associated with this force at distance
-   * positive is counter-clockwise, negative is clockwise
+  /**
+   * Returns the torque associated with this force at distance positive is counter-clockwise,
+   * negative is clockwise
    */
-  public double getTorque(Pose2d centerOfRotation){
+  public double getTorque(Pose2d centerOfRotation) {
     Transform2d transCORtoF = new Transform2d(centerOfRotation, pos);
 
-    //Align the force to the reference frame of the center of rotation
-    Force2d alignedForce = getForceInRefFrame(centerOfRotation); 
+    // Align the force to the reference frame of the center of rotation
+    Force2d alignedForce = getForceInRefFrame(centerOfRotation);
 
-    //Calculate the lever arm the force acts at
+    // Calculate the lever arm the force acts at
     Vector2d leverArm = new Vector2d(transCORtoF.getX(), transCORtoF.getY());
     return leverArm.cross(alignedForce.vec);
   }
 
-  public Force2d getForceInRefFrame(Pose2d refFrame){
+  public Force2d getForceInRefFrame(Pose2d refFrame) {
     Transform2d trans = new Transform2d(refFrame, pos);
     return force.rotateBy(trans.getRotation());
   }

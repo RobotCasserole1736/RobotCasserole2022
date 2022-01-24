@@ -1,5 +1,3 @@
 package frc.lib.LoadMon;
 
-public class HistogramLoadMonitor {
-    
-}
+public class HistogramLoadMonitor {}

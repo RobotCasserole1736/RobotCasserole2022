@@ -1,56 +1,58 @@
 package frc.lib.miniNT4;
 
+import frc.lib.miniNT4.samples.TimestampedValue;
+import frc.lib.miniNT4.topics.Topic;
 import java.util.HashMap;
 import java.util.Set;
 
-import frc.lib.miniNT4.samples.TimestampedValue;
-import frc.lib.miniNT4.topics.Topic;
-
 public abstract class BaseClient {
 
-    public String friendlyName = "";
+  public String friendlyName = "";
 
-    HashMap<Integer, Subscription> subscriptions = new HashMap<Integer, Subscription>();
+  HashMap<Integer, Subscription> subscriptions = new HashMap<Integer, Subscription>();
 
-    public BaseClient(){
-        NT4Server.getInstance().registerClient(this);
+  public BaseClient() {
+    NT4Server.getInstance().registerClient(this);
+  }
+
+  public Subscription subscribe(Set<String> patterns) {
+    return this.subscribe(patterns, this.subscriptions.size());
+  }
+
+  /**
+   * Creates a new subscription off of provided patterns and registers it with the server
+   *
+   * @param patterns
+   * @return the newly created and server-registered subscription object
+   */
+  public Subscription subscribe(Set<String> patterns, int subuid) {
+    Subscription newSub = new Subscription(patterns, subuid);
+    newSub.clientRef = this;
+    subscriptions.put(subuid, newSub);
+    return newSub;
+  }
+
+  public void unSubscribe(int deadSubId) {
+    Subscription oldSub = subscriptions.remove(deadSubId);
+
+    for (Topic t : NT4Server.getInstance().getAllTopics()) {
+      t.removeSubscriptionRef(oldSub);
     }
 
-    public Subscription subscribe(Set<String> patterns){
-        return this.subscribe(patterns, this.subscriptions.size());
+    if (oldSub != null) {
+      oldSub.stop();
     }
+  }
 
-    /**
-     * Creates a new subscription off of provided patterns and registers it with the server
-     * @param patterns
-     * @return the newly created and server-registered subscription object
-     */
-    public Subscription subscribe(Set<String> patterns, int subuid){
-        Subscription newSub = new Subscription(patterns, subuid);
-        newSub.clientRef = this;
-        subscriptions.put(subuid, newSub);
-        return newSub;
+  public void getValues(Set<String> patterns) {
+    for (Topic t : NT4Server.getInstance().getTopics(patterns)) {
+      onValueUpdate(t, t.getCurVal());
     }
+  }
 
-    public void unSubscribe(int deadSubId){
-        Subscription oldSub = subscriptions.remove(deadSubId);
+  public abstract void onAnnounce(Topic newTopic);
 
-        for(Topic t: NT4Server.getInstance().getAllTopics()){
-            t.removeSubscriptionRef(oldSub);
-        }
+  public abstract void onUnannounce(Topic deadTopic);
 
-        if(oldSub != null){
-            oldSub.stop();
-        }
-    }
-
-    public void getValues(Set<String> patterns){
-        for(Topic t: NT4Server.getInstance().getTopics(patterns)){
-            onValueUpdate(t, t.getCurVal());
-        }
-    }
-
-    public abstract void onAnnounce(Topic newTopic);
-    public abstract void onUnannounce(Topic deadTopic);
-    public abstract void onValueUpdate(Topic topic, TimestampedValue newVal);
+  public abstract void onValueUpdate(Topic topic, TimestampedValue newVal);
 }
