@@ -6,6 +6,9 @@ public class UnitUtils{
     public static double RPMtoDegPerSec(double rpmIn){ return rpmIn * 60.0 / 360.0; }
     public static double lbsToKg(double lbs_in){return 0.4535924 * lbs_in;}
 
+    public static double kPaToPsi(double kPa_in){return kPa_in / 6.89475729;}
+    public static double psiTokPa(double psi_in){return 6.89475729 * psi_in;}
+
     public static double wrapAngleDeg(double angle){
         angle %=360;
         angle= angle>180 ? angle-360 : angle;

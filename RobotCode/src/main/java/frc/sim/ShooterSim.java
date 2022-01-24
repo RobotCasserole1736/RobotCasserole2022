@@ -10,13 +10,15 @@ import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;
 
 public class ShooterSim {
 
-    FlywheelSim mainShooter;
+    FlywheelSim motorWithRotatingMass;
 
     SimSmartMotor shooterMotor;
 
     private final double SHOOTER_GEAR_RATIO = 1.0;
     private final double SHOOTER_WHEEL_MASS_kg = Units.lbsToKilograms(5.0);
     private final double SHOOTER_WHEEL_RADIUS_m = Units.inchesToMeters(6.0);
+
+    DCMotor drivingMotor = DCMotor.getNEO(1);
 
     @Signal(units="V")
     double appliedVoltage = 0;
@@ -27,7 +29,7 @@ public class ShooterSim {
     public ShooterSim(){
 
         double moi = 0.5 * SHOOTER_WHEEL_MASS_kg * SHOOTER_WHEEL_RADIUS_m * SHOOTER_WHEEL_RADIUS_m;
-        mainShooter = new FlywheelSim(DCMotor.getNEO(1), SHOOTER_GEAR_RATIO, moi);
+        motorWithRotatingMass = new FlywheelSim(drivingMotor, SHOOTER_GEAR_RATIO, moi);
         shooterMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.SHOOTER_MOTOR_CANID);
     }
 
@@ -40,14 +42,16 @@ public class ShooterSim {
             appliedVoltage = shooterMotor.getAppliedVoltage_V();
         }
 
-        mainShooter.setInputVoltage(appliedVoltage);
+        motorWithRotatingMass.setInputVoltage(appliedVoltage);
 
-        speed = mainShooter.getAngularVelocityRadPerSec();
+        motorWithRotatingMass.update(Constants.SIM_SAMPLE_RATE_SEC);
+
+        speed = motorWithRotatingMass.getAngularVelocityRadPerSec();
         shooterMotor.sim_setActualVelocity(speed * SHOOTER_GEAR_RATIO);
     }
 
     public double getCurrentDraw_A(){
-        return mainShooter.getCurrentDrawAmps();
+        return motorWithRotatingMass.getCurrentDrawAmps();
     }
     
 }

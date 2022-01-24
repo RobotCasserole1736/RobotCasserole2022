@@ -48,9 +48,9 @@ public class Robot extends TimedRobot {
   Autonomous auto;
   PoseTelemetry pt;
 
-  //TEMPORARY DRIVETRAIN OBJECTS
+  //TEMPORARY OBJECTS
   // These are just here to keep the sim happy while we test
-  // They should be deleted/moved/modified/whatever as the drivetrain classes are actually developed
+  // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
   CasseroleCANMotorCtrl fl_wheel = new CasseroleCANMotorCtrl("FL_Wheel", Constants.FL_WHEEL_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
   CasseroleCANMotorCtrl fl_azmth = new CasseroleCANMotorCtrl("FL_Azmth", Constants.FL_AZMTH_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
   CasseroleCANMotorCtrl fr_wheel = new CasseroleCANMotorCtrl("FR_Wheel", Constants.FR_WHEEL_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
@@ -63,6 +63,10 @@ public class Robot extends TimedRobot {
   CasseroleSwerveAzmthEncoder fr_azmth_enc = new CasseroleSwerveAzmthEncoder("FR", Constants.FR_AZMTH_ENC_IDX, 0);
   CasseroleSwerveAzmthEncoder bl_azmth_enc = new CasseroleSwerveAzmthEncoder("BL", Constants.BL_AZMTH_ENC_IDX, 0);
   CasseroleSwerveAzmthEncoder br_azmth_enc = new CasseroleSwerveAzmthEncoder("BR", Constants.BR_AZMTH_ENC_IDX, 0);
+
+  CasseroleCANMotorCtrl intakeMotor  = new CasseroleCANMotorCtrl("Intake", Constants.INTAKE_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  CasseroleCANMotorCtrl shooterMotor = new CasseroleCANMotorCtrl("Shooter", Constants.SHOOTER_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+
 
   // ... 
   // But before here
@@ -143,7 +147,7 @@ public class Robot extends TimedRobot {
     di.update();
 
     // TEMPORARY LOGIC to send some voltages to motors
-    // This isn't correct and should be done inside the drivetrain classes
+    // This isn't correct and should be done inside the proper classes
     // But, just for demonstration, for now.... here it be.
     fl_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
     fr_wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
@@ -154,6 +158,9 @@ public class Robot extends TimedRobot {
     fr_azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
     bl_azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
     br_azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
+
+    intakeMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
+    shooterMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
 
   }
 

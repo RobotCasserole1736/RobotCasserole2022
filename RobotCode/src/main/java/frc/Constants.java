@@ -72,13 +72,25 @@ public class Constants {
     static public final int BR_WHEEL_MOTOR_CANID = 8;
     static public final int BR_AZMTH_MOTOR_CANID = 9;
     static public final int SHOOTER_MOTOR_CANID = 10;
-    //static public final int UNUSED = 11;
+    static public final int INTAKE_MOTOR_CANID  = 11;
     //static public final int UNUSED = 12;
     //static public final int UNUSED = 13;
     //static public final int UNUSED = 14;
     //static public final int UNUSED = 15;
     //static public final int UNUSED = 16;
     //static public final int UNUSED = 17;
+
+    // Pneumatics Hub
+    static public final int INTAKE_SOLENOID = 0; 
+    //static public final int UNUSED = 1;
+    //static public final int UNUSED = 2;
+    //static public final int UNUSED = 3;
+    //static public final int UNUSED = 4;
+    //static public final int UNUSED = 5;
+    //static public final int UNUSED = 6;
+    //static public final int UNUSED = 7;
+    //static public final int UNUSED = 8;
+    //static public final int UNUSED = 9;    
 
     //////////////////////////////////////////////////////////////////
     // Nominal Sample Times
