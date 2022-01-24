@@ -10,14 +10,23 @@
 </head>
 
 <body>
-    <h1> Outline Viewer </h1>
+    <h1> Outline Viewer </h1>              
+
     
-    <hr>
+    <buttonsContainer class="outlined">
+        <buttonGroup class="outlined">
+            <div style="margin:5px; width:30vw">
+                <input style="margin:5px; width:20vw" class="filterTextInput" id="filterTextInput" type="text" placeholder="Filter" onkeyup="filterChangeHandler(this.value)">       
+            </div> 
+        </buttonGroup>
+        <buttonGroup class="outlined">
+            <div style="margin:5px; width:30vw" id="status">Not yet connected...</div>
+        </buttonGroup>
+        <buttonGroup class="outlined">
+            <div style="margin:5px; width:30vw" id="curTime"></div> 
+        </buttonGroup>
 
-    <div id="curTime"></div>
-    <div id="status">Not yet connected...</div>
-
-    <hr>
+    </buttonsContainer>
 
     <table id="mainTable">
     </table>

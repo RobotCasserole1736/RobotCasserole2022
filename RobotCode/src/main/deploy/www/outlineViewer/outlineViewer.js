@@ -107,7 +107,7 @@ function valueUpdateHandler( topic, timestamp_us, value ) {
 
     //update time
     document.getElementById("curTime").innerHTML = "Time: ";
-    document.getElementById("curTime").innerHTML += (timestamp_us / 1000000.0);
+    document.getElementById("curTime").innerHTML += (timestamp_us / 1000000.0).toFixed(2);
     //console.log("----------------------------");
     //console.log("Values Updated");
     //console.log(topic.name);
@@ -186,4 +186,18 @@ function sortTableAlphabetic(n){
         table.appendChild(store[i][1]);
     }
     store = null;
+}
+
+
+window.filterChangeHandler = filterChangeHandler;
+function filterChangeHandler(filterSpec_in){
+    for(var i=1, len=table.rows.length; i<len; i++){
+        var row = table.rows[i];
+        var name = row.cells[1].textContent;
+        if(name.toLowerCase().includes(filterSpec_in.toLowerCase())){
+            row.style.display = ""; //show
+        } else {
+            row.style.display = "none"; //hide
+        }
+    }
 }
