@@ -3,6 +3,8 @@ import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2022.2.1"
+    id 'com.diffplug.spotless' version '6.1.0'
+
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -208,3 +210,48 @@ task genMetaData(){
 build.dependsOn genMetaData
 simulateExternalJavaDebug.dependsOn genMetaData
 simulateExternalJavaRelease.dependsOn genMetaData
+
+
+// Configure spotless code formatter
+spotless {
+   java {
+      target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+      }
+      toggleOffOn()
+      googleJavaFormat()
+      removeUnusedImports()
+      trimTrailingWhitespace()
+      endWithNewline()
+   }
+   groovyGradle {
+      target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+      }
+      greclipse()
+      indentWithSpaces(4)
+      trimTrailingWhitespace()
+      endWithNewline()
+   }
+   format 'xml', {
+      target fileTree('.') {
+            include '**/*.xml'
+            exclude '**/build/**', '**/build-*/**'
+      }
+      eclipseWtp('xml')
+      trimTrailingWhitespace()
+      indentWithSpaces(2)
+      endWithNewline()
+   }
+   format 'misc', {
+      target fileTree('.') {
+            include '**/*.md', '**/.gitignore'
+            exclude '**/build/**', '**/build-*/**'
+      }
+      trimTrailingWhitespace()
+      indentWithSpaces(2)
+      endWithNewline()
+   }
+}
