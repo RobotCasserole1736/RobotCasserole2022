@@ -68,7 +68,7 @@ public class IntakeSim {
         intakeMotor.sim_setActualVelocity(speed * INTAKE_GEAR_RATIO);
 
         // Pushy
-        boolean shouldExtend = pneumaticsHub.getSolenoidOutput(Constants.INTAKE_SOLENOID);
+        boolean shouldExtend = pneumaticsHub.getSolenoidOutput(Constants.INTAKE_SOLENOID) & !isDisabled;
         double speedFrac = supplyPressure_kPa / CYL_NOM_PRESSURE_KPA;
         double travelSpeed_mps = speedFrac * CYL_STROKE_LEN_M / CYL_NOM_ACTUATION_TIME_SEC; 
         if(shouldExtend){
@@ -82,7 +82,7 @@ public class IntakeSim {
             }
         }
         cylPos += travelSpeed_mps * Constants.SIM_SAMPLE_RATE_SEC;
-        cylFlow = travelSpeed_mps * Math.PI * CYL_DIAMETER_M * 1000; //Convert cubic meters to liters
+        cylFlow = Math.abs(travelSpeed_mps) * Math.PI * CYL_DIAMETER_M * 1000; //Convert cubic meters to liters
 
     }
 
@@ -93,5 +93,8 @@ public class IntakeSim {
     public double getCylFlow_lps(){
         return cylFlow;
     }
-    
+        
+    public double getCylPos_m(){
+        return cylPos;
+    }
 }

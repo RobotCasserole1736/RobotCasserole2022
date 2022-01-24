@@ -88,6 +88,11 @@ dependencies {
     implementation 'org.msgpack:msgpack-core:0.9.0'
 }
 
+// Enable unit tests
+test {
+   useJUnit()
+}
+
 // Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()

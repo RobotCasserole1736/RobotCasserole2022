@@ -53,5 +53,5 @@ public class ShooterSim {
     public double getCurrentDraw_A(){
         return motorWithRotatingMass.getCurrentDrawAmps();
     }
-    
+
 }
