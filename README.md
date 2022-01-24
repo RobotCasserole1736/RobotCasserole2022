@@ -3,7 +3,7 @@
 # RobotCasserole2022 🍲
 Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
 
-![](https://github.com/RobotCasserole1736/RobotCasserole2020/workflows/Build/badge.svg)
+[![](https://github.com/RobotCasserole1736/RobotCasserole2022/workflows/Build/badge.svg)](https://github.com/RobotCasserole1736/RobotCasserole2022/actions)
 
 ## Contents
 1. Driver View
