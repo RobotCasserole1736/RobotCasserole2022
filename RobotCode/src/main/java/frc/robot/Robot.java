@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
 
   // Things
   CasseroleRIOLoadMonitor loadMon;
+  Histogram histogram;
 
   // DriverInput
   DriverInput di;
@@ -84,6 +85,7 @@ public class Robot extends TimedRobot {
     auto = Autonomous.getInstance();
 
     loadMon = new CasseroleRIOLoadMonitor();
+    histogram = Histogram.getInstance();
 
     di = new DriverInput();
 
@@ -101,6 +103,7 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void autonomousInit() {
+    histogram.markLoopStart();
     SignalWrangler.getInstance().logger.startLoggingAuto();
 
     //Reset sequencer
@@ -114,6 +117,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    histogram.markLoopStart();
     //Step the sequencer forward
     auto.update();
 
@@ -125,12 +129,14 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void teleopInit() {
+    histogram.markLoopEnd();
     SignalWrangler.getInstance().logger.startLoggingTeleop();
 
   }
 
   @Override
   public void teleopPeriodic() {
+    histogram.markLoopEnd();
 
     di.update();
 
@@ -153,12 +159,13 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void disabledInit() {
+    histogram.markLoopStart();
     SignalWrangler.getInstance().logger.stopLogging();
   }
 
   @Override
   public void disabledPeriodic() {
-
+    histogram.markLoopStart();
   }
 
 
@@ -172,6 +179,7 @@ public class Robot extends TimedRobot {
 
     db.updateDriverView();
     telemetryUpdate();
+    histogram.markLoopEnd();
   }
 
   private void telemetryUpdate(){

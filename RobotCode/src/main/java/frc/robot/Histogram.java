@@ -56,7 +56,7 @@ public class Histogram{
     }
     private void updateBuckets(){
         
-        for (int y = 0; y < buckets.length; y ++){
+        for (int y = 0; y < histBuckets.length; y ++){
             histBuckets[y].updateTelemetry(loopEndTime);
             histBuckets[y].checkAndInc(loopDurationSec);
         }

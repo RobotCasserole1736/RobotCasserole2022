@@ -5,10 +5,12 @@ import edu.wpi.first.wpilibj.simulation.PDPSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
+import frc.robot.Histogram;
 
 public class RobotModel {
 
     DrivetrainModel dt;
+    Histogram histogram;
 
     PDPSim pdp;
 
@@ -28,6 +30,7 @@ public class RobotModel {
     public RobotModel(){
         dt = new DrivetrainModel();
         pdp = new PDPSim();
+        histogram = Histogram.getInstance();
         reset(Constants.DFLT_START_POSE);
     }
 
@@ -36,6 +39,7 @@ public class RobotModel {
     }
 
     public void update(boolean isDisabled){
+        histogram.markLoopStart();
 
         long numIter = Math.round(Constants.Ts / Constants.SIM_SAMPLE_RATE_SEC);
 
@@ -55,7 +59,7 @@ public class RobotModel {
             pdp.setVoltage(batteryVoltage_V);
             pdp.setCurrent(0,currentDraw_A); //Hack just so that getTotalCurrent works in robot code
         }
-
+        histogram.markLoopEnd();
     }
 
     public Pose2d getCurActPose(){
