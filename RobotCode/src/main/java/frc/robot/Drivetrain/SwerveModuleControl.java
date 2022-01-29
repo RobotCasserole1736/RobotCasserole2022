@@ -2,9 +2,17 @@ package frc.robot.Drivetrain;
 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
+import frc.robot.DriverInput;
+import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
+import frc.wrappers.SwerveAzmthEncoder.CasseroleSwerveAzmthEncoder;
 
 class SwerveModuleControl {
+
+    CasseroleCANMotorCtrl wheel;
+    CasseroleCANMotorCtrl azmth;
+    CasseroleSwerveAzmthEncoder azmth_enc;
 
     SwerveModuleState desState = new SwerveModuleState();
     SwerveModuleState actState = new SwerveModuleState();
@@ -28,10 +36,10 @@ class SwerveModuleControl {
 
     public SwerveModuleControl(String posId, int wheelMotorIdx, int azmthMotorIdx, int azmthEncoderIdx){
 
-        //TODO make casserole motors for the azimuth (steer) and drive motors
-
-        //TODO make casserole azimuth encoder to measure steer angle
-
+         wheel = new CasseroleCANMotorCtrl("wheel"+posId, wheelMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
+         azmth = new CasseroleCANMotorCtrl("azmth"+posId, azmthMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+         azmth_enc = new CasseroleSwerveAzmthEncoder("encoder"+posId, azmthEncoderIdx, 0);
+      
         wheelSpdDesSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthDes", "RPM");
         wheelSpdActSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthAct", "RPM");
         azmthPosDesSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_speedDes", "deg");
@@ -40,6 +48,12 @@ class SwerveModuleControl {
     }
 
     public void update(double curSpeedFtPerSec, double maxAzmthErr_deg){
+     
+        DriverInput di;
+        di = DriverInput.getInstance();
+
+        wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
+        azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
 
         //TODO read the azimuth angle
 

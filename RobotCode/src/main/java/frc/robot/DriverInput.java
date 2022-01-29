@@ -7,6 +7,13 @@ public class DriverInput {
     
     XboxController driverController;
 
+    private static DriverInput di = null;
+    public static synchronized DriverInput getInstance() {
+        if(di == null)
+            di = new DriverInput();
+        return di;
+    }
+
     @Signal(units="cmd")
     double curFwdRevCmd;
     @Signal(units="cmd")
@@ -14,7 +21,7 @@ public class DriverInput {
     @Signal(units="cmd")
     double curSideToSideCmd;
 
-    public DriverInput(){
+    private DriverInput(){
 
         driverController = new XboxController(0);
 
@@ -33,7 +40,7 @@ public class DriverInput {
      * -1.0 means "fast as possible reverse"
      * @return 
      */
-    double getFwdRevCmd(){
+    public double getFwdRevCmd(){
         return curFwdRevCmd;
     }
 
@@ -44,10 +51,10 @@ public class DriverInput {
      * -1.0 means "fast as possible to the right"
      * @return 
      */
-    double getRotateCmd(){
+    public double getRotateCmd(){
         return curRotCmd;
     }
-    double getSideToSideCmd(){
+    public double getSideToSideCmd(){
         return curSideToSideCmd;
     }
     
