@@ -135,6 +135,11 @@ public class RealTalonFX extends AbstractSimmableMotorController {
         return in_native / NATIVE_UNITS_PER_REV;
     }
 
+    @Override
+    public void resetDistance() {
+        _talon.setSelectedSensorPosition(0,0,50);
+    }
+
     
     
 }

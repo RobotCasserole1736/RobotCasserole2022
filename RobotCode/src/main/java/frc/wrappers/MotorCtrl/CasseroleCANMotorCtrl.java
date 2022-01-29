@@ -100,4 +100,9 @@ public class CasseroleCANMotorCtrl {
         return actPos;
     }
 
+    public void resetDistance(){
+        ctrl.resetDistance();
+    }
+
+
 }

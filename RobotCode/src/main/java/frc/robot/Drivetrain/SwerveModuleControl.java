@@ -1,76 +1,76 @@
 package frc.robot.Drivetrain;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
-import frc.Constants;
+import frc.UnitUtils;
 import frc.lib.Signal.Annotations.Signal;
-import frc.robot.DriverInput;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 import frc.wrappers.SwerveAzmthEncoder.CasseroleSwerveAzmthEncoder;
 
 class SwerveModuleControl {
 
-    CasseroleCANMotorCtrl wheel;
-    CasseroleCANMotorCtrl azmth;
+    CasseroleCANMotorCtrl wheelMotorCtrl;
+    CasseroleCANMotorCtrl azmthMotorCtrl;
     CasseroleSwerveAzmthEncoder azmth_enc;
 
     SwerveModuleState desState = new SwerveModuleState();
     SwerveModuleState actState = new SwerveModuleState();
 
-    frc.lib.Signal.Signal wheelSpdDesSig;
-    frc.lib.Signal.Signal wheelSpdActSig;
     frc.lib.Signal.Signal azmthPosDesSig;
     frc.lib.Signal.Signal azmthPosActSig;
 
-    double wheelMotorSpeedDes_RPM = 0;
-    double wheelMotorSpeedAct_RPM = 0;
+    public AzimuthAngleController azmthCtrl;
 
-    double azmthPosAct_deg = 0;
+    SimpleMotorFeedforward wheelMotorFF;
 
     @Signal(units = "cmd")
     double wheelMotorCmd;
 
-    //TODO create an "Azimuth Controller" which calculates steer motor voltage commands from actual/desired angles
-
-
-
     public SwerveModuleControl(String posId, int wheelMotorIdx, int azmthMotorIdx, int azmthEncoderIdx){
 
-         wheel = new CasseroleCANMotorCtrl("wheel"+posId, wheelMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
-         azmth = new CasseroleCANMotorCtrl("azmth"+posId, azmthMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
-         azmth_enc = new CasseroleSwerveAzmthEncoder("encoder"+posId, azmthEncoderIdx, 0);
+        wheelMotorCtrl = new CasseroleCANMotorCtrl("wheel"+posId, wheelMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
+        azmthMotorCtrl = new CasseroleCANMotorCtrl("azmth"+posId, azmthMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+        azmth_enc = new CasseroleSwerveAzmthEncoder("encoder"+posId, azmthEncoderIdx, 0);
       
-        wheelSpdDesSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthDes", "RPM");
-        wheelSpdActSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthAct", "RPM");
-        azmthPosDesSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_speedDes", "deg");
-        azmthPosActSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_speedAct", "deg");
+        azmthPosDesSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthDes", "deg");
+        azmthPosActSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthDes", "deg");
+
+        azmthCtrl = new AzimuthAngleController();
+
+        wheelMotorFF = new SimpleMotorFeedforward(0, // kS - minimum voltage to see any movement. AKA "overcome stiction"
+                                                  0); // kV - Volts required to get one (radian per second) of velocity in steady state
 
     }
 
     public void update(double curSpeedFtPerSec, double maxAzmthErr_deg){
-     
-        DriverInput di;
-        di = DriverInput.getInstance();
 
-        wheel.setVoltageCmd(di.getFwdRevCmd() * 12.0);
-        azmth.setVoltageCmd(di.getRotateCmd() * 12.0);
+        azmth_enc.update();
 
-        //TODO read the azimuth angle
+        // Update the azimuth PID controller
+        azmthCtrl.setInputs(desState.angle.getDegrees(), 
+                            Units.radiansToDegrees(azmth_enc.getAngle_rad()), 
+                            curSpeedFtPerSec);
+        azmthCtrl.update();
 
-        //TODO calcualte desired wheel speed
+        //Send the output of the controller to the motor, converting from "motor-cmd" to volts as we go
+        azmthMotorCtrl.setVoltageCmd(azmthCtrl.getMotorCmd() * 12.0);
 
+        // Calculate the motor speed given the current wheel speed command and whether 
+        //  the azimuth is in an "inverting" state.
+        double motorDesSpd_radpersec = UnitUtils.dtLinearSpeedToMotorSpeed_radpersec(desState.speedMetersPerSecond);
+        if(azmthCtrl.getInvertWheelCmd()){
+            motorDesSpd_radpersec *= -1.0;
+        }
 
-        //TODO invert the wheel speed if needed
+        // Send the speed command to the motor controller
+        wheelMotorCtrl.setClosedLoopCmd(motorDesSpd_radpersec, wheelMotorFF.calculate(motorDesSpd_radpersec));
 
-        //TODO scale back the wheel speed if our azimuth angle isn't on target
-
-        //TODO measure the actual wheel speed from the drive motor
-
-        //TODO calculate feed-forward drivetrain 
-
-        //TODO send the voltage or speed commands to the motors
-
-        //TODO update the "actualState" object with this module's present steer angle and speed in meters per second
+        // Update the actual state with measurements from the sensors
+        actState.angle = new Rotation2d(azmth_enc.getAngle_rad());
+        actState.speedMetersPerSecond = UnitUtils.dtMotorSpeedToLinearSpeed_mps(wheelMotorCtrl.getVelocity_radpersec());
 
     }
 
@@ -79,15 +79,10 @@ class SwerveModuleControl {
      */
     public void updateTelemetry(){
         double sampleTime = Timer.getFPGATimestamp(); //TODO - this should actually be coming from the loop timing utility, whenever Lucas finishes it up.
-        wheelSpdDesSig.addSample(sampleTime, wheelMotorSpeedDes_RPM);
-        wheelSpdActSig.addSample(sampleTime, wheelMotorSpeedAct_RPM);
 
-        //TODO - forward azimuth controller information on to the signals
-        azmthPosDesSig.addSample(sampleTime, 0);
-        azmthPosActSig.addSample(sampleTime, 0);
+        azmthPosDesSig.addSample(sampleTime, azmthCtrl.getSetpoint_deg());
+        azmthPosActSig.addSample(sampleTime, Units.radiansToDegrees(azmth_enc.getAngle_rad()));
     }
-
-    //TODO - test mode update for PID tuning azimuth motor velocity
 
     public void setDesiredState(SwerveModuleState des){
         desState = des;
@@ -99,6 +94,16 @@ class SwerveModuleControl {
 
     public SwerveModuleState getDesiredState(){
         return desState;
+    }
+
+    public void setClosedLoopGains(double wheel_kP, double wheel_kI, double wheel_kD, double wheel_kV, double wheel_kS, double azmth_kP, double azmth_kI, double azmth_kD){
+        wheelMotorCtrl.setClosedLoopGains(wheel_kP, wheel_kI, wheel_kD);
+        wheelMotorFF = new SimpleMotorFeedforward(wheel_kS, wheel_kV);
+        azmthCtrl.setGains(azmth_kP, azmth_kI, azmth_kD);
+    }
+
+    public void resetWheelEncoder(){
+        wheelMotorCtrl.resetDistance();
     }
 
 }

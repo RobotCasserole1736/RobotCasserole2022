@@ -284,8 +284,10 @@ public class Calibration {
      * that must do something when cal values are changed.
      */
     public void acknowledgeValUpdate() {
+        if(is_updated)
+            System.out.println("Info: Calibration " + this.name + " acknowledged update ");
+
         is_updated = false;
-        System.out.println("Info: Calibration " + this.name + " acknowledged update ");
     }
 
     /**

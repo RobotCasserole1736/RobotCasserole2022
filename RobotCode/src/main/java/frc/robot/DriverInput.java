@@ -21,6 +21,11 @@ public class DriverInput {
     @Signal(units="cmd")
     double curSideToSideCmd;
 
+    @Signal(units="bool")
+    boolean robotRelative;
+
+
+
     private DriverInput(){
 
         driverController = new XboxController(0);
@@ -31,6 +36,7 @@ public class DriverInput {
         curFwdRevCmd = -1.0 * driverController.getLeftY();
         curRotCmd = -1.0 * driverController.getRightX();
         curSideToSideCmd = -1.0 * driverController.getLeftX();
+        robotRelative = driverController.getLeftBumper();
     }
 
     /**
@@ -56,6 +62,10 @@ public class DriverInput {
     }
     public double getSideToSideCmd(){
         return curSideToSideCmd;
+    }
+
+    public boolean getRobotRelative(){
+        return robotRelative;
     }
     
 }

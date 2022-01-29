@@ -1,5 +1,7 @@
 package frc;
 
+import edu.wpi.first.math.util.Units;
+
 public class UnitUtils{
 
     
@@ -14,6 +16,14 @@ public class UnitUtils{
         angle= angle>180 ? angle-360 : angle;
         angle= angle<-180 ? angle+360 : angle;
         return angle;
+    }
+
+    public static double dtLinearSpeedToMotorSpeed_radpersec(double linear_mps_in){
+        return linear_mps_in * Units.inchesToMeters(Constants.WHEEL_RADIUS_IN) * Constants.WHEEL_GEAR_RATIO;
+    }
+
+    public static double dtMotorSpeedToLinearSpeed_mps(double motor_radpersec_in){
+        return motor_radpersec_in / Units.inchesToMeters(Constants.WHEEL_RADIUS_IN) / Constants.WHEEL_GEAR_RATIO;
     }
 
     public static double limitMotorCmd(double motorCmdIn){

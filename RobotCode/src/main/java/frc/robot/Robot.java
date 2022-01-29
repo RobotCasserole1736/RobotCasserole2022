@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.Constants;
 import frc.lib.Calibration.CalWrangler;
@@ -133,9 +134,18 @@ public class Robot extends TimedRobot {
 
     di.update();
 
+    double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
+    double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
+    double rotateCmd_radpersec = di.getRotateCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
 
-    intakeMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
-    shooterMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
+    if(di.getRobotRelative()){
+      dt.setCmdRobotRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
+    } else {
+      dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
+    }
+
+    //intakeMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
+    //shooterMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
 
   }
 
@@ -151,7 +161,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-
+    dt.calUpdate(false);
   }
 
 

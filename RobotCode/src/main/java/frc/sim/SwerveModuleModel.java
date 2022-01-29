@@ -39,9 +39,6 @@ class SwerveModuleModel{
     MapLookup2D kineticFrictionScaleFactor = new MapLookup2D(); 
 
 
-    final double WHEEL_GEAR_RATIO = 6.1;
-    final double AZMTH_GEAR_RATIO = 150.0;
-
     final double AZMTH_EFFECTIVE_MOI = 0.01;
 
     Pose2d prevModulePose = null;
@@ -59,8 +56,8 @@ class SwerveModuleModel{
         wheelMotorCtrl = (SimSmartMotor) SimDeviceBanks.getCANDevice(wheelMotorIdx);
         azmthMotorCtrl = (SimSmartMotor) SimDeviceBanks.getCANDevice(azmthMotorIdx);
 
-        wheelMotor = new MotorGearboxWheelSim(DCMotor.getNEO(1), WHEEL_GEAR_RATIO, Units.inchesToMeters(Constants.WHEEL_RADIUS_IN * 2), 0.01);
-        azmthMotor = new SimpleMotorWithMassModel(DCMotor.getVex775Pro(1), AZMTH_GEAR_RATIO, AZMTH_EFFECTIVE_MOI);
+        wheelMotor = new MotorGearboxWheelSim(DCMotor.getNEO(1), Constants.WHEEL_GEAR_RATIO, Units.inchesToMeters(Constants.WHEEL_RADIUS_IN * 2), 0.01);
+        azmthMotor = new SimpleMotorWithMassModel(DCMotor.getVex775Pro(1), Constants.AZMTH_GEAR_RATIO, AZMTH_EFFECTIVE_MOI);
 
         angleMotorEncoder = (SimSwerveAzmthEncoder) SimDeviceBanks.getDIDevice(azmthEncIdx);
 

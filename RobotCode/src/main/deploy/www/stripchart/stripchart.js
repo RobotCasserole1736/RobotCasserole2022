@@ -175,6 +175,15 @@ function handleFileSelect(files_in){
     
 }
 
+
+var isVisible = false;
+window.handleSignalShowHide = handleSignalShowHide;
+function handleSignalShowHide(){
+    isVisible = !isVisible
+    document.getElementById("selectableSignalContainer").style
+    
+}
+
 /////////////////////////////////////////////////////////////
 // DAQ Source Change Handlers
 

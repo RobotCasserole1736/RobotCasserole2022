@@ -153,5 +153,11 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
         return curWindingVoltage;
     }
 
+    @Override
+    public void resetDistance() {
+        curPos_rad = 0;
+    }
+
+
     
 }
