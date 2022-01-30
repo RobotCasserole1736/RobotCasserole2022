@@ -5,7 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.Constants;
 import frc.lib.Calibration.CalWrangler;
@@ -173,7 +174,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-    dt.update();
+    if(DriverStation.isTest() && !DriverStation.isDisabled()){
+      dt.testUpdate();
+    } else {
+      dt.update();
+    }
 
     db.updateDriverView();
     telemetryUpdate();
@@ -191,10 +196,28 @@ public class Robot extends TimedRobot {
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
 
+  ///////////////////////////////////////////////////////////////////
+  // Test-Mode-Specific
+  ///////////////////////////////////////////////////////////////////
 
-  //////////////////////////////////////////////////////////////////////////////////////////
+  @Override
+  public void testInit(){
+    // Disable default behavior of the live-window output manipulation logic
+    // We've got our own and never use this anyway.
+    LiveWindow.setEnabled(false);
+
+    // Tell the subsystems that care that we're entering test mode.
+    dt.testInit();
+  }
+
+  @Override
+  public void testPeriodic(){
+    // Nothing special here, yet
+  }
+
+  ///////////////////////////////////////////////////////////////////
   // Simulation Support
-  //////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////
 
   RobotModel plant;
 

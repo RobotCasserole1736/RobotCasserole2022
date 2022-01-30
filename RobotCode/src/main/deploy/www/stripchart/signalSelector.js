@@ -62,18 +62,31 @@ export class SignalSelector {
     // Re-filter the signals shown to the user by a new spec
     setFilterSpec(filterSpec_in){
         var filterSpec = filterSpec_in.toLowerCase();
-
+        var regexFilter = this.wildcardToRegex(filterSpec);
+        var regex = new RegExp(regexFilter);
         if(filterSpec.length == 0 ){ //no filter, show all
             this.selectableSignalsList.forEach(ssig => ssig.show());
         } else { //Filtering, do the inclusion check
             this.selectableSignalsList.forEach(ssig => {
-                if(ssig.signal.name.toLowerCase().includes(filterSpec)){
+                var sigNameToTest = ssig.signal.name.toLowerCase();
+                if(regex.test(sigNameToTest)){
                     ssig.show();
                 } else {
                     ssig.hide();
                 }
             });
         }
+    }
+
+    // Translates simple "*" glob-style wildcards to a formal regex
+    // so that we don't have to teach students regex
+    // https://stackoverflow.com/questions/26246601/wildcard-string-comparison-in-javascript
+    wildcardToRegex(rule) {
+        // Escape control characters for regex
+        var escapeRegex = (str) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        //Remap single "*" wildcards to a regex ".*" wildcard
+        rule = rule.split("*").map(escapeRegex).join(".*");
+        return rule;
     }
 
     clearSelection(){

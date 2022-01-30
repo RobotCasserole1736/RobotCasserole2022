@@ -90,7 +90,7 @@ plottedSignalName {
 
 plottedSignalUnits {
     flex-direction: column;
-    flex-grow:0;
+    flex-grow:1;
     width: 50px;
     padding: 3;
 }
