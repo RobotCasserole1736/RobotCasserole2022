@@ -80,6 +80,9 @@ class SwerveModuleControl {
         actState.angle = new Rotation2d(azmth_enc.getAngle_rad());
         actState.speedMetersPerSecond = UnitUtils.dtMotorSpeedToLinearSpeed_mps(wheelMotorCtrl.getVelocity_radpersec());
 
+        wheelMotorCtrl.update();
+        azmthMotorCtrl.update();
+
     }
 
     /**
@@ -90,8 +93,8 @@ class SwerveModuleControl {
 
         azmthPosDesSig.addSample(sampleTime, azmthCtrl.getSetpoint_deg());
         azmthPosActSig.addSample(sampleTime, Units.radiansToDegrees(azmth_enc.getAngle_rad()));
-        wheelSpdDesSig.addSample(sampleTime, Units.radiansPerSecondToRotationsPerMinute(motorDesSpd_radpersec/Constants.WHEEL_GEAR_RATIO));
-        wheelSpdActSig.addSample(sampleTime, Units.radiansPerSecondToRotationsPerMinute(wheelMotorCtrl.getVelocity_radpersec()/Constants.WHEEL_GEAR_RATIO));
+        wheelSpdDesSig.addSample(sampleTime, UnitUtils.dtMotorSpeedToLinearSpeed_mps(motorDesSpd_radpersec)/Constants.MAX_FWD_REV_SPEED_MPS);
+        wheelSpdActSig.addSample(sampleTime, UnitUtils.dtMotorSpeedToLinearSpeed_mps(wheelMotorCtrl.getVelocity_radpersec())/Constants.MAX_FWD_REV_SPEED_MPS);
     }
 
     public void setDesiredState(SwerveModuleState des){

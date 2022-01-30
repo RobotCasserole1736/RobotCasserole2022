@@ -65,10 +65,9 @@ public class AzimuthAngleController{
 
     public void update(){
 
-        desAngleRateLimit = setpointRateLimiter.calculate(desAng);
 
-        errNoInvert = UnitUtils.wrapAngleDeg(desAngleRateLimit - actAng);
-        errInvert   = UnitUtils.wrapAngleDeg(desAngleRateLimit - actAng + 180);
+        errNoInvert = UnitUtils.wrapAngleDeg(desAng - actAng);
+        errInvert   = UnitUtils.wrapAngleDeg(desAng - actAng + 180);
 
         if(Math.abs(errNoInvert) < Math.abs(errInvert)){
             //don't invert the wheel direction
@@ -80,7 +79,10 @@ public class AzimuthAngleController{
             invertWheelDirection = true;
         }
 
-        azmthMotorCmd = azmthPIDCtrl.calculate(actAng, angSetpoint);
+        desAngleRateLimit = setpointRateLimiter.calculate(angSetpoint);
+
+
+        azmthMotorCmd = azmthPIDCtrl.calculate(actAng, desAngleRateLimit);
         azmthMotorCmd = limitMag(azmthMotorCmd, azmthCmdLimitTbl.lookupVal(netSpeed));
 
     }

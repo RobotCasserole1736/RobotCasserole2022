@@ -85,9 +85,11 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
 
     public void sim_setActualVelocity(double velocity_radpersec){
         curVel_radpersec = velocity_radpersec;
+        curPos_rad += curVel_radpersec * Constants.SIM_SAMPLE_RATE_SEC;
     }
 
     public void sim_setActualPosition(double pos_rad){
+        curVel_radpersec = (pos_rad - curPos_rad) / Constants.SIM_SAMPLE_RATE_SEC;
         curPos_rad = pos_rad;
     }
 
