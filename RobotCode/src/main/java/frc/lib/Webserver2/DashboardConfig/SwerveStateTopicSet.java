@@ -10,12 +10,18 @@ public class SwerveStateTopicSet {
 
     int modIdx = 0;
 
+    public static final String PREFIX = "DtModule_";
+    public static final String SUFFIX_AZMTH_DES = "_azmthDes";
+    public static final String SUFFIX_AZMTH_ACT = "_azmthAct";
+    public static final String SUFFIX_WHEEL_DES = "_speedDes";
+    public static final String SUFFIX_WHEEL_ACT = "_speedAct";
 
-    public SwerveStateTopicSet(String root, int modIdx_in){
-        azmthDesTopic = SignalUtils.nameToNT4ValueTopic(root + "_azmthDes");
-        azmthActTopic = SignalUtils.nameToNT4ValueTopic(root + "_azmthAct");
-        speedDesTopic = SignalUtils.nameToNT4ValueTopic(root + "_speedDes");
-        speedActTopic = SignalUtils.nameToNT4ValueTopic(root + "_speedAct");
+
+    public SwerveStateTopicSet(String modName, int modIdx_in){
+        azmthDesTopic = SignalUtils.nameToNT4ValueTopic(PREFIX + modName + SUFFIX_AZMTH_DES);
+        azmthActTopic = SignalUtils.nameToNT4ValueTopic(PREFIX + modName + SUFFIX_AZMTH_ACT);
+        speedDesTopic = SignalUtils.nameToNT4ValueTopic(PREFIX + modName + SUFFIX_WHEEL_DES);
+        speedActTopic = SignalUtils.nameToNT4ValueTopic(PREFIX + modName + SUFFIX_WHEEL_ACT);
         modIdx = modIdx_in;
     }
 

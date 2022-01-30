@@ -60,14 +60,14 @@ public class DrivetrainControl {
 
     private DrivetrainControl(){
 
-        moduleWheel_kP = new Calibration("Drivetrain Module Wheel kP", "", 8.0);
+        moduleWheel_kP = new Calibration("Drivetrain Module Wheel kP", "", 0.0);
         moduleWheel_kI = new Calibration("Drivetrain Module Wheel kI", "", 0.0);
         moduleWheel_kD = new Calibration("Drivetrain Module Wheel kD", "", 0.0);
         moduleWheel_kV = new Calibration("Drivetrain Module Wheel kV", "volts/radPerSec", 12.0/668.112);
         moduleWheel_kS = new Calibration("Drivetrain Module Wheel kS", "volts", 0.2);
-        moduleAzmth_kP = new Calibration("Drivetrain Module Azmth kP", "", 8.0);
+        moduleAzmth_kP = new Calibration("Drivetrain Module Azmth kP", "", 0.005);
         moduleAzmth_kI = new Calibration("Drivetrain Module Azmth kI", "", 0.0);
-        moduleAzmth_kD = new Calibration("Drivetrain Module Azmth kD", "", 0.0);
+        moduleAzmth_kD = new Calibration("Drivetrain Module Azmth kD", "", 0.00001);
 
         hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 8.0);
         hdc_translate_kI = new Calibration("Drivetrain HDC Translation kI", "", 0.0);

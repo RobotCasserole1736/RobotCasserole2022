@@ -21,9 +21,11 @@ public class RemoteClient extends BaseClient{
         NT4Server.getInstance().unRegisterClient(this);
 
         //Implicit unsubscribe from all topics
-        Set<Integer> subIDs = new HashSet<Integer>(this.subscriptions.keySet());
-        for(int id : subIDs){
-            unSubscribe(id);
+        synchronized(subscriptions){
+            Set<Integer> subIDs = new HashSet<Integer>(this.subscriptions.keySet());
+            for(int id : subIDs){
+                unSubscribe(id);
+            }
         }
 
         //Implicit unpublish of all published signals

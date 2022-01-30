@@ -5,8 +5,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import frc.Constants;
 import frc.UnitUtils;
 import frc.lib.Signal.Annotations.Signal;
+import frc.lib.Webserver2.DashboardConfig.SwerveStateTopicSet;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 import frc.wrappers.SwerveAzmthEncoder.CasseroleSwerveAzmthEncoder;
 
@@ -19,8 +21,12 @@ class SwerveModuleControl {
     SwerveModuleState desState = new SwerveModuleState();
     SwerveModuleState actState = new SwerveModuleState();
 
+    double motorDesSpd_radpersec;
+
     frc.lib.Signal.Signal azmthPosDesSig;
     frc.lib.Signal.Signal azmthPosActSig;
+    frc.lib.Signal.Signal wheelSpdDesSig;
+    frc.lib.Signal.Signal wheelSpdActSig;
 
     public AzimuthAngleController azmthCtrl;
 
@@ -29,14 +35,16 @@ class SwerveModuleControl {
     @Signal(units = "cmd")
     double wheelMotorCmd;
 
-    public SwerveModuleControl(String posId, int wheelMotorIdx, int azmthMotorIdx, int azmthEncoderIdx){
+    public SwerveModuleControl(String modName, int wheelMotorIdx, int azmthMotorIdx, int azmthEncoderIdx){
 
-        wheelMotorCtrl = new CasseroleCANMotorCtrl("wheel"+posId, wheelMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
-        azmthMotorCtrl = new CasseroleCANMotorCtrl("azmth"+posId, azmthMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
-        azmth_enc = new CasseroleSwerveAzmthEncoder("encoder"+posId, azmthEncoderIdx, 0);
+        wheelMotorCtrl = new CasseroleCANMotorCtrl("wheel"+modName, wheelMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
+        azmthMotorCtrl = new CasseroleCANMotorCtrl("azmth"+modName, azmthMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+        azmth_enc = new CasseroleSwerveAzmthEncoder("encoder"+modName, azmthEncoderIdx, 0);
       
-        azmthPosDesSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthDes", "deg");
-        azmthPosActSig = new frc.lib.Signal.Signal("DtModule_" + posId + "_azmthDes", "deg");
+        azmthPosDesSig = new frc.lib.Signal.Signal(SwerveStateTopicSet.PREFIX + modName + SwerveStateTopicSet.SUFFIX_AZMTH_DES, "deg");
+        azmthPosActSig = new frc.lib.Signal.Signal(SwerveStateTopicSet.PREFIX + modName + SwerveStateTopicSet.SUFFIX_AZMTH_ACT, "deg");
+        wheelSpdDesSig = new frc.lib.Signal.Signal(SwerveStateTopicSet.PREFIX + modName + SwerveStateTopicSet.SUFFIX_WHEEL_DES, "RPM");
+        wheelSpdActSig = new frc.lib.Signal.Signal(SwerveStateTopicSet.PREFIX + modName + SwerveStateTopicSet.SUFFIX_WHEEL_ACT, "RPM");
 
         azmthCtrl = new AzimuthAngleController();
 
@@ -60,7 +68,7 @@ class SwerveModuleControl {
 
         // Calculate the motor speed given the current wheel speed command and whether 
         //  the azimuth is in an "inverting" state.
-        double motorDesSpd_radpersec = UnitUtils.dtLinearSpeedToMotorSpeed_radpersec(desState.speedMetersPerSecond);
+        motorDesSpd_radpersec = UnitUtils.dtLinearSpeedToMotorSpeed_radpersec(desState.speedMetersPerSecond);
         if(azmthCtrl.getInvertWheelCmd()){
             motorDesSpd_radpersec *= -1.0;
         }
@@ -82,6 +90,8 @@ class SwerveModuleControl {
 
         azmthPosDesSig.addSample(sampleTime, azmthCtrl.getSetpoint_deg());
         azmthPosActSig.addSample(sampleTime, Units.radiansToDegrees(azmth_enc.getAngle_rad()));
+        wheelSpdDesSig.addSample(sampleTime, Units.radiansPerSecondToRotationsPerMinute(motorDesSpd_radpersec/Constants.WHEEL_GEAR_RATIO));
+        wheelSpdActSig.addSample(sampleTime, Units.radiansPerSecondToRotationsPerMinute(wheelMotorCtrl.getVelocity_radpersec()/Constants.WHEEL_GEAR_RATIO));
     }
 
     public void setDesiredState(SwerveModuleState des){

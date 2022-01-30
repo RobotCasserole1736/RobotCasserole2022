@@ -185,9 +185,7 @@ public class Robot extends TimedRobot {
     dt.updateTelemetry();
 
     pt.setDesiredPose(dt.getCurDesiredPose());
-  
-    //TODO - send drivetrain pose estimate to the pt (pose telemetry) object
-
+    pt.setEstimatedPose(dt.pe.getEstPose());
     
     pt.update(time);
     SignalWrangler.getInstance().sampleAllSignals(time);

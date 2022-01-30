@@ -261,13 +261,11 @@ public class Socket extends WebSocketAdapter {
 
                 newSub.start();
 
-                //NT4Server.getInstance().printCurrentSubscriptions();
-
             break;
             case "unsubscribe":
                 subuid = ((Number)params.get("subuid")).intValue();
                 clientInf.unSubscribe(subuid);
-                //NT4Server.getInstance().printCurrentSubscriptions();
+
             break;
             default:
                 throw new IllegalArgumentException("Unrecognized method " + method);

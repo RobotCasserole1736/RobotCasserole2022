@@ -49,10 +49,10 @@ public class Dashboard {
 
         d.addFieldPose("pose", "Field", LEFT_COL, ROW1, 0.75);
         SwerveStateTopicSet[] topicList = new SwerveStateTopicSet[4];
-        topicList[0] = new SwerveStateTopicSet("DtModule_FL",0);
-        topicList[1] = new SwerveStateTopicSet("DtModule_FR",1);
-        topicList[2] = new SwerveStateTopicSet("DtModule_BL",2);
-        topicList[3] = new SwerveStateTopicSet("DtModule_BR",3);
+        topicList[0] = new SwerveStateTopicSet("FL",0);
+        topicList[1] = new SwerveStateTopicSet("FR",1);
+        topicList[2] = new SwerveStateTopicSet("BL",2);
+        topicList[3] = new SwerveStateTopicSet("BR",3);
         d.addSwerveState(topicList, "SwerveState", RIGHT_COL, ROW1, 0.8);
 
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_masterCaution"),"Master Caution", "#FF0000", "icons/alert.svg", CENTER_COL-6, ROW2, 1.0);

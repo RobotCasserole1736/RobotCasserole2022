@@ -28,12 +28,17 @@ public abstract class BaseClient {
     public Subscription subscribe(Set<String> patterns, int subuid){
         Subscription newSub = new Subscription(patterns, subuid);
         newSub.clientRef = this;
-        subscriptions.put(subuid, newSub);
+        synchronized(subscriptions){
+            subscriptions.put(subuid, newSub);
+        }
         return newSub;
     }
 
     public void unSubscribe(int deadSubId){
-        Subscription oldSub = subscriptions.remove(deadSubId);
+        Subscription oldSub;
+        synchronized(subscriptions){
+            oldSub = subscriptions.remove(deadSubId);
+        }
 
         for(Topic t: NT4Server.getInstance().getAllTopics()){
             t.removeSubscriptionRef(oldSub);

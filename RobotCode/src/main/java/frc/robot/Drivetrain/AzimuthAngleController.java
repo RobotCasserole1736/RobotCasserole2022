@@ -1,6 +1,7 @@
 package frc.robot.Drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.UnitUtils;
 import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Util.MapLookup2D;
@@ -8,7 +9,10 @@ import frc.lib.Util.MapLookup2D;
 
 public class AzimuthAngleController{
 
-    PIDController azmthPIDCtrl = new PIDController(0.01, 0, 0.0001);
+    final double MAX_AZMTH_SPEED_DEG_PER_SEC = 720.0; // TODO, maybe go faster?
+
+    PIDController azmthPIDCtrl = new PIDController(0,0,0);
+    SlewRateLimiter setpointRateLimiter = new SlewRateLimiter(MAX_AZMTH_SPEED_DEG_PER_SEC);
 
     double desAng = 0;
 
@@ -16,6 +20,9 @@ public class AzimuthAngleController{
     double actAng = 0;
     @Signal(units = "deg")
     double angSetpoint = 0;
+
+    @Signal(units = "deg")
+    double desAngleRateLimit = 0;
 
     @Signal(units = "deg")
     double errNoInvert;
@@ -49,15 +56,19 @@ public class AzimuthAngleController{
     }
 
     public void setInputs(double desiredAngle_in, double actualAngle_in, double curSpeed_fps_in){
-        desAng = desiredAngle_in;
+        
+        desAng = desiredAngle_in;        
         actAng = actualAngle_in;
         netSpeed = curSpeed_fps_in; 
+
     }
 
     public void update(){
 
-        errNoInvert = UnitUtils.wrapAngleDeg(desAng - actAng);
-        errInvert   = UnitUtils.wrapAngleDeg(desAng - actAng + 180);
+        desAngleRateLimit = setpointRateLimiter.calculate(desAng);
+
+        errNoInvert = UnitUtils.wrapAngleDeg(desAngleRateLimit - actAng);
+        errInvert   = UnitUtils.wrapAngleDeg(desAngleRateLimit - actAng + 180);
 
         if(Math.abs(errNoInvert) < Math.abs(errInvert)){
             //don't invert the wheel direction
@@ -70,8 +81,8 @@ public class AzimuthAngleController{
         }
 
         azmthMotorCmd = azmthPIDCtrl.calculate(actAng, angSetpoint);
-
         azmthMotorCmd = limitMag(azmthMotorCmd, azmthCmdLimitTbl.lookupVal(netSpeed));
+
     }
 
     public void setGains(double kP, double kI, double kD){
