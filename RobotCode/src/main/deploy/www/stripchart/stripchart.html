@@ -23,9 +23,6 @@
             <buttonGroup class="outlined">
                 <button id="zoom_full_btn" type="button" onclick="handleZoomFullBtnClick()">Zoom Full</button>
             </buttonGroup>
-            <buttonGroup class="outlined">
-                <button id="unselect_all_btn" type="button" onclick="unselectAllBtnClick()">Unselect All</button>
-            </buttonGroup>
             <buttonGroup class="outlined"> 
                 <div class="sliderParts">Live</div>
                 
@@ -69,9 +66,10 @@
             </plotsContainer>
 
             <!-- Signal List / Selection Area-->
-            <signalListContainer class="outlined">
+            <signalListContainer class="outlined" id="signalPane">
                 <input class="filterTextInput" id="filterTextInput" type="text" placeholder="Filter"
                 onkeyup="filterChangeHandler(this.value)">
+                <button id="unselect_all_btn" type="button" onclick="unselectAllBtnClick()">Unselect All</button>
                 <selectableSignalContainer id="selectableSignalContainer">
                     
                 </selectableSignalContainer>

@@ -180,8 +180,7 @@ var isVisible = false;
 window.handleSignalShowHide = handleSignalShowHide;
 function handleSignalShowHide(){
     isVisible = !isVisible
-    document.getElementById("selectableSignalContainer").style
-    
+    document.getElementById("signalPane").style.width = isVisible ?  "33%" : "0%";    
 }
 
 /////////////////////////////////////////////////////////////
