@@ -73,7 +73,7 @@ public class RobotModel {
     }
 
     public Pose2d getCurActPose(){
-        return dt.field.getRobotObject().getPose();
+        return dt.endRobotRefFrame;
     }
 
 }

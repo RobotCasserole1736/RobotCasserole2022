@@ -22,7 +22,7 @@ public class SimGyroSensorModel{
     }
 
     public void resetToPose(Pose2d resetPose){
-        gyroSim.simSetAngle(Units.degreesToRadians(resetPose.getRotation().getDegrees() * -1.0));
+        // nothing, since gyro is rate-based?
     }
 
     public void update(Pose2d curRobotPose, Pose2d prevRobotPose){

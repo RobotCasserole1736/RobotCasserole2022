@@ -36,7 +36,7 @@ public class DriverInput {
         curFwdRevCmd = -1.0 * driverController.getLeftY();
         curRotCmd = -1.0 * driverController.getRightX();
         curSideToSideCmd = -1.0 * driverController.getLeftX();
-        robotRelative = driverController.getLeftBumper();
+        robotRelative = driverController.getRightBumper();
     }
 
     /**

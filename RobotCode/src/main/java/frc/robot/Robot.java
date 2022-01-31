@@ -92,6 +92,7 @@ public class Robot extends TimedRobot {
     //Autonomous might overwrite this, but pick a default starting pose for now?
     // Maybe this is unnecessary?
     dt.pe.setKnownPose(Constants.DFLT_START_POSE);
+    syncSimPoseToEstimate();
 
     SignalWrangler.getInstance().registerSignals(this);
     webserver.startServer();
@@ -165,6 +166,9 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     dt.calUpdate(false);
+
+    auto.sampleDashboardSelector();
+
   }
 
 

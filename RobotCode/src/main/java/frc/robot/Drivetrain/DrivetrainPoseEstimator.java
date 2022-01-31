@@ -64,8 +64,8 @@ public class DrivetrainPoseEstimator {
      */
     public void setKnownPose(Pose2d in){
         DrivetrainControl.getInstance().resetWheelEncoders();
-        //No need to reset gyro, pose estimator does that.
-        m_poseEstimator.resetPosition(in, getGyroHeading());
+        gyro.reset(in.getRotation().getRadians());
+        m_poseEstimator.resetPosition(in, in.getRotation());
         curEstPose = in;
     }
 

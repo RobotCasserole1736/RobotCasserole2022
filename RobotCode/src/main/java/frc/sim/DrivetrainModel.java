@@ -28,7 +28,7 @@ class DrivetrainModel {
 
     Field2d field;
     Pose2d dtPoseForTelemetry;
-    Pose2d endRobotRefFrame; //Previous sent pose, allows us to detect when the robot has been manually moved.
+    Pose2d endRobotRefFrame = new Pose2d();
 
     Vector2d accel_prev = new Vector2d();
     Vector2d vel_prev   = new Vector2d();
@@ -45,13 +45,12 @@ class DrivetrainModel {
         gyro = new SimGyroSensorModel();
 
         field = PoseTelemetry.field;
-        field.setRobotPose(Constants.DFLT_START_POSE);
 
         dtPoseForTelemetry = new Pose2d();
     }
 
     public void modelReset(Pose2d pose){
-        field.setRobotPose(pose);
+        endRobotRefFrame = pose;
         accel_prev = new Vector2d();
         vel_prev   = new Vector2d();
         rotAccel_prev = 0;
@@ -65,17 +64,8 @@ class DrivetrainModel {
     public void update(boolean isDisabled, double batteryVoltage){
 
         Pose2d fieldReferenceFrame = new Pose2d();// global origin
-        Pose2d startRobotRefFrame = field.getRobotPose(); //origin on and aligned to robot's present position in the field
+        Pose2d startRobotRefFrame = endRobotRefFrame; //origin on and aligned to robot's present position in the field
         Transform2d fieldToRobotTrans = new Transform2d(fieldReferenceFrame, startRobotRefFrame);
-
-        ////////////////////////////////////////////////////////////////
-        // Handle model state reset conditions
-
-        if(!startRobotRefFrame.equals(endRobotRefFrame)){
-            //Robot has been moved manually in the Field2D widget. Reset the sim model.
-            endRobotRefFrame = startRobotRefFrame;
-            modelReset(startRobotRefFrame);
-        }
 
         ////////////////////////////////////////////////////////////////
         // Component-Force Calculations to populate the free-body diagram
@@ -172,9 +162,6 @@ class DrivetrainModel {
         Twist2d motionThisLoop = new Twist2d(posChange.getX(), posChange.getY(), rotPosChange);
         
         endRobotRefFrame = startRobotRefFrame.exp(motionThisLoop);
-
-
-        field.setRobotPose(endRobotRefFrame);
 
         gyro.update(endRobotRefFrame, startRobotRefFrame);
 
