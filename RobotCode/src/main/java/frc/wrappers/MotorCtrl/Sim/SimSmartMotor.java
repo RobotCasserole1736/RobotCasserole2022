@@ -123,7 +123,7 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
      * A rough guess at the behavior of the closed loop controllers on the smart motor controllers
      */
     private double pidSim(double vel_cmd, double arb_ff_V){
-        var velError_RPM = Units.radiansPerSecondToRotationsPerMinute(curVel_radpersec - vel_cmd);
+        var velError_RPM = Units.radiansPerSecondToRotationsPerMinute(vel_cmd - curVel_radpersec);
         
         velErr_accum += velError_RPM;
         

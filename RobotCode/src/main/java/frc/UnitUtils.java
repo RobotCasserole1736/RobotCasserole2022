@@ -19,11 +19,11 @@ public class UnitUtils{
     }
 
     public static double dtLinearSpeedToMotorSpeed_radpersec(double linear_mps_in){
-        return linear_mps_in / (2.0 * Math.PI * Units.inchesToMeters(Constants.WHEEL_RADIUS_IN)) * Constants.WHEEL_GEAR_RATIO;
+        return linear_mps_in / (Units.inchesToMeters(Constants.WHEEL_RADIUS_IN)) * Constants.WHEEL_GEAR_RATIO;
     }
 
     public static double dtMotorSpeedToLinearSpeed_mps(double motor_radpersec_in){
-        return motor_radpersec_in * (2.0 * Math.PI * Units.inchesToMeters(Constants.WHEEL_RADIUS_IN)) / Constants.WHEEL_GEAR_RATIO;
+        return motor_radpersec_in * (Units.inchesToMeters(Constants.WHEEL_RADIUS_IN)) / Constants.WHEEL_GEAR_RATIO;
     }
 
     public static double limitMotorCmd(double motorCmdIn){

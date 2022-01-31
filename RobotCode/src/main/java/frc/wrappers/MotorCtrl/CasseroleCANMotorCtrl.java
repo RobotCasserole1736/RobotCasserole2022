@@ -14,10 +14,6 @@ public class CasseroleCANMotorCtrl {
         SPARK_MAX
     }
 
-    Calibration kP_cal;
-    Calibration kI_cal;
-    Calibration kD_cal;
-
     AbstractSimmableMotorController ctrl;
 
     @Signal(units="V")
@@ -48,21 +44,10 @@ public class CasseroleCANMotorCtrl {
                     break;
             }
         }
-
-        kP_cal = new Calibration(prefix + "_kP", "", 0);
-        kI_cal = new Calibration(prefix + "_kI", "", 0);
-        kD_cal = new Calibration(prefix + "_kD", "", 0);
     }
     
 
     public void update(){
-        // Handle Calibration Changes
-        if(kP_cal.isChanged() || kI_cal.isChanged() || kD_cal.isChanged()){
-            ctrl.setClosedLoopGains(kP_cal.get(), kI_cal.get(), kD_cal.get());
-            kP_cal.acknowledgeValUpdate();
-            kI_cal.acknowledgeValUpdate();
-            kD_cal.acknowledgeValUpdate();
-        }
         actVel = ctrl.getVelocity_radpersec();
         actPos = ctrl.getPosition_rad();
         current = ctrl.getCurrent_A();
@@ -74,9 +59,7 @@ public class CasseroleCANMotorCtrl {
     }
 
     public void setClosedLoopGains(double p, double i, double d){
-        kP_cal.cur_val = p;
-        kI_cal.cur_val = i;
-        kD_cal.cur_val = d;
+        ctrl.setClosedLoopGains(p, i, d);
     }
 
     public void setClosedLoopCmd(double velocityCmd_radpersec, double arbFF_V){
