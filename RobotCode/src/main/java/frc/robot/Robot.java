@@ -109,6 +109,7 @@ public class Robot extends TimedRobot {
     auto.reset();
     auto.startSequencer();
 
+
     // Ensure simulation resets to correct pose at the start of autonomous
     syncSimPoseToEstimate();
 
@@ -228,9 +229,7 @@ public class Robot extends TimedRobot {
 
   public void syncSimPoseToEstimate(){
     if(Robot.isSimulation()){
-      //TODO update plant pose to match current estimate
-      //This needs the drivetrain pose estimator class functional first before it works
-      //plant.reset(dt.getCurPoseEst());
+      plant.reset(dt.pe.getEstPose());
       
     }
   }

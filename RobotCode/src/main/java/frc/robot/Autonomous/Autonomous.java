@@ -15,6 +15,7 @@ import frc.lib.miniNT4.topics.Topic;
 import frc.robot.Autonomous.Modes.DoNothing;
 import frc.robot.Autonomous.Modes.DriveFwd;
 import frc.robot.Autonomous.Modes.Wait;
+import frc.robot.Drivetrain.DrivetrainControl;
 
 
 /*
@@ -106,8 +107,7 @@ public class Autonomous extends LocalClient  {
 
     public void startSequencer(){
         sampleDashboardSelector(); //ensure it gets called once more
-        //TODO - set assumed starting pose to drivetrain pose estimation
-        //Drivetrain.getInstance().setCurPose(curMainMode.getInitialPose());
+        DrivetrainControl.getInstance().pe.setKnownPose(curMainMode.getInitialPose());
         if(curMainMode != null){
             seq.start();
         }
@@ -123,8 +123,7 @@ public class Autonomous extends LocalClient  {
         curDelayMode.addStepsToSequencer(seq);
         curMainMode.addStepsToSequencer(seq);
     
-        //TODO - set assumed starting pose to drivetrain pose estimation
-        //Drivetrain.getInstance().setCurPose(curMainMode.getInitialPose());
+        DrivetrainControl.getInstance().pe.setKnownPose(curMainMode.getInitialPose());
 
         curDelayModeTopic.submitNewValue(new TimestampedInteger(curDelayMode.idx));
         curMainModeTopic.submitNewValue(new TimestampedInteger(curMainMode.idx));

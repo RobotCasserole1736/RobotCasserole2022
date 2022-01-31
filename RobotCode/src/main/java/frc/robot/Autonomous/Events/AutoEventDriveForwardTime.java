@@ -32,28 +32,26 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.Trajectory.State;
+import edu.wpi.first.math.util.Units;
 
 /**
  * Interface into the Casserole autonomous sequencer for a path-planned traversal. Simply wraps
  * path-planner functionality into the AutoEvent abstract class.
  */
 
-public class AutoEventJSONTrajectory extends AutoEvent {
+public class AutoEventDriveForwardTime extends AutoEvent {
 
     boolean done = false;
+    double duration = 0;
 
-    public Trajectory trajectory;
-    List<State> stateList;
+    private final double FWD_SPEED_MPS = Units.feetToMeters(3.0);
 
     DrivetrainControl dt_inst;
 
-    public AutoEventJSONTrajectory(String jsonFileName) {
+    public AutoEventDriveForwardTime(double duration_in) {
 
-        dt_inst = DrivetrainControl.getInstance();
-
-        var poseList = new PoseListGenerator(jsonFileName).getPoseList();
-
-        trajectory = TrajectoryGenerator.generateTrajectory(poseList, AutoTrajectoryConstants.getConfig());         
+        duration = duration_in;
+        dt_inst = DrivetrainControl.getInstance();    
     }
 
     /**
@@ -66,20 +64,16 @@ public class AutoEventJSONTrajectory extends AutoEvent {
         double curTime = (Timer.getFPGATimestamp()-startTime);
 
         //Check for finish
-        if(curTime >= trajectory.getTotalTimeSeconds()) {
+        if(curTime >= duration) {
             done = true;
             dt_inst.stop();
             return;
+        } else {
+            dt_inst.setCmdRobotRelative(FWD_SPEED_MPS, 0.0, 0.0);
+            //Populate desired pose from drivetrain - meh
+            PoseTelemetry.getInstance().setDesiredPose(dt_inst.pe.getEstPose());
         }
 
-        // Extract current and previous steps
-        State curState = trajectory.sample(curTime);
-        Rotation2d curHeading = curState.poseMeters.getRotation(); //TODO - we just drive like a tank drive right now, but could offset/swing this heading?
-
-        dt_inst.setCmdTrajectory(curState, curHeading);
-
-        //Populate desired pose from path plan.
-        PoseTelemetry.getInstance().setDesiredPose(curState.poseMeters);
     }
 
     /**

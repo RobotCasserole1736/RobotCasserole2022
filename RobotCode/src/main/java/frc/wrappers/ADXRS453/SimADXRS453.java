@@ -40,8 +40,8 @@ public class SimADXRS453 extends AbstractADXRS453 {
     }
 
     public void simUpdate(double newRate_radpersec){
-        rate = newRate_radpersec;
-        angle += newRate_radpersec * Constants.Ts;
+        rate = newRate_radpersec; //Sim gyro is inverted
+        angle += newRate_radpersec * Constants.SIM_SAMPLE_RATE_SEC;
     }   
 
     public void simSetAngle(double newAngle_rad){

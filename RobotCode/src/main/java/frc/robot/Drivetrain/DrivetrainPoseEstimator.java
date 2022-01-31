@@ -73,6 +73,9 @@ public class DrivetrainPoseEstimator {
 
     public void update(){
 
+        // Handle gyro-related update tasks
+        gyro.update();
+
         //Based on gyro and measured module speeds and positions, estimate where our robot should have moved to.
         SwerveModuleState[] states = DrivetrainControl.getInstance().getModuleActualStates();
         Pose2d prevEstPose = curEstPose;

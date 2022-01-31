@@ -22,7 +22,9 @@ public class CasseroleADXRS453  {
     }
 
     public void update(){
-        curAngle_rad = gyro.getRawAngle() + offset_rad;
+        // Gyros are inverted in reference frame (positive clockwise)
+        // and we maintain our own offset in code when rezeroing.
+        curAngle_rad = gyro.getRawAngle() * -1.0 + offset_rad;
     }
 
     public void reset(double curAngle_rad) {
