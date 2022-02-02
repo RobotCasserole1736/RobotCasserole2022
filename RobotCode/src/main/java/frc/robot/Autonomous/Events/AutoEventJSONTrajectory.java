@@ -1,5 +1,7 @@
 package frc.robot.Autonomous.Events;
 
+import frc.Constants;
+
 /*
  *******************************************************************************************
  * Copyright (C) FRC Team 1736 Robot Casserole - www.robotcasserole.org
@@ -21,17 +23,16 @@ package frc.robot.Autonomous.Events;
  */
 
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.lib.PathPlanner.PoseListGenerator;
 import frc.robot.PoseTelemetry;
 import frc.robot.Drivetrain.DrivetrainControl;
 
-import java.util.List;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.Trajectory.State;
 
 /**
  * Interface into the Casserole autonomous sequencer for a path-planned traversal. Simply wraps
@@ -42,18 +43,15 @@ public class AutoEventJSONTrajectory extends AutoEvent {
 
     boolean done = false;
 
-    public Trajectory trajectory;
-    List<State> stateList;
+    PathPlannerTrajectory path;
 
     DrivetrainControl dt_inst;
 
-    public AutoEventJSONTrajectory(String jsonFileName) {
+    public AutoEventJSONTrajectory(String jsonFileName, double speedScalar) {
 
         dt_inst = DrivetrainControl.getInstance();
 
-        var poseList = new PoseListGenerator(jsonFileName).getPoseList();
-
-        trajectory = TrajectoryGenerator.generateTrajectory(poseList, AutoTrajectoryConstants.getConfig());         
+        path = PathPlanner.loadPath(jsonFileName, Constants.MAX_FWD_REV_SPEED_MPS * speedScalar, Constants.MAX_TRANSLATE_ACCEL_MPS2 * speedScalar);        
     }
 
     /**
@@ -66,15 +64,15 @@ public class AutoEventJSONTrajectory extends AutoEvent {
         double curTime = (Timer.getFPGATimestamp()-startTime);
 
         //Check for finish
-        if(curTime >= trajectory.getTotalTimeSeconds()) {
+        if(curTime >= path.getTotalTimeSeconds()) {
             done = true;
             dt_inst.stop();
             return;
         }
 
         // Extract current and previous steps
-        State curState = trajectory.sample(curTime);
-        Rotation2d curHeading = curState.poseMeters.getRotation(); //TODO - we just drive like a tank drive right now, but could offset/swing this heading?
+        PathPlannerState curState = (PathPlannerState)  path.sample(curTime);
+        Rotation2d curHeading = curState.holonomicRotation;
 
         dt_inst.setCmdTrajectory(curState, curHeading);
 
@@ -109,5 +107,9 @@ public class AutoEventJSONTrajectory extends AutoEvent {
         startTime = Timer.getFPGATimestamp();
     }
 
+
+    public Pose2d getInitialPose(){
+        return path.getInitialPose();
+    }
 
 }

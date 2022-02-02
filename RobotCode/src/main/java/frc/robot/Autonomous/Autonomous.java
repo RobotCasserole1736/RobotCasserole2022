@@ -13,6 +13,7 @@ import frc.lib.miniNT4.NT4TypeStr;
 import frc.lib.miniNT4.samples.TimestampedInteger;
 import frc.lib.miniNT4.samples.TimestampedValue;
 import frc.lib.miniNT4.topics.Topic;
+import frc.robot.Autonomous.Modes.BallPickup;
 import frc.robot.Autonomous.Modes.DoNothing;
 import frc.robot.Autonomous.Modes.DriveFwd;
 import frc.robot.Autonomous.Modes.Wait;
@@ -77,6 +78,7 @@ public class Autonomous extends LocalClient  {
         delayModeList.add(new Wait(6.0));
         delayModeList.add(new Wait(9.0));
 
+        mainModeList.add(new BallPickup());
         mainModeList.add(new DriveFwd());
         mainModeList.add(new DoNothing());
         

@@ -12,6 +12,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Util.FunctionGenerator;
+import frc.lib.Util.MapLookup2D;
 
 public class DrivetrainControl {
     
@@ -58,7 +59,6 @@ public class DrivetrainControl {
     Calibration hdc_rotation_kI;
     Calibration hdc_rotation_kD;
 
-
     // Pose Estimator Class
     // This class is designed to combine encoder measurments and gyro readings
     // and maybe vision processing (in the future), and produce a best-guess
@@ -101,10 +101,10 @@ public class DrivetrainControl {
         moduleAzmth_kI = new Calibration("Drivetrain Module Azmth kI", "", 0.0);
         moduleAzmth_kD = new Calibration("Drivetrain Module Azmth kD", "", 0.00001);
 
-        hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 8.0);
-        hdc_translate_kI = new Calibration("Drivetrain HDC Translation kI", "", 0.0);
+        hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 20.0);
+        hdc_translate_kI = new Calibration("Drivetrain HDC Translation kI", "", 2.0);
         hdc_translate_kD = new Calibration("Drivetrain HDC Translation kD", "", 0.0);
-        hdc_rotation_kP  = new Calibration("Drivetrain HDC Rotation kP", "", 8.0);
+        hdc_rotation_kP  = new Calibration("Drivetrain HDC Rotation kP", "", 15.0);
         hdc_rotation_kI  = new Calibration("Drivetrain HDC Rotation kI", "", 0.0);
         hdc_rotation_kD  = new Calibration("Drivetrain HDC Rotation kD", "", 0.0);
 
@@ -328,6 +328,7 @@ public class DrivetrainControl {
     public void setKnownPose(Pose2d poseIn){
         curDesPose = poseIn;
         pe.setKnownPose(poseIn);
+        hdc_rotate.reset(poseIn.getRotation().getRadians());
     }
 
 }

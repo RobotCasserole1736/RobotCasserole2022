@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.Constants;
 import frc.UnitUtils;
 import frc.lib.Signal.Annotations.Signal;
+import frc.lib.Util.MapLookup2D;
 import frc.lib.Webserver2.DashboardConfig.SwerveStateTopicSet;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 import frc.wrappers.SwerveAzmthEncoder.CasseroleSwerveAzmthEncoder;
@@ -32,6 +33,14 @@ class SwerveModuleControl {
 
     SimpleMotorFeedforward wheelMotorFF;
 
+    
+    // Wheel command limiter table
+    // Forces wheel speed command to be smaller in cases
+    // where we have high azimuth error. This reduces skidding
+    // and in turn reduces odometry error.
+    MapLookup2D wheelCmdLimitTbl;
+
+
     @Signal(units = "cmd")
     double wheelMotorCmd;
 
@@ -50,6 +59,16 @@ class SwerveModuleControl {
 
         wheelMotorFF = new SimpleMotorFeedforward(0, // kS - minimum voltage to see any movement. AKA "overcome stiction"
                                                   0); // kV - Volts required to get one (radian per second) of velocity in steady state
+
+        wheelCmdLimitTbl = new MapLookup2D();
+        wheelCmdLimitTbl.insertNewPoint(0.0, 1.0);
+        wheelCmdLimitTbl.insertNewPoint(5.0, 1.0);
+        wheelCmdLimitTbl.insertNewPoint(7.0, 0.8);
+        wheelCmdLimitTbl.insertNewPoint(15.0, 0.5);
+        wheelCmdLimitTbl.insertNewPoint(30.0, 0.1);
+        wheelCmdLimitTbl.insertNewPoint(45.0, 0.0);
+        wheelCmdLimitTbl.insertNewPoint(90.0, 0.0);
+                                          
 
     }
 
@@ -72,6 +91,9 @@ class SwerveModuleControl {
         if(azmthCtrl.getInvertWheelCmd()){
             motorDesSpd_radpersec *= -1.0;
         }
+
+        // Apply a limit to the motor wheel speed based on large azimuth errors
+        motorDesSpd_radpersec *= wheelCmdLimitTbl.lookupVal(maxAzmthErr_deg);
 
         // Send the speed command to the motor controller
         wheelMotorCtrl.setClosedLoopCmd(motorDesSpd_radpersec, wheelMotorFF.calculate(motorDesSpd_radpersec));
