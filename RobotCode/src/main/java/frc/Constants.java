@@ -14,7 +14,7 @@ public class Constants {
     //////////////////////////////////////////////////////////////////
     // Drivetrain Physical
     //////////////////////////////////////////////////////////////////
-    static public final double WHEEL_BASE_HALF_WIDTH_M = Units.feetToMeters(1.0);
+    static public final double WHEEL_BASE_HALF_WIDTH_M = Units.inchesToMeters(23.75/2.0);
     static public final double ROBOT_MASS_kg = UnitUtils.lbsToKg(140);
     static public final double ROBOT_MOI_KGM2 = 1.0/12.0 * ROBOT_MASS_kg * Math.pow((WHEEL_BASE_HALF_WIDTH_M*2.2),2) * 2; //Model moment of intertia as a square slab slightly bigger than wheelbase with axis through center
 

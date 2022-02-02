@@ -2,6 +2,7 @@ package frc.robot.Autonomous;
 
 import java.util.Set;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import frc.lib.AutoSequencer.AutoSequencer;
 import frc.lib.Autonomous.AutoMode;
 import frc.lib.Autonomous.AutoModeList;
@@ -123,7 +124,7 @@ public class Autonomous extends LocalClient  {
         curDelayMode.addStepsToSequencer(seq);
         curMainMode.addStepsToSequencer(seq);
     
-        DrivetrainControl.getInstance().pe.setKnownPose(curMainMode.getInitialPose());
+        DrivetrainControl.getInstance().pe.setKnownPose(getStartPose());
 
         curDelayModeTopic.submitNewValue(new TimestampedInteger(curDelayMode.idx));
         curMainModeTopic.submitNewValue(new TimestampedInteger(curMainMode.idx));
@@ -144,6 +145,10 @@ public class Autonomous extends LocalClient  {
 
     public boolean isActive(){
         return (seq.isRunning() && curMainMode != null);
+    }
+
+    public Pose2d getStartPose(){
+        return curMainMode.getInitialPose();
     }
 
     @Override

@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.Constants;
@@ -77,21 +76,19 @@ public class Robot extends TimedRobot {
     pt = PoseTelemetry.getInstance();
     db = new Dashboard(webserver);
 
-    auto = Autonomous.getInstance();
-
     loadMon = new CasseroleRIOLoadMonitor();
 
     di = DriverInput.getInstance();
 
     dt = DrivetrainControl.getInstance();
 
+    auto = Autonomous.getInstance();
+    auto.loadSequencer();
+
     if(Robot.isSimulation()){
       simulationSetup();
     }
 
-    //Autonomous might overwrite this, but pick a default starting pose for now?
-    // Maybe this is unnecessary?
-    dt.pe.setKnownPose(Constants.DFLT_START_POSE);
     syncSimPoseToEstimate();
 
     SignalWrangler.getInstance().registerSignals(this);
@@ -229,12 +226,12 @@ public class Robot extends TimedRobot {
 
   public void simulationSetup(){
     plant = new RobotModel();
+    syncSimPoseToEstimate();
   }
 
   public void syncSimPoseToEstimate(){
     if(Robot.isSimulation()){
       plant.reset(dt.pe.getEstPose());
-      
     }
   }
 
