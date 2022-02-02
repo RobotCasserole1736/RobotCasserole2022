@@ -21,17 +21,10 @@ package frc.robot.Autonomous.Events;
  */
 
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.lib.PathPlanner.PoseListGenerator;
 import frc.robot.PoseTelemetry;
 import frc.robot.Drivetrain.DrivetrainControl;
 
-import java.util.List;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -71,7 +64,7 @@ public class AutoEventDriveForwardTime extends AutoEvent {
         } else {
             dt_inst.setCmdRobotRelative(FWD_SPEED_MPS, 0.0, 0.0);
             //Populate desired pose from drivetrain - meh
-            PoseTelemetry.getInstance().setDesiredPose(dt_inst.pe.getEstPose());
+            PoseTelemetry.getInstance().setDesiredPose(dt_inst.getCurEstPose());
         }
 
     }

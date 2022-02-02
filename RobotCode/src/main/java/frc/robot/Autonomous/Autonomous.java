@@ -108,7 +108,7 @@ public class Autonomous extends LocalClient  {
 
     public void startSequencer(){
         sampleDashboardSelector(); //ensure it gets called once more
-        DrivetrainControl.getInstance().pe.setKnownPose(curMainMode.getInitialPose());
+        DrivetrainControl.getInstance().setKnownPose(curMainMode.getInitialPose());
         if(curMainMode != null){
             seq.start();
         }
@@ -124,7 +124,7 @@ public class Autonomous extends LocalClient  {
         curDelayMode.addStepsToSequencer(seq);
         curMainMode.addStepsToSequencer(seq);
     
-        DrivetrainControl.getInstance().pe.setKnownPose(getStartPose());
+        DrivetrainControl.getInstance().setKnownPose(getStartPose());
 
         curDelayModeTopic.submitNewValue(new TimestampedInteger(curDelayMode.idx));
         curMainModeTopic.submitNewValue(new TimestampedInteger(curMainMode.idx));

@@ -63,7 +63,7 @@ public class DrivetrainControl {
     // This class is designed to combine encoder measurments and gyro readings
     // and maybe vision processing (in the future), and produce a best-guess
     // as to where the robot is at on the field at any particular moment.
-    public DrivetrainPoseEstimator pe;
+    DrivetrainPoseEstimator pe;
 
     // Holonomic drive controller and its components
     PIDController hdc_fwdrev;
@@ -302,6 +302,10 @@ public class DrivetrainControl {
         return curDesPose;
     }
 
+    public Pose2d getCurEstPose(){
+        return pe.getEstPose();
+    }
+
     // Pose Estimation relies on total accumulated distance for some calculations
     // When the pose estimator "warped" from one location to another instantaneously, 
     // we also need to reset its sources of data. 
@@ -319,6 +323,11 @@ public class DrivetrainControl {
         moduleFR.updateTelemetry();
         moduleBL.updateTelemetry();
         moduleBR.updateTelemetry();
+    }
+
+    public void setKnownPose(Pose2d poseIn){
+        curDesPose = poseIn;
+        pe.setKnownPose(poseIn);
     }
 
 }

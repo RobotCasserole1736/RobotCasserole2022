@@ -193,7 +193,7 @@ public class Robot extends TimedRobot {
     dt.updateTelemetry();
 
     pt.setDesiredPose(dt.getCurDesiredPose());
-    pt.setEstimatedPose(dt.pe.getEstPose());
+    pt.setEstimatedPose(dt.getCurEstPose());
     
     pt.update(time);
     SignalWrangler.getInstance().sampleAllSignals(time);
@@ -231,7 +231,7 @@ public class Robot extends TimedRobot {
 
   public void syncSimPoseToEstimate(){
     if(Robot.isSimulation()){
-      plant.reset(dt.pe.getEstPose());
+      plant.reset(dt.getCurEstPose());
     }
   }
 
