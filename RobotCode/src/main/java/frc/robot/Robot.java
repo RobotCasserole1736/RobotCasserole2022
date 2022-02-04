@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
 
   // Things
   CasseroleRIOLoadMonitor loadMon;
+  BatteryMonitor batMan;
 
   // DriverInput
   DriverInput di;
@@ -77,6 +78,7 @@ public class Robot extends TimedRobot {
     db = new Dashboard(webserver);
 
     loadMon = new CasseroleRIOLoadMonitor();
+    batMan = BatteryMonitor.getInstance();
 
     di = DriverInput.getInstance();
 
@@ -196,6 +198,7 @@ public class Robot extends TimedRobot {
     pt.setEstimatedPose(dt.getCurEstPose());
     
     pt.update(time);
+    batMan.update();
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
 
