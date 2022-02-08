@@ -2,8 +2,10 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
+import frc.lib.Signal.Annotations.Signal;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl.CANMotorCtrlType;
 
@@ -34,12 +36,19 @@ public class Shooter {
     private VictorSPX feedWheelOne;
     private VictorSPX feedWheelTwo;
 
+    @Signal (units = "RPM")
+    double actual_Shooter_Speed;
+    @Signal (units = "RPM")
+    double desired_Shooter_Speed;
+
     Calibration shooter_P;
     Calibration shooter_I;
     Calibration shooter_D;
     Calibration shooter_F;
     Calibration shooter_Launch_Speed;
     Calibration allowed_Shooter_Error;
+
+    SimpleMotorFeedforward shooterMotorFF;
 
 	public static synchronized Shooter getInstance() {
 		if(shooter == null)
@@ -61,13 +70,22 @@ public class Shooter {
         shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",2000);
         allowed_Shooter_Error = new Calibration("allowed shooter error", "RPM",100);
 
+        shooterMotorFF = new SimpleMotorFeedforward(0,0);
 
+        calUpdate(true);
 	}
 
 	
     // Call with true to cause the shooter to run, false to stop it.
     public void setRun(boolean runCmd){
+        if (runCmd){
+            shooterMotor.setClosedLoopCmd(shooter_Launch_Speed.get(), shooter_F.get());
 
+        }
+
+        else {
+            shooterMotor.setClosedLoopCmd(0, 0);
+        }
     }
 
 
@@ -83,8 +101,36 @@ public class Shooter {
 
     // Returns whether the shooter is running at its setpoint speed or not.
     public boolean getSpooleldUp(){
+        if(Math.abs(shooterMotor.getVelocity_radpersec() - shooter_Launch_Speed.get()) > allowed_Shooter_Error.get())
+            return false;
+
+        else
+            return true;
+    }
+    public void calUpdate(boolean force){
+
+        // guard these Cal updates with isChanged because they write to motor controlelrs
+        // and that soaks up can bus bandwidth, which we don't want
+        //There's probably a better way to do this than this utter horrible block of characters. But meh.
+        // Did you know that in vsCode you can edit multiple lines at once by holding alt, shift, and then clicking and dragging?
+        if(shooter_P.isChanged() ||
+           shooter_I.isChanged() ||
+           shooter_D.isChanged() ||
+           shooter_F.isChanged() ||
+           shooter_Launch_Speed.isChanged() ||
+           allowed_Shooter_Error.isChanged() ||
+            force){
+            shooterMotor.setClosedLoopGains(shooter_P.get(), shooter_I.get(), shooter_D.get());
+            shooter_P.acknowledgeValUpdate();
+            shooter_I.acknowledgeValUpdate();
+            shooter_D.acknowledgeValUpdate();
+            shooter_F.acknowledgeValUpdate();
+            shooter_Launch_Speed.acknowledgeValUpdate();
+            allowed_Shooter_Error.acknowledgeValUpdate();
+           
+        }
 
     }
 
 
-},
+}
