@@ -45,6 +45,9 @@ public class Robot extends TimedRobot {
   // Intake
   Intake in;
 
+  //Elevator
+  Elevator elevator;
+
   //Drivetrain and drivetrain accessories
   DrivetrainControl dt;
 
@@ -86,6 +89,8 @@ public class Robot extends TimedRobot {
     dt = DrivetrainControl.getInstance();
 
     in = Intake.getInstance();
+
+    elevator = Elevator.getInstance();
 
     auto = Autonomous.getInstance();
     auto.loadSequencer();
@@ -141,6 +146,8 @@ public class Robot extends TimedRobot {
     di.update();
 
     in.update();
+
+    elevator.update();
 
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;

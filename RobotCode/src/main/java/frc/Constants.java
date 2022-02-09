@@ -79,8 +79,8 @@ public class Constants {
     static public final int SHOOTER_MOTOR_CANID = 10;
     static public final int HORIZ_INTAKE_MOTOR_CANID  = 11;
     static public final int VERT_INTAKE_MOTOR_CANID = 12;
-    //static public final int UNUSED = 12;
-    //static public final int UNUSED = 13;
+    
+    static public final int Elevator_Motor_Canid = 13;
     //static public final int UNUSED = 14;
     //static public final int UNUSED = 15;
     //static public final int UNUSED = 16;
