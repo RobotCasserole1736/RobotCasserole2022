@@ -18,7 +18,7 @@ public class IntakeSimTest {
   @Before // this method will run before each test
   public void setup() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
-    ctrl = new SimSmartMotor(Constants.INTAKE_MOTOR_CANID);
+    ctrl = new SimSmartMotor(Constants.HORIZ_INTAKE_MOTOR_CANID);
     ctrl.sim_setSupplyVoltage(12.0);
     intk = new IntakeSim();
     phSim = new REVPHSim();

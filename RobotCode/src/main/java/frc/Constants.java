@@ -36,7 +36,7 @@ public class Constants {
     //////////////////////////////////////////////////////////////////
 
     // PWM Bank
-    //static public final int UNUSED = 0; 
+    static public final int LED_CONTROLLER_PORT = 0; 
     //static public final int UNUSED = 1;
     //static public final int UNUSED = 2;
     //static public final int UNUSED = 3;

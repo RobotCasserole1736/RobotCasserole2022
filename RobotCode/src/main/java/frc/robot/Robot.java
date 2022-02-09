@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
   Autonomous auto;
   PoseTelemetry pt;
 
+  LEDController ledCont;
   //TEMPORARY OBJECTS
   // These are just here to keep the sim happy while we test
   // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
@@ -94,6 +95,7 @@ public class Robot extends TimedRobot {
       simulationSetup();
     }
 
+    ledCont = LEDController.getInstance();
     syncSimPoseToEstimate();
 
     SignalWrangler.getInstance().registerSignals(this);
