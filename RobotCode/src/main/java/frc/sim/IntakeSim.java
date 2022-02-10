@@ -44,7 +44,7 @@ public class IntakeSim {
 
         double moi = 0.5 * INTAKE_WHEEL_MASS_kg * INTAKE_WHEEL_RADIUS_m * INTAKE_WHEEL_RADIUS_m;
         motorWithRotatingMass = new FlywheelSim(drivingMotor, INTAKE_GEAR_RATIO, moi);
-        intakeMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.INTAKE_MOTOR_CANID);
+        intakeMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.HORIZ_INTAKE_MOTOR_CANID);
 
         pneumaticsHub = new REVPHSim();
     }

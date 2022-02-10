@@ -42,6 +42,9 @@ public class Robot extends TimedRobot {
   // DriverInput
   DriverInput di;
 
+  // Intake
+  Intake in;
+
   //Drivetrain and drivetrain accessories
   DrivetrainControl dt;
 
@@ -53,7 +56,7 @@ public class Robot extends TimedRobot {
   // These are just here to keep the sim happy while we test
   // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
 
-  CasseroleCANMotorCtrl intakeMotor  = new CasseroleCANMotorCtrl("Intake", Constants.INTAKE_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  //CasseroleCANMotorCtrl intakeMotor  = new CasseroleCANMotorCtrl("Intake", Constants.INTAKE_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
   CasseroleCANMotorCtrl shooterMotor = new CasseroleCANMotorCtrl("Shooter", Constants.SHOOTER_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
 
 
@@ -81,6 +84,8 @@ public class Robot extends TimedRobot {
     di = DriverInput.getInstance();
 
     dt = DrivetrainControl.getInstance();
+
+    in = Intake.getInstance();
 
     auto = Autonomous.getInstance();
     auto.loadSequencer();
@@ -134,6 +139,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     di.update();
+
+    in.update();
 
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
