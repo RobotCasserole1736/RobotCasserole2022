@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -40,6 +41,10 @@ public class Shooter {
     double actual_Shooter_Speed;
     @Signal (units = "RPM")
     double desired_Shooter_Speed;
+    @Signal (units = "Cmd")
+    boolean run_Cmd;
+    @Signal (units = "Cmd")
+    boolean feed_Cmd;
 
     Calibration shooter_P;
     Calibration shooter_I;
@@ -47,6 +52,7 @@ public class Shooter {
     Calibration shooter_F;
     Calibration shooter_Launch_Speed;
     Calibration allowed_Shooter_Error;
+    Calibration feedSpeed;
 
     SimpleMotorFeedforward shooterMotorFF;
 
@@ -68,9 +74,13 @@ public class Shooter {
         shooter_D = new Calibration("shooter D","",0);
         shooter_F = new Calibration("shooter F","",0.006);
         shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",2000);
-        allowed_Shooter_Error = new Calibration("allowed shooter error", "RPM",100);
+        allowed_Shooter_Error = new Calibration("allowed shooter error","RPM",100);
+        feedSpeed = new Calibration("feed speed","Cmd",0.5);
 
         shooterMotorFF = new SimpleMotorFeedforward(0,0);
+
+        run_Cmd = false;
+        feed_Cmd = false;
 
         calUpdate(true);
 	}
@@ -78,25 +88,40 @@ public class Shooter {
 	
     // Call with true to cause the shooter to run, false to stop it.
     public void setRun(boolean runCmd){
-        if (runCmd){
-            shooterMotor.setClosedLoopCmd(shooter_Launch_Speed.get(), shooter_F.get());
-
-        }
-
-        else {
-            shooterMotor.setClosedLoopCmd(0, 0);
-        }
+        run_Cmd = runCmd;
+        
     }
 
 
     // Call with true to cause the feed wheels to run and feed balls to the shooter. False should stop the feed motors.
     public void setFeed(boolean feedCmd){
+        feed_Cmd = feedCmd;
 
     }
 
     //Call this in a periodic loop to keep the shooter up to date
     public void update(){
+        actual_Shooter_Speed = shooterMotor.getVelocity_radpersec();
 
+        if (run_Cmd){
+            shooterMotor.setClosedLoopCmd(shooter_Launch_Speed.get(), shooter_F.get());
+            desired_Shooter_Speed = shooter_Launch_Speed.get();
+        }
+
+        else {
+            shooterMotor.setClosedLoopCmd(0, 0);
+            desired_Shooter_Speed = 0;
+        }
+        
+        if (feed_Cmd){
+            feedWheelOne.set(ControlMode.Velocity, feedSpeed.get());
+            feedWheelTwo.set(ControlMode.Velocity, feedSpeed.get());
+        }
+
+        else {
+            feedWheelOne.set(ControlMode.Velocity, 0);
+            feedWheelTwo.set(ControlMode.Velocity, 0);
+        }
     }
 
     // Returns whether the shooter is running at its setpoint speed or not.
@@ -119,6 +144,7 @@ public class Shooter {
            shooter_F.isChanged() ||
            shooter_Launch_Speed.isChanged() ||
            allowed_Shooter_Error.isChanged() ||
+           feedSpeed.isChanged() ||
             force){
             shooterMotor.setClosedLoopGains(shooter_P.get(), shooter_I.get(), shooter_D.get());
             shooter_P.acknowledgeValUpdate();
@@ -127,6 +153,7 @@ public class Shooter {
             shooter_F.acknowledgeValUpdate();
             shooter_Launch_Speed.acknowledgeValUpdate();
             allowed_Shooter_Error.acknowledgeValUpdate();
+            feedSpeed.acknowledgeValUpdate();
            
         }
 
