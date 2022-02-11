@@ -47,14 +47,14 @@ public class Elevator {
 	Calibration advance;
     Calibration eject;
 	@Signal(units = "cmd")
-	intakeCmdState cmdState;
+	elevatorCmdState cmdState;
 
     
 // Possible states we could want the elevator to be running in
 // STOP: don't move
 // INTAKE: move cargo into and through the singulator into the elevator
 // EJECT: move cargo toward the intake 
-public enum intakeCmdState{
+public enum elevatorCmdState{
    
  
     STOP,
@@ -62,17 +62,17 @@ public enum intakeCmdState{
     EJECT
 }
 
-public void setCmd(intakeCmdState cmd_in){
+public void setCmd(elevatorCmdState cmd_in){
 	cmdState = cmd_in;
 
 }
 
 public void update(){
-	if(cmdState == intakeCmdState.STOP) {
+	if(cmdState == elevatorCmdState.STOP) {
 		elevatorMotor.set(ControlMode.Velocity,0);
-	} else if(cmdState == intakeCmdState.INTAKE) {
+	} else if(cmdState == elevatorCmdState.INTAKE) {
 		elevatorMotor.set(ControlMode.Velocity,advance.get());
-	} else if(cmdState == intakeCmdState.EJECT) {
+	} else if(cmdState == elevatorCmdState.EJECT) {
 		elevatorMotor.set(ControlMode.Velocity,eject.get());
 	} 
 
