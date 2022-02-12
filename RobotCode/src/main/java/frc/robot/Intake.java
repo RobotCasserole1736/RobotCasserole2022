@@ -53,9 +53,19 @@ public class Intake {
 	}
 
     public enum intakeCmdState{
-        STOP,
-        INTAKE,
-        EJECT
+        STOP(0),
+        INTAKE(1),
+        EJECT(-1);
+
+        public final int value;
+
+        private intakeCmdState(int value) {
+            this.value = value;
+        }
+
+        public int toInt() {
+            return this.value;
+        }
     }
 
     public void setCmd(intakeCmdState cmd_in){

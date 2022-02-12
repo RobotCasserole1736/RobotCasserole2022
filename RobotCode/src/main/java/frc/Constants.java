@@ -36,7 +36,7 @@ public class Constants {
     //////////////////////////////////////////////////////////////////
 
     // PWM Bank
-    //static public final int UNUSED = 0; 
+    static public final int LED_CONTROLLER_PORT = 0; 
     //static public final int UNUSED = 1;
     //static public final int UNUSED = 2;
     //static public final int UNUSED = 3;
@@ -81,7 +81,7 @@ public class Constants {
     static public final int VERT_INTAKE_MOTOR_CANID = 12;
     static public final int SHOOTER_FEED_MOTOR_1_CANID = 13;
     static public final int SHOOTER_FEED_MOTOR_2_CANID = 14;
-    //static public final int UNUSED = 15;
+    static public final int Elevator_Motor_Canid = 15;
     //static public final int UNUSED = 16;
     //static public final int UNUSED = 17;
 

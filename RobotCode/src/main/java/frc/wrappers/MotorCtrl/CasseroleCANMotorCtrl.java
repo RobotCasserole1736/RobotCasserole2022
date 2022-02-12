@@ -1,6 +1,5 @@
 package frc.wrappers.MotorCtrl;
 
-import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 import frc.robot.Robot;
 import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;

@@ -15,7 +15,7 @@ public class FunctionGenerator {
 
     // Source for time-varying signals, used to calibrate closed loop control algorithms and systems
     public FunctionGenerator(String name, String units){
-        sigType =  new Calibration("fg_" + name + "_type", "", 3, 0, 3);
+        sigType =  new Calibration("fg_" + name + "_type", "", 3, 0, 0);
         frequency =  new Calibration("fg_" + name + "_freq", "Hz", 2, 0, 1/0.02);
         amplititude =  new Calibration("fg_" + name + "_amp", units, 5.0);
         offset =  new Calibration("fg_" + name + "_offset", units, 0);

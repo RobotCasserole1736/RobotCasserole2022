@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
 
   // Things
   CasseroleRIOLoadMonitor loadMon;
+  BatteryMonitor batMan;
 
   // DriverInput
   DriverInput di;
@@ -50,6 +51,8 @@ public class Robot extends TimedRobot {
 
   //Shooter
   Shooter shooter;
+  //Elevator
+  Elevator elevator;
 
   //Drivetrain and drivetrain accessories
   DrivetrainControl dt;
@@ -58,6 +61,7 @@ public class Robot extends TimedRobot {
   Autonomous auto;
   PoseTelemetry pt;
 
+  LEDController ledCont;
   //TEMPORARY OBJECTS
   // These are just here to keep the sim happy while we test
   // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
@@ -86,6 +90,7 @@ public class Robot extends TimedRobot {
     db = new Dashboard(webserver);
 
     loadMon = new CasseroleRIOLoadMonitor();
+    batMan = BatteryMonitor.getInstance();
 
     di = DriverInput.getInstance();
 
@@ -96,6 +101,7 @@ public class Robot extends TimedRobot {
     in = Intake.getInstance();
 
     shooter = Shooter.getInstance();
+    elevator = Elevator.getInstance();
 
     auto = Autonomous.getInstance();
     auto.loadSequencer();
@@ -104,6 +110,7 @@ public class Robot extends TimedRobot {
       simulationSetup();
     }
 
+    ledCont = LEDController.getInstance();
     syncSimPoseToEstimate();
 
     SignalWrangler.getInstance().registerSignals(this);
@@ -153,6 +160,8 @@ public class Robot extends TimedRobot {
     oi.update();
 
     in.update();
+
+    elevator.update();
 
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
@@ -220,6 +229,7 @@ public class Robot extends TimedRobot {
     pt.setEstimatedPose(dt.getCurEstPose());
     
     pt.update(time);
+    batMan.update();
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
 
