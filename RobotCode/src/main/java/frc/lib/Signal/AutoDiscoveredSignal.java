@@ -81,7 +81,11 @@ class AutoDiscoveredSignal {
             }
         } catch (IllegalAccessException e) {
             System.out.println(
-                    "WARNING: Signal " + sig.getName() + " threw an exception while we were attempting to read it.");
+                    "WARNING: Signal " + sig.getName() + " threw Illegal Access while we were attempting to read it.");
+            System.out.println(e);
+        } catch (NullPointerException e) {
+            System.out.println(
+                    "WARNING: Signal " + sig.getName() + " threw Null Pointer while we were attempting to read it.");
             System.out.println(e);
         }
     }

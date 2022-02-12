@@ -13,17 +13,25 @@ import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;
 public class IntakeSim {
 
     // Spinny Parts
-    FlywheelSim motorWithRotatingMass;
-    SimSmartMotor intakeMotor;
+    FlywheelSim horizMotorWithRotatingMass;
+    FlywheelSim vertMotorWithRotatingMass;
+    SimSmartMotor horizIntakeMotor;
+    SimSmartMotor vertIntakeMotor;
     private final double INTAKE_GEAR_RATIO = 1.0;
     private final double INTAKE_WHEEL_MASS_kg = Units.lbsToKilograms(8.0);
     private final double INTAKE_WHEEL_RADIUS_m = Units.inchesToMeters(1.0);
     DCMotor drivingMotor = DCMotor.getNeo550(1);
     
     @Signal(units="V")
-    double appliedVoltage = 0;
+    double horizAppliedVoltage = 0;
     @Signal(units="radPerSec")
-    double speed = 0;
+    double horizSpeed = 0;
+
+    @Signal(units="V")
+    double vertAppliedVoltage = 0;
+    @Signal(units="radPerSec")
+    double vertSpeed = 0;
+
 
     // Pushy Parts
     private final double CYL_STROKE_LEN_M = 0.25;
@@ -43,8 +51,11 @@ public class IntakeSim {
     public IntakeSim(){
 
         double moi = 0.5 * INTAKE_WHEEL_MASS_kg * INTAKE_WHEEL_RADIUS_m * INTAKE_WHEEL_RADIUS_m;
-        motorWithRotatingMass = new FlywheelSim(drivingMotor, INTAKE_GEAR_RATIO, moi);
-        intakeMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.HORIZ_INTAKE_MOTOR_CANID);
+        horizMotorWithRotatingMass = new FlywheelSim(drivingMotor, INTAKE_GEAR_RATIO, moi);
+        horizIntakeMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.HORIZ_INTAKE_MOTOR_CANID);
+
+        vertMotorWithRotatingMass = new FlywheelSim(drivingMotor, INTAKE_GEAR_RATIO, moi);
+        vertIntakeMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.VERT_INTAKE_MOTOR_CANID);
 
         pneumaticsHub = new REVPHSim();
     }
@@ -52,21 +63,30 @@ public class IntakeSim {
     public void update(boolean isDisabled, double batteryVoltage, double supplyPressure_kPa){
 
         // Spinny
-        intakeMotor.sim_setSupplyVoltage(batteryVoltage);
+        horizIntakeMotor.sim_setSupplyVoltage(batteryVoltage);
+        vertIntakeMotor.sim_setSupplyVoltage(batteryVoltage);
 
         if(isDisabled){
-            appliedVoltage = 0;
+            horizAppliedVoltage = 0;
+            vertAppliedVoltage = 0;
         } else {
-            appliedVoltage = intakeMotor.getAppliedVoltage_V();
+            horizAppliedVoltage = horizIntakeMotor.getAppliedVoltage_V();
+            vertAppliedVoltage = vertIntakeMotor.getAppliedVoltage_V();
         }
 
-        motorWithRotatingMass.setInputVoltage(appliedVoltage);
+        horizMotorWithRotatingMass.setInputVoltage(horizAppliedVoltage);
+        vertMotorWithRotatingMass.setInputVoltage(vertAppliedVoltage);
 
-        motorWithRotatingMass.update(Constants.SIM_SAMPLE_RATE_SEC);
+        horizMotorWithRotatingMass.update(Constants.SIM_SAMPLE_RATE_SEC);
+        vertMotorWithRotatingMass.update(Constants.SIM_SAMPLE_RATE_SEC);
 
-        speed = motorWithRotatingMass.getAngularVelocityRadPerSec();
-        intakeMotor.sim_setActualVelocity(speed * INTAKE_GEAR_RATIO);
-        intakeMotor.sim_setCurrent(motorWithRotatingMass.getCurrentDrawAmps());
+        horizSpeed = horizMotorWithRotatingMass.getAngularVelocityRadPerSec();
+        horizIntakeMotor.sim_setActualVelocity(horizSpeed * INTAKE_GEAR_RATIO);
+        horizIntakeMotor.sim_setCurrent(horizMotorWithRotatingMass.getCurrentDrawAmps());
+
+        vertSpeed = vertMotorWithRotatingMass.getAngularVelocityRadPerSec();
+        vertIntakeMotor.sim_setActualVelocity(vertSpeed * INTAKE_GEAR_RATIO);
+        vertIntakeMotor.sim_setCurrent(vertMotorWithRotatingMass.getCurrentDrawAmps());
 
         // Pushy
         boolean shouldExtend = pneumaticsHub.getSolenoidOutput(Constants.INTAKE_SOLENOID) & !isDisabled;
@@ -88,7 +108,7 @@ public class IntakeSim {
     }
 
     public double getCurrentDraw_A(){
-        return intakeMotor.getCurrent_A();
+        return horizIntakeMotor.getCurrent_A() + vertIntakeMotor.getCurrent_A();
     }
 
     public double getCylFlow_lps(){

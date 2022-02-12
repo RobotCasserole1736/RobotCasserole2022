@@ -47,7 +47,7 @@ public class Elevator {
 	Calibration advance;
     Calibration eject;
 	@Signal(units = "cmd")
-	elevatorCmdState cmdState;
+	elevatorCmdState cmdState = elevatorCmdState.STOP;
 
     
 // Possible states we could want the elevator to be running in
@@ -55,11 +55,19 @@ public class Elevator {
 // INTAKE: move cargo into and through the singulator into the elevator
 // EJECT: move cargo toward the intake 
 public enum elevatorCmdState{
-   
- 
-    STOP,
-    INTAKE,
-    EJECT
+    STOP(0),
+    INTAKE(1),
+    EJECT(-1);
+
+	public final int value;
+
+	private elevatorCmdState(int value) {
+		this.value = value;
+	}
+
+	public int toInt() {
+		return this.value;
+	}
 }
 
 public void setCmd(elevatorCmdState cmd_in){
