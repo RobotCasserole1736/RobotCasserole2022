@@ -11,15 +11,18 @@ import frc.wrappers.MotorCtrl.Sim.SimSmartMotor;
 import org.junit.*;
 
 public class IntakeSimTest {
-  SimSmartMotor ctrl;
+  SimSmartMotor ctrlHoriz;
+  SimSmartMotor ctrlVert;
   IntakeSim intk;
   REVPHSim phSim;
 
   @Before // this method will run before each test
   public void setup() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
-    ctrl = new SimSmartMotor(Constants.HORIZ_INTAKE_MOTOR_CANID);
-    ctrl.sim_setSupplyVoltage(12.0);
+    ctrlHoriz = new SimSmartMotor(Constants.HORIZ_INTAKE_MOTOR_CANID);
+    ctrlHoriz.sim_setSupplyVoltage(12.0);
+    ctrlVert = new SimSmartMotor(Constants.VERT_INTAKE_MOTOR_CANID);
+    ctrlVert.sim_setSupplyVoltage(12.0);
     intk = new IntakeSim();
     phSim = new REVPHSim();
   }
@@ -61,19 +64,19 @@ public class IntakeSimTest {
 
   @Test
   public void ingestTest() {
-    ctrl.setVoltageCmd(12.0);
+    ctrlHoriz.setVoltageCmd(12.0);
     run(2.0);
-    assertTrue(ctrl.getVelocity_radpersec() > 0);
-    assertTrue(ctrl.getCurrent_A() > 0);
+    assertTrue(ctrlHoriz.getVelocity_radpersec() > 0);
+    assertTrue(ctrlHoriz.getCurrent_A() > 0);
     assertTrue(intk.getCurrentDraw_A() > 0);
   }
 
   @Test
   public void ejectTest() {
-    ctrl.setVoltageCmd(-12.0);
+    ctrlHoriz.setVoltageCmd(-12.0);
     run(2.0);
-    assertTrue(ctrl.getVelocity_radpersec() < 0);
-    assertTrue(ctrl.getCurrent_A() > 0);
+    assertTrue(ctrlHoriz.getVelocity_radpersec() < 0);
+    assertTrue(ctrlHoriz.getCurrent_A() > 0);
     assertTrue(intk.getCurrentDraw_A() > 0);
   }
 
