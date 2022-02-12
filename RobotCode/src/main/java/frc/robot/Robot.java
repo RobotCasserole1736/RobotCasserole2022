@@ -49,6 +49,9 @@ public class Robot extends TimedRobot {
   //Elevator
   Elevator elevator;
 
+  //Climber
+  Climber climb;
+
   //Drivetrain and drivetrain accessories
   DrivetrainControl dt;
 
@@ -86,6 +89,7 @@ public class Robot extends TimedRobot {
 
     loadMon = new CasseroleRIOLoadMonitor();
     batMan = BatteryMonitor.getInstance();
+    climb = Climber.getInstance();
 
     di = DriverInput.getInstance();
 
@@ -152,6 +156,8 @@ public class Robot extends TimedRobot {
     in.update();
 
     elevator.update();
+
+    climb.update();
 
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
