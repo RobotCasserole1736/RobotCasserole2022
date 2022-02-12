@@ -42,8 +42,14 @@ public class Robot extends TimedRobot {
   // DriverInput
   DriverInput di;
 
+  //OperatorInput
+  OperatorInput oi;
+
   // Intake
   Intake in;
+
+  //Shooter
+  Shooter shooter;
 
   //Drivetrain and drivetrain accessories
   DrivetrainControl dt;
@@ -83,9 +89,13 @@ public class Robot extends TimedRobot {
 
     di = DriverInput.getInstance();
 
+    oi = OperatorInput.getInstance();
+
     dt = DrivetrainControl.getInstance();
 
     in = Intake.getInstance();
+
+    shooter = Shooter.getInstance();
 
     auto = Autonomous.getInstance();
     auto.loadSequencer();
@@ -140,6 +150,8 @@ public class Robot extends TimedRobot {
 
     di.update();
 
+    oi.update();
+
     in.update();
 
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
@@ -151,6 +163,9 @@ public class Robot extends TimedRobot {
     } else {
       dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
     }
+
+    shooter.setFeed(oi.getFeedShooter());
+    shooter.setRun(oi.getRunShooter());
 
     //intakeMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
     //shooterMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
@@ -183,6 +198,8 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void robotPeriodic() {
+
+    shooter.update();
 
     if(DriverStation.isTest() && !DriverStation.isDisabled()){
       dt.testUpdate();

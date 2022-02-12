@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.util.Units;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
@@ -104,29 +105,31 @@ public class Shooter {
         actual_Shooter_Speed = shooterMotor.getVelocity_radpersec();
 
         if (run_Cmd){
-            shooterMotor.setClosedLoopCmd(shooter_Launch_Speed.get(), shooter_F.get());
             desired_Shooter_Speed = shooter_Launch_Speed.get();
+            var desired_Shooter_Speed_RadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(desired_Shooter_Speed);
+            shooterMotor.setClosedLoopCmd(desired_Shooter_Speed_RadPerSec, shooter_F.get() * desired_Shooter_Speed_RadPerSec);
         }
 
         else {
-            shooterMotor.setClosedLoopCmd(0, 0);
+            shooterMotor.setVoltageCmd(0);
             desired_Shooter_Speed = 0;
         }
         
         if (feed_Cmd){
-            feedWheelOne.set(ControlMode.Velocity, feedSpeed.get());
-            feedWheelTwo.set(ControlMode.Velocity, feedSpeed.get());
+            feedWheelOne.set(ControlMode.PercentOutput, feedSpeed.get());
+            feedWheelTwo.set(ControlMode.PercentOutput, feedSpeed.get());
         }
 
         else {
-            feedWheelOne.set(ControlMode.Velocity, 0);
-            feedWheelTwo.set(ControlMode.Velocity, 0);
+            feedWheelOne.set(ControlMode.PercentOutput, 0);
+            feedWheelTwo.set(ControlMode.PercentOutput, 0);
         }
     }
 
     // Returns whether the shooter is running at its setpoint speed or not.
     public boolean getSpooleldUp(){
-        if(Math.abs(shooterMotor.getVelocity_radpersec() - shooter_Launch_Speed.get()) > allowed_Shooter_Error.get())
+        var Speed_RPM = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
+        if(Math.abs(Speed_RPM - shooter_Launch_Speed.get()) > allowed_Shooter_Error.get())
             return false;
 
         else
