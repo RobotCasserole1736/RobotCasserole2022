@@ -82,7 +82,7 @@ public class Webserver2 {
             new HttpConnectionFactory(httpConfiguration));
         http.setPort(5805);
         server.addConnector(http);
-        final SslContextFactory sslContextFactory = new SslContextFactory("./src/main/deploy/keystore/localkey.jks");
+        final SslContextFactory sslContextFactory = new SslContextFactory(resourceBase + "/../keystore/localkey.jks");
         sslContextFactory.setKeyStorePassword("aaaaaa");
         final HttpConfiguration httpsConfiguration = new HttpConfiguration(httpConfiguration);
         httpsConfiguration.addCustomizer(new SecureRequestCustomizer());

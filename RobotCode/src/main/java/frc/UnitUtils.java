@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 public class UnitUtils{
 
     
-    public static double RPMtoDegPerSec(double rpmIn){ return rpmIn * 60.0 / 360.0; }
+    public static double RPMtoDegPerSec(double rpmIn){ return rpmIn * 360 / 60.0; }
     public static double lbsToKg(double lbs_in){return 0.4535924 * lbs_in;}
 
     public static double kPaToPsi(double kPa_in){return kPa_in / 6.89475729;}

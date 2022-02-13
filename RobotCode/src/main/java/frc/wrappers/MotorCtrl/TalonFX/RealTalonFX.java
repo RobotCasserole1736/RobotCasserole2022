@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
 import edu.wpi.first.math.util.Units;
 import frc.wrappers.MotorCtrl.AbstractSimmableMotorController;
@@ -34,6 +35,8 @@ public class RealTalonFX extends AbstractSimmableMotorController {
         _talon.configPeakOutputForward(1,  TIMEOUT_MS);
         _talon.configPeakOutputReverse(-1, TIMEOUT_MS);
         _talon.enableVoltageCompensation(true);
+        _talon.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_20Ms, TIMEOUT_MS);
+        _talon.configVelocityMeasurementWindow(16, TIMEOUT_MS);
         _talon.configVoltageCompSaturation(MAX_VOLTAGE, TIMEOUT_MS);
     }
 
@@ -52,9 +55,9 @@ public class RealTalonFX extends AbstractSimmableMotorController {
         // d = volts / (rad/sec error) / seconds
 
         //Convert to CTRE Units
-        p = ( CMD_PER_V ) *  (1/NATIVE_UNITS_PER_REV) * Units.radiansToRotations(p);
-        i = ( CMD_PER_V ) *  (1/NATIVE_UNITS_PER_REV) * Units.radiansToRotations(i); //CTRE needs this in * 1000 ms (or * 1 sec)
-        d = ( CMD_PER_V ) *  (1/NATIVE_UNITS_PER_REV) * Units.radiansToRotations(d); //CTRE needs this in / 1000 ms (or / 1 sec)
+        p = ( CMD_PER_V ) *  RevtoCTRENativeUnits(Units.radiansToRotations(p));
+        i = ( CMD_PER_V ) *  RevtoCTRENativeUnits(Units.radiansToRotations(i)); //CTRE needs this in * 1000 ms (or * 1 sec)
+        d = ( CMD_PER_V ) *  RevtoCTRENativeUnits(Units.radiansToRotations(d)); //CTRE needs this in / 1000 ms (or / 1 sec)
 
         _talon.config_kP(0, p, TIMEOUT_MS);
         _talon.config_kI(0, i, TIMEOUT_MS);
@@ -64,7 +67,7 @@ public class RealTalonFX extends AbstractSimmableMotorController {
 
     @Override
     public void setClosedLoopCmd(double velocityCmd_radpersec, double arbFF_V) {
-        var arbFF_demand = arbFF_V * 12.0; //TODO - base off of battery voltage rather than assuming 12.0
+        var arbFF_demand = arbFF_V / 12.0; // CTRE wants this in the range [-1, 1].  TODO use bbattery voltage?
         var velCmdRPM = Units.radiansPerSecondToRotationsPerMinute(velocityCmd_radpersec);
         _talon.set(TalonFXControlMode.Velocity, RPMtoCTRENativeUnits(velCmdRPM), DemandType.ArbitraryFeedForward, arbFF_demand); 
     }
@@ -120,11 +123,11 @@ public class RealTalonFX extends AbstractSimmableMotorController {
     }
 
     double RPMtoCTRENativeUnits(double in_rpm){
-        return in_rpm * NATIVE_UNITS_PER_REV / 600.0;
+        return RevtoCTRENativeUnits(in_rpm) / 600;
     }
 
     double CTRENativeUnitstoRPM(double in_native){
-        return in_native / NATIVE_UNITS_PER_REV * 600.0;
+        return CTRENativeUnitstoRev(in_native) * 600;
     }
 
     double RevtoCTRENativeUnits(double in_rev){
