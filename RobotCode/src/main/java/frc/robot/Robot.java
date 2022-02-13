@@ -200,6 +200,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     dt.calUpdate(false);
+    shooter.calUpdate(false);
 
     auto.sampleDashboardSelector();
 

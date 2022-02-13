@@ -124,6 +124,8 @@ public class Shooter {
             feedWheelOne.set(ControlMode.PercentOutput, 0);
             feedWheelTwo.set(ControlMode.PercentOutput, 0);
         }
+
+        shooterMotor.update();
     }
 
     // Returns whether the shooter is running at its setpoint speed or not.
