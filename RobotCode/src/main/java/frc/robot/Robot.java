@@ -43,9 +43,14 @@ public class Robot extends TimedRobot {
   // DriverInput
   DriverInput di;
 
+  //OperatorInput
+  OperatorInput oi;
+
   // Intake
   Intake in;
 
+  //Shooter
+  Shooter shooter;
   //Elevator
   Elevator elevator;
 
@@ -65,7 +70,7 @@ public class Robot extends TimedRobot {
   // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
 
   //CasseroleCANMotorCtrl intakeMotor  = new CasseroleCANMotorCtrl("Intake", Constants.INTAKE_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
-  CasseroleCANMotorCtrl shooterMotor = new CasseroleCANMotorCtrl("Shooter", Constants.SHOOTER_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  //CasseroleCANMotorCtrl shooterMotor = new CasseroleCANMotorCtrl("Shooter", Constants.SHOOTER_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
 
 
   // ... 
@@ -93,10 +98,13 @@ public class Robot extends TimedRobot {
 
     di = DriverInput.getInstance();
 
+    oi = OperatorInput.getInstance();
+
     dt = DrivetrainControl.getInstance();
 
     in = Intake.getInstance();
 
+    shooter = Shooter.getInstance();
     elevator = Elevator.getInstance();
 
     auto = Autonomous.getInstance();
@@ -153,6 +161,8 @@ public class Robot extends TimedRobot {
 
     di.update();
 
+    oi.update();
+
     in.update();
 
     elevator.update();
@@ -168,6 +178,9 @@ public class Robot extends TimedRobot {
     } else {
       dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
     }
+
+    shooter.setFeed(oi.getFeedShooter());
+    shooter.setRun(oi.getRunShooter());
 
     //intakeMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
     //shooterMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
@@ -200,6 +213,8 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void robotPeriodic() {
+
+    shooter.update();
 
     if(DriverStation.isTest() && !DriverStation.isDisabled()){
       dt.testUpdate();
