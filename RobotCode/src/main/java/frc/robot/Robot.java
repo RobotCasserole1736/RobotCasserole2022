@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
   // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
 
   //CasseroleCANMotorCtrl intakeMotor  = new CasseroleCANMotorCtrl("Intake", Constants.INTAKE_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
-  CasseroleCANMotorCtrl shooterMotor = new CasseroleCANMotorCtrl("Shooter", Constants.SHOOTER_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  //CasseroleCANMotorCtrl shooterMotor = new CasseroleCANMotorCtrl("Shooter", Constants.SHOOTER_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
 
 
   // ... 
