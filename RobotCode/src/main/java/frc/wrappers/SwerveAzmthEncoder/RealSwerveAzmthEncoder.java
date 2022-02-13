@@ -13,6 +13,7 @@ public class RealSwerveAzmthEncoder extends AbstractSwerveAzmthEncoder {
     public RealSwerveAzmthEncoder(int port){
         dc = new DutyCycleEncoder(port);
         dc.setDistancePerRotation(2 * Math.PI);
+        dc.setDutyCycleRange(1.0/4096.0, 1.0);
     }
 
     @Override
