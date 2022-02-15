@@ -70,10 +70,10 @@ public class Shooter {
         feedWheelOne = new VictorSPX(Constants.SHOOTER_FEED_MOTOR_1_CANID);
         feedWheelTwo = new VictorSPX(Constants.SHOOTER_FEED_MOTOR_2_CANID);
 
-        shooter_P = new Calibration("shooter P","",0);
+        shooter_P = new Calibration("shooter P","",0.01);
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);
-        shooter_F = new Calibration("shooter F","",0.006);
+        shooter_F = new Calibration("shooter F","",0.0202);
         shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",2000);
         allowed_Shooter_Error = new Calibration("allowed shooter error","RPM",100);
         feedSpeed = new Calibration("feed speed","Cmd",0.5);
@@ -102,7 +102,7 @@ public class Shooter {
 
     //Call this in a periodic loop to keep the shooter up to date
     public void update(){
-        actual_Shooter_Speed = shooterMotor.getVelocity_radpersec();
+        actual_Shooter_Speed = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
 
         if (run_Cmd){
             desired_Shooter_Speed = shooter_Launch_Speed.get();
