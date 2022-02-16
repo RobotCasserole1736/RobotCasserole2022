@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
   // Things
   CasseroleRIOLoadMonitor loadMon;
   BatteryMonitor batMan;
+  Ballcolordetector bcd;
 
   // DriverInput
   DriverInput di;
@@ -95,6 +96,7 @@ public class Robot extends TimedRobot {
     loadMon = new CasseroleRIOLoadMonitor();
     batMan = BatteryMonitor.getInstance();
     climb = Climber.getInstance();
+    bcd = new Ballcolordetector();
 
     di = DriverInput.getInstance();
 
@@ -214,7 +216,7 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void robotPeriodic() {
-
+    bcd.update();
     shooter.update();
 
     if(DriverStation.isTest() && !DriverStation.isDisabled()){
