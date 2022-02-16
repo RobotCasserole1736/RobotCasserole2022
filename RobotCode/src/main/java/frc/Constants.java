@@ -78,11 +78,11 @@ public class Constants {
     static public final int BR_AZMTH_MOTOR_CANID = 9;
     static public final int SHOOTER_MOTOR_CANID = 10;
     static public final int HORIZ_INTAKE_MOTOR_CANID  = 11;
-    static public final int VERT_INTAKE_MOTOR_CANID = 12;
-    static public final int SHOOTER_FEED_MOTOR_1_CANID = 13;
-    static public final int SHOOTER_FEED_MOTOR_2_CANID = 14;
-    static public final int Elevator_Motor_Canid = 15;
-    //static public final int UNUSED = 16;
+    static public final int LEFT_VERT_INTAKE_MOTOR_CANID = 12;
+    static public final int RIGHT_VERT_INTAKE_MOTOR_CANID = 13;
+    static public final int SHOOTER_FEED_MOTOR_1_CANID = 14;
+    static public final int SHOOTER_FEED_MOTOR_2_CANID = 15;
+    static public final int Elevator_Motor_Canid = 16;
     //static public final int UNUSED = 17;
 
     // Pneumatics Hub
