@@ -21,6 +21,8 @@ public class ShooterSim {
     //Two Colsons
     private final double SHOOTER_WHEEL_TOP_MASS_kg = Units.lbsToKilograms(0.64);
     private final double SHOOTER_WHEEL_TOP_RADIUS_m = Units.inchesToMeters(3.5/2);
+    //MOI fudge factor cuz friction and wheels and shafts and whatnot
+    private final double MOI_FUDGE = 1.8;
 
 
     DCMotor drivingMotor = DCMotor.getNEO(1);
@@ -33,8 +35,8 @@ public class ShooterSim {
 
     public ShooterSim(){
 
-        double moi_top = 0.5 * SHOOTER_WHEEL_TOP_MASS_kg * SHOOTER_WHEEL_TOP_RADIUS_m * SHOOTER_WHEEL_TOP_RADIUS_m;
-        double moi_bottom = 0.5 * SHOOTER_WHEEL_BOTTOM_MASS_kg * SHOOTER_WHEEL_BOTTOM_RADIUS_m * SHOOTER_WHEEL_BOTTOM_RADIUS_m;
+        double moi_top = MOI_FUDGE * 0.5 * SHOOTER_WHEEL_TOP_MASS_kg * SHOOTER_WHEEL_TOP_RADIUS_m * SHOOTER_WHEEL_TOP_RADIUS_m;
+        double moi_bottom = MOI_FUDGE * 0.5 * SHOOTER_WHEEL_BOTTOM_MASS_kg * SHOOTER_WHEEL_BOTTOM_RADIUS_m * SHOOTER_WHEEL_BOTTOM_RADIUS_m;
 
         motorWithRotatingMass = new FlywheelSim(drivingMotor, SHOOTER_GEAR_RATIO, moi_top + moi_bottom);
         shooterMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.SHOOTER_MOTOR_CANID);

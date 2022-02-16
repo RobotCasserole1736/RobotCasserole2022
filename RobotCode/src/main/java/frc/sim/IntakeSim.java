@@ -55,7 +55,7 @@ public class IntakeSim {
         horizIntakeMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.HORIZ_INTAKE_MOTOR_CANID);
 
         vertMotorWithRotatingMass = new FlywheelSim(drivingMotor, INTAKE_GEAR_RATIO, moi);
-        vertIntakeMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.VERT_INTAKE_MOTOR_CANID);
+        vertIntakeMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.LEFT_VERT_INTAKE_MOTOR_CANID);
 
         pneumaticsHub = new REVPHSim();
     }

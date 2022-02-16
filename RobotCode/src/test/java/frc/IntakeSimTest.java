@@ -21,7 +21,7 @@ public class IntakeSimTest {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
     ctrlHoriz = new SimSmartMotor(Constants.HORIZ_INTAKE_MOTOR_CANID);
     ctrlHoriz.sim_setSupplyVoltage(12.0);
-    ctrlVert = new SimSmartMotor(Constants.VERT_INTAKE_MOTOR_CANID);
+    ctrlVert = new SimSmartMotor(Constants.LEFT_VERT_INTAKE_MOTOR_CANID);
     ctrlVert.sim_setSupplyVoltage(12.0);
     intk = new IntakeSim();
     phSim = new REVPHSim();

@@ -29,12 +29,15 @@ public class Intake {
 	private static Intake intake = null;
 
     private CasseroleCANMotorCtrl horizIntakeMotor;
-    private CasseroleCANMotorCtrl vertIntakeMotor;
+    private CasseroleCANMotorCtrl vertIntakeMotorL;
+    private CasseroleCANMotorCtrl vertIntakeMotorR;
 
     Calibration horizIntakeSpeed;
     Calibration horizEjectSpeed;
-    Calibration vertIntakeSpeed;
-    Calibration vertEjectSpeed;
+    Calibration vertIntakeSpeedL;
+    Calibration vertEjectSpeedL;
+    Calibration vertIntakeSpeedR;
+    Calibration vertEjectSpeedR;
 
 	public static synchronized Intake getInstance() {
 		if(intake == null)
@@ -44,12 +47,15 @@ public class Intake {
 
 	private Intake() {
         horizIntakeMotor = new CasseroleCANMotorCtrl("intakeHoriz", Constants.HORIZ_INTAKE_MOTOR_CANID, CANMotorCtrlType.TALON_FX);
-        vertIntakeMotor = new CasseroleCANMotorCtrl("intakeVert", Constants.VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
+        vertIntakeMotorL = new CasseroleCANMotorCtrl("intakeVertL", Constants.LEFT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
+        vertIntakeMotorR = new CasseroleCANMotorCtrl("intakeVertR", Constants.RIGHT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
 
-        horizIntakeSpeed = new Calibration("Horizontal Intake Speed", "", 0.8);
-        horizEjectSpeed = new Calibration("Horizontal Eject Speed", "", -0.8);
-        vertIntakeSpeed = new Calibration("Vertical Intake Speed", "", 0.8);
-        vertEjectSpeed = new Calibration("Vertical Eject Speed", "", -0.8);
+        horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.8);
+        horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.8);
+        vertIntakeSpeedL = new Calibration("INT Left Vertical Intake Speed", "", 0.8);
+        vertEjectSpeedL = new Calibration("INT Left Vertical Eject Speed", "", -0.8);
+        vertIntakeSpeedR = new Calibration("INT Right Vertical Intake Speed", "", -0.8);
+        vertEjectSpeedR = new Calibration("INT Right Vertical Eject Speed", "", 0.8);
 	}
 
     public enum intakeCmdState{
@@ -78,11 +84,19 @@ public class Intake {
         } 
 
         if(cmd_in == intakeCmdState.STOP) {
-            vertIntakeMotor.setVoltageCmd(0);
+            vertIntakeMotorL.setVoltageCmd(0);
         } else if(cmd_in == intakeCmdState.INTAKE) {
-            vertIntakeMotor.setVoltageCmd(vertIntakeSpeed.get());
-        } else if(cmd_in == intakeCmdState.EJECT); {
-            vertIntakeMotor.setVoltageCmd(vertEjectSpeed.get());
+            vertIntakeMotorL.setVoltageCmd(vertIntakeSpeedL.get());
+        } else if(cmd_in == intakeCmdState.EJECT) {
+            vertIntakeMotorL.setVoltageCmd(vertEjectSpeedL.get());
+        }
+
+        if(cmd_in == intakeCmdState.STOP) {
+            vertIntakeMotorR.setVoltageCmd(0);
+        } else if(cmd_in == intakeCmdState.INTAKE) {
+            vertIntakeMotorR.setVoltageCmd(vertIntakeSpeedR.get());
+        } else if(cmd_in == intakeCmdState.EJECT) {
+            vertIntakeMotorR.setVoltageCmd(vertIntakeSpeedR.get());
         }
     }
 
