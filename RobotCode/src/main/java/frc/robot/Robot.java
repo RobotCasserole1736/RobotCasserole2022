@@ -17,7 +17,9 @@ import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.Drivetrain.DrivetrainControl;
 import frc.sim.RobotModel;
+import frc.wrappers.ADXRS453.CasseroleADXRS453;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
+import frc.wrappers.SwerveAzmthEncoder.CasseroleSwerveAzmthEncoder;
 
 
 /**
@@ -44,19 +46,19 @@ public class Robot extends TimedRobot {
   DriverInput di;
 
   // Intake
-  Intake in;
+  //Intake in;
 
   //Elevator
-  Elevator elevator;
+  //Elevator elevator;
 
   //Drivetrain and drivetrain accessories
-  DrivetrainControl dt;
+  //DrivetrainControl dt;
 
   // Autonomous Control Utilities
-  Autonomous auto;
-  PoseTelemetry pt;
+  //Autonomous auto;
+  //PoseTelemetry pt;
 
-  LEDController ledCont;
+  //LEDController ledCont;
   //TEMPORARY OBJECTS
   // These are just here to keep the sim happy while we test
   // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
@@ -64,6 +66,9 @@ public class Robot extends TimedRobot {
   //CasseroleCANMotorCtrl intakeMotor  = new CasseroleCANMotorCtrl("Intake", Constants.INTAKE_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
   CasseroleCANMotorCtrl shooterMotor = new CasseroleCANMotorCtrl("Shooter", Constants.SHOOTER_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
 
+  //CasseroleSwerveAzmthEncoder amzthTest = new CasseroleSwerveAzmthEncoder("test", Constants.FL_AZMTH_ENC_IDX, 0.0);
+
+  CasseroleADXRS453 testGyro = new CasseroleADXRS453();
 
   // ... 
   // But before here
@@ -81,7 +86,7 @@ public class Robot extends TimedRobot {
     /* Init website utilties */
     webserver = new Webserver2();
     CalWrangler.getInstance();
-    pt = PoseTelemetry.getInstance();
+    //pt = PoseTelemetry.getInstance();
     db = new Dashboard(webserver);
 
     loadMon = new CasseroleRIOLoadMonitor();
@@ -89,21 +94,23 @@ public class Robot extends TimedRobot {
 
     di = DriverInput.getInstance();
 
-    dt = DrivetrainControl.getInstance();
+    testGyro.calibrate();
 
-    in = Intake.getInstance();
+    //dt = DrivetrainControl.getInstance();
 
-    elevator = Elevator.getInstance();
+    //in = Intake.getInstance();
 
-    auto = Autonomous.getInstance();
-    auto.loadSequencer();
+    //elevator = Elevator.getInstance();
 
-    if(Robot.isSimulation()){
-      simulationSetup();
-    }
+    //auto = Autonomous.getInstance();
+    //auto.loadSequencer();
 
-    ledCont = LEDController.getInstance();
-    syncSimPoseToEstimate();
+    //if(Robot.isSimulation()){
+    //  simulationSetup();
+   // }
+
+    //ledCont = LEDController.getInstance();
+    //syncSimPoseToEstimate();
 
     SignalWrangler.getInstance().registerSignals(this);
     webserver.startServer();
@@ -118,19 +125,25 @@ public class Robot extends TimedRobot {
     SignalWrangler.getInstance().logger.startLoggingAuto();
 
     //Reset sequencer
-    auto.reset();
-    auto.startSequencer();
+    //auto.reset();
+    //auto.startSequencer();
+
+    testGyro.reset(0);
 
 
     // Ensure simulation resets to correct pose at the start of autonomous
-    syncSimPoseToEstimate();
+    //syncSimPoseToEstimate();
+
+    shooterMotor.setClosedLoopGains(0.00001,0,0);
 
   }
 
   @Override
   public void autonomousPeriodic() {
     //Step the sequencer forward
-    auto.update();
+    //auto.update();
+
+    shooterMotor.setClosedLoopCmd(48.0, 0.825);
 
   }
 
@@ -149,22 +162,22 @@ public class Robot extends TimedRobot {
 
     di.update();
 
-    in.update();
+    //in.update();
 
-    elevator.update();
+    //elevator.update();
 
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double rotateCmd_radpersec = di.getRotateCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
 
-    if(di.getRobotRelative()){
-      dt.setCmdRobotRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
-    } else {
-      dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
-    }
+    //if(di.getRobotRelative()){
+    //  dt.setCmdRobotRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
+    //} else {
+    //  dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
+    //}
 
     //intakeMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
-    //shooterMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
+    shooterMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
 
   }
 
@@ -180,9 +193,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    dt.calUpdate(false);
+    //dt.calUpdate(false);
 
-    auto.sampleDashboardSelector();
+    //auto.sampleDashboardSelector();
 
   }
 
@@ -196,24 +209,27 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
 
     if(DriverStation.isTest() && !DriverStation.isDisabled()){
-      dt.testUpdate();
+      //dt.testUpdate();
     } else {
-      dt.update();
+      //dt.update();
     }
 
-    db.updateDriverView();
+    shooterMotor.update();
+    testGyro.update();
+
+    //db.updateDriverView();
     telemetryUpdate();
   }
 
   private void telemetryUpdate(){
     double time = Timer.getFPGATimestamp();
 
-    dt.updateTelemetry();
+    //dt.updateTelemetry();
 
-    pt.setDesiredPose(dt.getCurDesiredPose());
-    pt.setEstimatedPose(dt.getCurEstPose());
+    //pt.setDesiredPose(dt.getCurDesiredPose());
+    //pt.setEstimatedPose(dt.getCurEstPose());
     
-    pt.update(time);
+    //pt.update(time);
     batMan.update();
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
@@ -229,7 +245,7 @@ public class Robot extends TimedRobot {
     LiveWindow.setEnabled(false);
 
     // Tell the subsystems that care that we're entering test mode.
-    dt.testInit();
+    //dt.testInit();
   }
 
   @Override
@@ -250,14 +266,14 @@ public class Robot extends TimedRobot {
 
   public void syncSimPoseToEstimate(){
     if(Robot.isSimulation()){
-      plant.reset(dt.getCurEstPose());
+      //plant.reset(dt.getCurEstPose());
     }
   }
 
   @Override
   public void simulationPeriodic(){
     plant.update(this.isDisabled());
-    pt.setActualPose(plant.getCurActPose());
+    //pt.setActualPose(plant.getCurActPose());
   }
 
 
