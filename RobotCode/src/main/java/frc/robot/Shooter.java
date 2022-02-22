@@ -45,7 +45,7 @@ public class Shooter {
     @Signal (units = "Cmd")
     boolean run_Cmd;
     @Signal (units = "Cmd")
-    boolean feed_Cmd;
+    shooterFeedCmdState feed_Cmd;
 
     Calibration shooter_P;
     Calibration shooter_I;
@@ -54,6 +54,8 @@ public class Shooter {
     Calibration shooter_Launch_Speed;
     Calibration allowed_Shooter_Error;
     Calibration feedSpeed;
+    Calibration ejectSpeed;
+    Calibration intakeSpeed;
 
     SimpleMotorFeedforward shooterMotorFF;
 
@@ -77,27 +79,45 @@ public class Shooter {
         shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",2000);
         allowed_Shooter_Error = new Calibration("allowed shooter error","RPM",100);
         feedSpeed = new Calibration("feed speed","Cmd",0.5);
+        ejectSpeed = new Calibration("eject speed","Cmd",-0.5);
+        intakeSpeed = new Calibration("intake speed","Cmd",0.5);
 
         shooterMotorFF = new SimpleMotorFeedforward(0,0);
 
         run_Cmd = false;
-        feed_Cmd = false;
+        feed_Cmd = shooterFeedCmdState.STOP;
 
         calUpdate(true);
 	}
 
+    public enum shooterFeedCmdState{
+        STOP(0),
+        INTAKE(1),
+        EJECT(-1),
+        FEED(2);
+
+        public final int value;
+        private shooterFeedCmdState(int value) {
+            this.value = value;
+        }
+
+        public int toInt() {
+            return this.value;
+        }
+
+    }
+
+    
+    // Call with true to cause the feed wheels to run and feed balls to the shooter. False should stop the feed motors.
+    public void setFeed(shooterFeedCmdState ShooterFeedCmdState){
+        feed_Cmd = ShooterFeedCmdState;
+        
+    }
 	
     // Call with true to cause the shooter to run, false to stop it.
     public void setRun(boolean runCmd){
         run_Cmd = runCmd;
         
-    }
-
-
-    // Call with true to cause the feed wheels to run and feed balls to the shooter. False should stop the feed motors.
-    public void setFeed(boolean feedCmd){
-        feed_Cmd = feedCmd;
-
     }
 
     //Call this in a periodic loop to keep the shooter up to date
@@ -108,21 +128,23 @@ public class Shooter {
             desired_Shooter_Speed = shooter_Launch_Speed.get();
             var desired_Shooter_Speed_RadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(desired_Shooter_Speed);
             shooterMotor.setClosedLoopCmd(desired_Shooter_Speed_RadPerSec, shooter_F.get() * desired_Shooter_Speed_RadPerSec);
-        }
-
-        else {
+        } else {
             shooterMotor.setVoltageCmd(0);
             desired_Shooter_Speed = 0;
         }
         
-        if (feed_Cmd){
-            feedWheelOne.set(ControlMode.PercentOutput, feedSpeed.get());
-            feedWheelTwo.set(ControlMode.PercentOutput, feedSpeed.get());
-        }
-
-        else {
+        if(feed_Cmd == shooterFeedCmdState.STOP) {
             feedWheelOne.set(ControlMode.PercentOutput, 0);
             feedWheelTwo.set(ControlMode.PercentOutput, 0);
+        } else if(feed_Cmd == shooterFeedCmdState.INTAKE) {
+            feedWheelOne.set(ControlMode.PercentOutput, intakeSpeed.get());
+            feedWheelTwo.set(ControlMode.PercentOutput, intakeSpeed.get());
+        } else if(feed_Cmd == shooterFeedCmdState.EJECT) {
+            feedWheelOne.set(ControlMode.PercentOutput, ejectSpeed.get());
+            feedWheelTwo.set(ControlMode.PercentOutput, ejectSpeed.get());
+        } else if(feed_Cmd == shooterFeedCmdState.FEED) {
+            feedWheelOne.set(ControlMode.PercentOutput, feedSpeed.get());
+            feedWheelTwo.set(ControlMode.PercentOutput, feedSpeed.get());        
         }
 
         shooterMotor.update();
@@ -137,9 +159,10 @@ public class Shooter {
         else
             return true;
     }
+
     public void calUpdate(boolean force){
 
-        // guard these Cal updates with isChanged because they write to motor controlelrs
+        // guard these Cal updates with isChanged because they write to motor controllers
         // and that soaks up can bus bandwidth, which we don't want
         //There's probably a better way to do this than this utter horrible block of characters. But meh.
         // Did you know that in vsCode you can edit multiple lines at once by holding alt, shift, and then clicking and dragging?
