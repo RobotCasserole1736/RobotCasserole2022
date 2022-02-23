@@ -99,48 +99,52 @@ public class DriverInput {
         return curSideToSideCmd;
     }
 
-    public boolean getrunShooter(){
+    public boolean getRunShooter(){
         return runShooter;
     }
 
-    public boolean getfeedShooter(){
+    public boolean getFeedShooter(){
         return feedShooter;
     }
 
-    public boolean getclimbExtend(){
+    public boolean getClimbExtend(){
         return climbExtend;
     }
 
-    public boolean getclimbRetract(){
+    public boolean getClimbRetract(){
         return climbRetract;
     }
 
-    public boolean getclimbTilt(){
+    public boolean getClimbTilt(){
         return climbTilt;
     }
 
-    public boolean getclimbStraighten(){
+    public boolean getClimbStraighten(){
         return climbStraighten;
     }
 
-    public boolean getintakeLowerAndRun(){
+    public boolean getIntakeLowerAndRun(){
         return intakeLowerAndRun;
     }
 
-    public boolean getintakeRaise(){
+    public boolean getIntakeRaise(){
         return intakeRaise;
     }
 
-    public boolean geteject(){
+    public boolean getEject(){
         return eject;
     }
 
-    public boolean getcompEnable(){
+    public boolean getCompEnable(){
         return compEnable;
     }
 
-    public boolean getcompDisable(){
+    public boolean getCompDisable(){
         return compDisable;
+    }
+
+    public boolean getRobotRelative(){
+        return robotRelative;
     }
     
 }
