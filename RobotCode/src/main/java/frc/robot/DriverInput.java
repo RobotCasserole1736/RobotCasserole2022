@@ -6,6 +6,7 @@ import frc.lib.Signal.Annotations.Signal;
 public class DriverInput {
     
     XboxController driverController;
+    boolean compressorEnabled = true;
 
     private static DriverInput di = null;
     public static synchronized DriverInput getInstance() {
@@ -37,6 +38,13 @@ public class DriverInput {
         curRotCmd = -1.0 * driverController.getRightX();
         curSideToSideCmd = -1.0 * driverController.getLeftX();
         robotRelative = driverController.getRightBumper();
+
+        if(driverController.getStartButton()) {
+            compressorEnabled = true;
+        } else if(driverController.getBackButton()) {
+            compressorEnabled = false;
+        } else {
+        }
     }
 
     /**
@@ -67,5 +75,9 @@ public class DriverInput {
     public boolean getRobotRelative(){
         return robotRelative;
     }
+
+    public boolean getCompressorEnabledCmd(){
+        return compressorEnabled;
+      }
     
 }

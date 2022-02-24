@@ -16,14 +16,20 @@ public class PneumaticsSupplyControl {
         phCompressor.enableDigital();
     }
 
-    public void setCompressorEnabled(boolean enable){
-        //enable = phCompressor.enabled();
-        //Is above necessary? And if statement here or in update?
+    public void setCompressorEnabledCmd(boolean cmd_in){
+        if(cmd_in){
+            phCompressor.enableDigital();
+        } else {
+            phCompressor.disable();
+        }
+        
+    }
+
+    public void setCompressorRun(boolean run_cmd){
 
     }
 
     public void update(){
-        
         currentPressure = phCompressor.getPressure();
 
     }

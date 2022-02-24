@@ -173,6 +173,9 @@ public class Robot extends TimedRobot {
 
     climb.update();
 
+    PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
+
+
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double rotateCmd_radpersec = di.getRotateCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
