@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
   //Drivetrain and drivetrain accessories
   DrivetrainControl dt;
 
+  RobotAngle angle;
+
   // Autonomous Control Utilities
   Autonomous auto;
   PoseTelemetry pt;
@@ -105,6 +107,8 @@ public class Robot extends TimedRobot {
     oi = OperatorInput.getInstance();
 
     dt = DrivetrainControl.getInstance();
+
+    angle = RobotAngle.getInstance();
 
     in = Intake.getInstance();
 
@@ -231,6 +235,8 @@ public class Robot extends TimedRobot {
     } else {
       dt.update();
     }
+
+    angle.update();
 
     db.updateDriverView();
     telemetryUpdate();
