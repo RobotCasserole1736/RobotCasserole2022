@@ -23,12 +23,36 @@ public class DriverInput {
 
     @Signal(units="bool")
     boolean robotRelative;
+   
+    @Signal(units="bool")
+    boolean runShooter;
+    @Signal(units="bool")
+    boolean feedShooter;
+    @Signal(units="bool")
+    boolean climbExtend;
+    @Signal(units="bool")
+    boolean climbRetract;
+    @Signal(units="bool")
+    boolean climbTilt;
+    @Signal(units="bool")
+    boolean climbStraighten;
+    @Signal(units="bool")
+    boolean intakeLowerAndRun;
+    @Signal(units="bool")
+    boolean intakeRaise;
+    @Signal(units="bool")
+    boolean eject;
+    @Signal(units="bool")
+    boolean compEnable;
+    @Signal(units="bool")
+    boolean compDisable;
 
 
 
     private DriverInput(){
 
         driverController = new XboxController(0);
+
 
     }
 
@@ -37,6 +61,17 @@ public class DriverInput {
         curRotCmd = -1.0 * driverController.getRightX();
         curSideToSideCmd = -1.0 * driverController.getLeftX();
         robotRelative = driverController.getRightBumper();
+        runShooter = driverController.getLeftTriggerAxis()>0.5;
+        feedShooter = driverController.getLeftBumper();
+        intakeLowerAndRun = driverController.getRightTriggerAxis()>0.5;
+        eject = driverController.getXButtonPressed();
+        compEnable = driverController.getStartButton();
+        compDisable = driverController.getBackButton();
+        climbExtend = driverController.getPOV()==0 && driverController.getBButton();
+        climbRetract = driverController.getPOV()==180 && driverController.getBButton();
+        climbTilt = driverController.getPOV()==270 && driverController.getBButton();
+        climbStraighten = driverController.getPOV()==90 && driverController.getBButton();
+
     }
 
     /**
@@ -62,6 +97,50 @@ public class DriverInput {
     }
     public double getSideToSideCmd(){
         return curSideToSideCmd;
+    }
+
+    public boolean getRunShooter(){
+        return runShooter;
+    }
+
+    public boolean getFeedShooter(){
+        return feedShooter;
+    }
+
+    public boolean getClimbExtend(){
+        return climbExtend;
+    }
+
+    public boolean getClimbRetract(){
+        return climbRetract;
+    }
+
+    public boolean getClimbTilt(){
+        return climbTilt;
+    }
+
+    public boolean getClimbStraighten(){
+        return climbStraighten;
+    }
+
+    public boolean getIntakeLowerAndRun(){
+        return intakeLowerAndRun;
+    }
+
+    public boolean getIntakeRaise(){
+        return intakeRaise;
+    }
+
+    public boolean getEject(){
+        return eject;
+    }
+
+    public boolean getCompEnable(){
+        return compEnable;
+    }
+
+    public boolean getCompDisable(){
+        return compDisable;
     }
 
     public boolean getRobotRelative(){

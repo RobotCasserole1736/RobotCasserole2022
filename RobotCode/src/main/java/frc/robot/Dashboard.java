@@ -21,6 +21,21 @@ public class Dashboard {
     boolean masterCaution;
     String masterCautionTxt;
 
+    @Signal(name="db_shooterSpeed")
+    double shooterSpeed;
+
+    @Signal(name="db_pneumaticsPressure")
+    double pnuemPressure;
+
+    @Signal(name="db_shooterSpoolup")
+    boolean shooterSpoolup;
+
+    @Signal(name="db_clmberTilt")
+    boolean climberTilt;
+
+    @Signal(name="db_clmberExtend")
+    boolean climberExtend;
+
     boolean pneumaticPressureLow = false; //TODO?
 
     DashboardConfig d;
@@ -53,13 +68,13 @@ public class Dashboard {
         topicList[1] = new SwerveStateTopicSet("FR",1);
         topicList[2] = new SwerveStateTopicSet("BL",2);
         topicList[3] = new SwerveStateTopicSet("BR",3);
-        d.addSwerveState(topicList, "SwerveState", RIGHT_COL, ROW1, 0.8);
+        d.addSwerveState(topicList, "SwerveState", RIGHT_COL+3.5, ROW1, 0.8);
 
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_masterCaution"),"Master Caution", "#FF0000", "icons/alert.svg", CENTER_COL-6, ROW2, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_visionTargetVisible"),"Vision Target Visible", "#00FF00", "icons/vision.svg", CENTER_COL, ROW2, 1.0);
         //d.addIcon(SignalUtils.nameToNT4ValueTopic("db_climberUpperLimit"),"Climber Upper Limit", "#FFFF00", "icons/upperLimit.svg", CENTER_COL+6, ROW2, 1.0);
 
-        //d.addIcon(SignalUtils.nameToNT4ValueTopic("db_shooterSpoolup"),"Shooter Spoolup", "#FFFF00", "icons/speed.svg", CENTER_COL-6, ROW2+5, 1.0);
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_shooterSpoolup"),"Shooter Spoolup", "#FFFF00", "icons/speed.svg", CENTER_COL-12, ROW2, 1.0);
         //d.addIcon(SignalUtils.nameToNT4ValueTopic("db_conveyorFull"),"Conveyor Full", "#00FF00", "icons/gear.svg", CENTER_COL, ROW2+5, 1.0);
         //d.addIcon(SignalUtils.nameToNT4ValueTopic("db_climberLowerLimit"),"Climber Lower Limit", "#FFFF00", "icons/lowerLimit.svg", CENTER_COL+6, ROW2+5, 1.0);
         
@@ -67,7 +82,14 @@ public class Dashboard {
 
         d.addAutoChooser(Autonomous.getInstance().delayModeList, CENTER_COL, ROW3, 1.0);
         d.addAutoChooser(Autonomous.getInstance().mainModeList, CENTER_COL, ROW4, 1.0);
-    
+
+        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_shooterSpeed"), "Shooter Speed", "rpm", 0, 5000, 1000, 2000, CENTER_COL-7, ROW1, 1.0);
+        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_pneumaticsPressure"), "Pneum. Pressure", "psi", 0, 130, 80, 120, CENTER_COL+13, ROW1, 1.0);
+
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberTilt"),"Climber Tilt", "#FFFF00", "icons/climb.svg", CENTER_COL+12, ROW2, 1.0);
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberExtend"),"Climber Extend", "#FFFF00", "icons/climb.svg", CENTER_COL+6, ROW2, 1.0);
+
+
       }
     
       public void updateDriverView() {
@@ -83,6 +105,13 @@ public class Dashboard {
           masterCautionTxt = "";
           masterCaution = false;
         }
+
+        shooterSpeed = Shooter.getInstance().getShooterSpeed();
+        //pnuemPressure = PnuematicsSupplyControl.getInstance().getPressure();
+        // Waiting for class to be made
+        shooterSpoolup = Shooter.getInstance().getSpooledUp();
+        climberTilt = Climber.getInstance().getIsTilted();
+        climberExtend = Climber.getInstance().getIsExtended();
 
       }
     
