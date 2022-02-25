@@ -66,6 +66,8 @@ public class Robot extends TimedRobot {
   PoseTelemetry pt;
 
   LEDController ledCont;
+
+  PneumaticsSupplyControl PSC;
   //TEMPORARY OBJECTS
   // These are just here to keep the sim happy while we test
   // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
@@ -119,6 +121,8 @@ public class Robot extends TimedRobot {
     ledCont = LEDController.getInstance();
     syncSimPoseToEstimate();
 
+    PSC = new PneumaticsSupplyControl();
+
     SignalWrangler.getInstance().registerSignals(this);
     webserver.startServer();
   }
@@ -170,6 +174,9 @@ public class Robot extends TimedRobot {
     elevator.update();
 
     climb.update();
+
+    PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
+
 
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
     double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
