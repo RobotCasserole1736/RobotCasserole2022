@@ -192,7 +192,10 @@ public class Robot extends TimedRobot {
       dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
     }
 
-    shooter.setFeed(di.getFeedShooter());
+    if(di.getFeedShooter())
+      shooter.setFeed(Shooter.shooterFeedCmdState.FEED);
+    else
+      shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
     shooter.setRun(di.getRunShooter());
 
     //intakeMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
