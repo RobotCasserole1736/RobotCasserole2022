@@ -95,7 +95,13 @@ public class Constants {
     //static public final int UNUSED = 6;
     //static public final int UNUSED = 7;
     //static public final int UNUSED = 8;
-    //static public final int UNUSED = 9;    
+    //static public final int UNUSED = 9; 
+    
+     //////////////////////////////////////////////////////////////////
+    // Shooter Constants
+    //////////////////////////////////////////////////////////////////
+    public static final double SINGLE_BALL_SHOT_TIME = 1.5;
+    public static final double DOUBLE_BALL_SHOT_TIME = 2.0;
 
     //////////////////////////////////////////////////////////////////
     // Nominal Sample Times
