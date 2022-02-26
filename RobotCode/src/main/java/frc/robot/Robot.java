@@ -12,12 +12,12 @@ import frc.Constants;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.lib.Signal.SignalWrangler;
+import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.Drivetrain.DrivetrainControl;
 import frc.sim.RobotModel;
-import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 
 
 /**
@@ -38,8 +38,8 @@ public class Robot extends TimedRobot {
 
   // Things
   CasseroleRIOLoadMonitor loadMon;
-  BatteryMonitor batMan;
-  Ballcolordetector bcd;
+  //BatteryMonitor batMan;
+  //Ballcolordetector bcd;
 
   // DriverInput
   DriverInput di;
@@ -70,12 +70,15 @@ public class Robot extends TimedRobot {
   LEDController ledCont;
 
   PneumaticsSupplyControl PSC;
-  //TEMPORARY OBJECTS
-  // These are just here to keep the sim happy while we test
-  // They should be deleted/moved/modified/whatever as the drivetrain or whateverclasses are actually developed
 
-  //CasseroleCANMotorCtrl intakeMotor  = new CasseroleCANMotorCtrl("Intake", Constants.INTAKE_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
-  //CasseroleCANMotorCtrl shooterMotor = new CasseroleCANMotorCtrl("Shooter", Constants.SHOOTER_MOTOR_CANID, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
+  @Signal
+  double loopDurationSec;
+  double startTimeSec;
+
+  @Signal
+  double loopPeriodSec;
+
+  
 
 
   // ... 
@@ -89,6 +92,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
+    // Disable default behavior of the live-window output manipulation logic
+    // We've got our own and never use this anyway.
+    LiveWindow.setEnabled(false);
+
     NT4Server.getInstance(); // Ensure it starts
 
     /* Init website utilties */
@@ -98,9 +105,9 @@ public class Robot extends TimedRobot {
     db = new Dashboard(webserver);
 
     loadMon = new CasseroleRIOLoadMonitor();
-    batMan = BatteryMonitor.getInstance();
+    //batMan = BatteryMonitor.getInstance();
     climb = Climber.getInstance();
-    bcd = new Ballcolordetector();
+    //bcd = new Ballcolordetector();
 
     di = DriverInput.getInstance();
 
@@ -198,8 +205,6 @@ public class Robot extends TimedRobot {
       shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
     shooter.setRun(di.getRunShooter());
 
-    //intakeMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
-    //shooterMotor.setVoltageCmd(di.getSideToSideCmd() * 12.0);
 
   }
 
@@ -215,6 +220,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    loopPeriodSec = Timer.getFPGATimestamp() - startTimeSec;
+    startTimeSec = Timer.getFPGATimestamp();
     dt.calUpdate(false);
     shooter.calUpdate(false);
 
@@ -230,8 +237,9 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void robotPeriodic() {
-    bcd.update();
+    //bcd.update();
     shooter.update();
+    elevator.update();
 
     if(DriverStation.isTest() && !DriverStation.isDisabled()){
       dt.testUpdate();
@@ -243,6 +251,8 @@ public class Robot extends TimedRobot {
 
     db.updateDriverView();
     telemetryUpdate();
+
+    loopDurationSec = Timer.getFPGATimestamp() - startTimeSec;
   }
 
   private void telemetryUpdate(){
@@ -254,7 +264,7 @@ public class Robot extends TimedRobot {
     pt.setEstimatedPose(dt.getCurEstPose());
     
     pt.update(time);
-    batMan.update();
+    //batMan.update();
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
 
@@ -264,9 +274,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit(){
-    // Disable default behavior of the live-window output manipulation logic
-    // We've got our own and never use this anyway.
-    LiveWindow.setEnabled(false);
 
     // Tell the subsystems that care that we're entering test mode.
     dt.testInit();

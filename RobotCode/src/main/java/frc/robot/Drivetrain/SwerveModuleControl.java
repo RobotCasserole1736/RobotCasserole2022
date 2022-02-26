@@ -44,12 +44,15 @@ class SwerveModuleControl {
     @Signal(units = "cmd")
     double wheelMotorCmd;
 
-    public SwerveModuleControl(String modName, int wheelMotorIdx, int azmthMotorIdx, int azmthEncoderIdx){
+    public SwerveModuleControl(String modName, int wheelMotorIdx, int azmthMotorIdx, int azmthEncoderIdx, double azmthOffset, boolean invertWheel){
 
         wheelMotorCtrl = new CasseroleCANMotorCtrl("wheel"+modName, wheelMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.TALON_FX);
         azmthMotorCtrl = new CasseroleCANMotorCtrl("azmth"+modName, azmthMotorIdx, CasseroleCANMotorCtrl.CANMotorCtrlType.SPARK_MAX);
-        azmth_enc = new CasseroleSwerveAzmthEncoder("encoder"+modName, azmthEncoderIdx, 0);
+        azmth_enc = new CasseroleSwerveAzmthEncoder("encoder"+modName, azmthEncoderIdx, azmthOffset);
       
+        wheelMotorCtrl.setInverted(invertWheel);
+        azmthMotorCtrl.setInverted(true);
+
         azmthPosDesSig = new frc.lib.Signal.Signal(SwerveStateTopicSet.PREFIX + modName + SwerveStateTopicSet.SUFFIX_AZMTH_DES, "deg");
         azmthPosActSig = new frc.lib.Signal.Signal(SwerveStateTopicSet.PREFIX + modName + SwerveStateTopicSet.SUFFIX_AZMTH_ACT, "deg");
         wheelSpdDesSig = new frc.lib.Signal.Signal(SwerveStateTopicSet.PREFIX + modName + SwerveStateTopicSet.SUFFIX_WHEEL_DES, "RPM");

@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import frc.lib.Signal.Annotations.Signal;
 
 public class BatteryMonitor {
@@ -28,7 +29,7 @@ public class BatteryMonitor {
 	}
 
 	private BatteryMonitor() {
-		pd = new PowerDistribution();
+		pd = new PowerDistribution(1,ModuleType.kRev);
 		
 	}
 

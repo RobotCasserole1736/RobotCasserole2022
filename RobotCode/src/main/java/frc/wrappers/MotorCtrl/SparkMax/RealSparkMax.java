@@ -4,6 +4,7 @@ package frc.wrappers.MotorCtrl.SparkMax;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.util.Units;
@@ -23,6 +24,7 @@ public class RealSparkMax extends AbstractSimmableMotorController {
         m_motor.restoreFactoryDefaults();
         m_pidController = m_motor.getPIDController();
         m_encoder = m_motor.getEncoder();
+        m_motor.setIdleMode(IdleMode.kCoast);
     }
 
 

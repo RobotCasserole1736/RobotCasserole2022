@@ -46,9 +46,9 @@ public class Intake {
 	}
 
 	private Intake() {
-        horizIntakeMotor = new CasseroleCANMotorCtrl("intakeHoriz", Constants.HORIZ_INTAKE_MOTOR_CANID, CANMotorCtrlType.TALON_FX);
-        vertIntakeMotorL = new CasseroleCANMotorCtrl("intakeVertL", Constants.LEFT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
-        vertIntakeMotorR = new CasseroleCANMotorCtrl("intakeVertR", Constants.RIGHT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
+        //horizIntakeMotor = new CasseroleCANMotorCtrl("intakeHoriz", Constants.HORIZ_INTAKE_MOTOR_CANID, CANMotorCtrlType.TALON_FX);
+        //vertIntakeMotorL = new CasseroleCANMotorCtrl("intakeVertL", Constants.LEFT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
+        //vertIntakeMotorR = new CasseroleCANMotorCtrl("intakeVertR", Constants.RIGHT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
 
         horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.8);
         horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.8);
@@ -75,29 +75,29 @@ public class Intake {
     }
 
     public void setCmd(intakeCmdState cmd_in){
-        if(cmd_in == intakeCmdState.STOP) {
-            horizIntakeMotor.setVoltageCmd(0);
-        } else if(cmd_in == intakeCmdState.INTAKE) {
-            horizIntakeMotor.setVoltageCmd(horizIntakeSpeed.get());
-        } else if(cmd_in == intakeCmdState.EJECT) {
-            horizIntakeMotor.setVoltageCmd(horizEjectSpeed.get());
-        } 
+        //if(cmd_in == intakeCmdState.STOP) {
+        //    horizIntakeMotor.setVoltageCmd(0);
+        //} else if(cmd_in == intakeCmdState.INTAKE) {
+        //    horizIntakeMotor.setVoltageCmd(horizIntakeSpeed.get());
+        //} else if(cmd_in == intakeCmdState.EJECT) {
+        //    horizIntakeMotor.setVoltageCmd(horizEjectSpeed.get());
+        //} 
 
-        if(cmd_in == intakeCmdState.STOP) {
-            vertIntakeMotorL.setVoltageCmd(0);
-        } else if(cmd_in == intakeCmdState.INTAKE) {
-            vertIntakeMotorL.setVoltageCmd(vertIntakeSpeedL.get());
-        } else if(cmd_in == intakeCmdState.EJECT) {
-            vertIntakeMotorL.setVoltageCmd(vertEjectSpeedL.get());
-        }
-
-        if(cmd_in == intakeCmdState.STOP) {
-            vertIntakeMotorR.setVoltageCmd(0);
-        } else if(cmd_in == intakeCmdState.INTAKE) {
-            vertIntakeMotorR.setVoltageCmd(vertIntakeSpeedR.get());
-        } else if(cmd_in == intakeCmdState.EJECT) {
-            vertIntakeMotorR.setVoltageCmd(vertIntakeSpeedR.get());
-        }
+        //if(cmd_in == intakeCmdState.STOP) {
+        //    vertIntakeMotorL.setVoltageCmd(0);
+        //} else if(cmd_in == intakeCmdState.INTAKE) {
+        //    vertIntakeMotorL.setVoltageCmd(vertIntakeSpeedL.get());
+        //} else if(cmd_in == intakeCmdState.EJECT) {
+        //    vertIntakeMotorL.setVoltageCmd(vertEjectSpeedL.get());
+        //}
+//
+        //if(cmd_in == intakeCmdState.STOP) {
+        //    vertIntakeMotorR.setVoltageCmd(0);
+        //} else if(cmd_in == intakeCmdState.INTAKE) {
+        //    vertIntakeMotorR.setVoltageCmd(vertIntakeSpeedR.get());
+        //} else if(cmd_in == intakeCmdState.EJECT) {
+        //    vertIntakeMotorR.setVoltageCmd(vertIntakeSpeedR.get());
+        //}
     }
 
     public void update(){

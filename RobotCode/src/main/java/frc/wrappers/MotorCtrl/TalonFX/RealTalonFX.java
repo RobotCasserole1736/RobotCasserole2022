@@ -1,6 +1,7 @@
 package frc.wrappers.MotorCtrl.TalonFX;
 
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -13,7 +14,7 @@ public class RealTalonFX extends AbstractSimmableMotorController {
 
     WPI_TalonFX _talon;
 
-    final int TIMEOUT_MS = 30;
+    final int TIMEOUT_MS = 1000;
 
     final double MAX_VOLTAGE = 14.0;
 
@@ -38,6 +39,7 @@ public class RealTalonFX extends AbstractSimmableMotorController {
         _talon.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_20Ms, TIMEOUT_MS);
         _talon.configVelocityMeasurementWindow(16, TIMEOUT_MS);
         _talon.configVoltageCompSaturation(MAX_VOLTAGE, TIMEOUT_MS);
+        _talon.setNeutralMode(NeutralMode.Coast);
     }
 
 
