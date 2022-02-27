@@ -93,12 +93,12 @@ public class DrivetrainControl {
 
     private DrivetrainControl(){
 
-        moduleWheel_kP = new Calibration("Drivetrain Module Wheel kP", "", 0.001);
+        moduleWheel_kP = new Calibration("Drivetrain Module Wheel kP", "", /*0.001*/0);
         moduleWheel_kI = new Calibration("Drivetrain Module Wheel kI", "", 0.0);
         moduleWheel_kD = new Calibration("Drivetrain Module Wheel kD", "", 0.0);
         moduleWheel_kV = new Calibration("Drivetrain Module Wheel kV", "volts/radPerSec", 12.0/668.112);
         moduleWheel_kS = new Calibration("Drivetrain Module Wheel kS", "volts", 0.1);
-        moduleAzmth_kP = new Calibration("Drivetrain Module Azmth kP", "", 0.005);
+        moduleAzmth_kP = new Calibration("Drivetrain Module Azmth kP", "", 0.008);
         moduleAzmth_kI = new Calibration("Drivetrain Module Azmth kI", "", 0.0);
         moduleAzmth_kD = new Calibration("Drivetrain Module Azmth kD", "", 0.00001);
 
@@ -120,10 +120,10 @@ public class DrivetrainControl {
 
         hdc.setEnabled(true);
 
-        moduleFL = new SwerveModuleControl("FL", Constants.FL_WHEEL_MOTOR_CANID,Constants.FL_AZMTH_MOTOR_CANID,Constants.FL_AZMTH_ENC_IDX, Units.degreesToRadians(124.2), false);
-        moduleFR = new SwerveModuleControl("FR", Constants.FR_WHEEL_MOTOR_CANID,Constants.FR_AZMTH_MOTOR_CANID,Constants.FR_AZMTH_ENC_IDX, Units.degreesToRadians(273.3), true);
-        moduleBL = new SwerveModuleControl("BL", Constants.BL_WHEEL_MOTOR_CANID,Constants.BL_AZMTH_MOTOR_CANID,Constants.BL_AZMTH_ENC_IDX, Units.degreesToRadians(242.4), false);
-        moduleBR = new SwerveModuleControl("BR", Constants.BR_WHEEL_MOTOR_CANID,Constants.BR_AZMTH_MOTOR_CANID,Constants.BR_AZMTH_ENC_IDX, Units.degreesToRadians(310.4), true);          
+        moduleFL = new SwerveModuleControl("FL", Constants.FL_WHEEL_MOTOR_CANID,Constants.FL_AZMTH_MOTOR_CANID,Constants.FL_AZMTH_ENC_IDX, Units.degreesToRadians(124.2), true);
+        moduleFR = new SwerveModuleControl("FR", Constants.FR_WHEEL_MOTOR_CANID,Constants.FR_AZMTH_MOTOR_CANID,Constants.FR_AZMTH_ENC_IDX, Units.degreesToRadians(273.3), false);
+        moduleBL = new SwerveModuleControl("BL", Constants.BL_WHEEL_MOTOR_CANID,Constants.BL_AZMTH_MOTOR_CANID,Constants.BL_AZMTH_ENC_IDX, Units.degreesToRadians(242.4), true);
+        moduleBR = new SwerveModuleControl("BR", Constants.BR_WHEEL_MOTOR_CANID,Constants.BR_AZMTH_MOTOR_CANID,Constants.BR_AZMTH_ENC_IDX, Units.degreesToRadians(310.4), false);          
 
         pe = DrivetrainPoseEstimator.getInstance();
 

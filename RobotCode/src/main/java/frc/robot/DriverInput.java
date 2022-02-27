@@ -57,9 +57,26 @@ public class DriverInput {
     }
 
     public void update(){
+
+        
         curFwdRevCmd = -1.0 * driverController.getLeftY();
         curRotCmd = -1.0 * driverController.getRightX();
         curSideToSideCmd = -1.0 * driverController.getLeftX();
+
+
+        //Temp, need to change these to the wpilib versions
+        if(Math.abs(curFwdRevCmd) < 0.1){
+            curFwdRevCmd = 0;
+        }
+
+        if(Math.abs(curRotCmd) < 0.1){
+            curRotCmd = 0;
+        }
+
+        if(Math.abs(curSideToSideCmd) < 0.1){
+            curSideToSideCmd = 0;
+        }
+
         robotRelative = driverController.getRightBumper();
         runShooter = driverController.getLeftTriggerAxis()>0.5;
         feedShooter = driverController.getLeftBumper();

@@ -189,11 +189,11 @@ public class Robot extends TimedRobot {
     PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
 
 
-    double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
-    double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
+    double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
+    double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
     double rotateCmd_radpersec = di.getRotateCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
 
-    if(di.getRobotRelative()){
+    if(!di.getRobotRelative()){ //temp, use robot relative by default
       dt.setCmdRobotRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
     } else {
       dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
