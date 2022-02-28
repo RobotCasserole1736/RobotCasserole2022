@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
   @Signal
   double loopPeriodSec;
 
-  SegmentTimeTracker stt = new SegmentTimeTracker("Robot.java", 0.02);
+  SegmentTimeTracker stt = new SegmentTimeTracker("Robot.java", 0.03);
 
 
   // ... 
@@ -95,90 +95,90 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    Tracer initTime = new Tracer();
+    stt.start();
 
     // Disable default behavior of the live-window output manipulation logic
     // We've got our own and never use this anyway.
     LiveWindow.setEnabled(false);
     LiveWindow.disableAllTelemetry();
-    initTime.addEpoch("LW Disable");
+    stt.mark("LW Disable");
 
     NT4Server.getInstance(); // Ensure it starts
-    initTime.addEpoch("NT4");
+    stt.mark("NT4");
 
 
     /* Init website utilties */
     webserver = new Webserver2();
-    initTime.addEpoch("Webserver2");
+    stt.mark("Webserver2");
 
     CalWrangler.getInstance();
-    initTime.addEpoch("Cal Wrangler");
+    stt.mark("Cal Wrangler");
 
     pt = PoseTelemetry.getInstance();
-    initTime.addEpoch("Pose Telemetry");
+    stt.mark("Pose Telemetry");
 
     db = new Dashboard(webserver);
-    initTime.addEpoch("Dashboard");
+    stt.mark("Dashboard");
 
     loadMon = new CasseroleRIOLoadMonitor();
-    initTime.addEpoch("RIO Load Monitor");
+    stt.mark("RIO Load Monitor");
 
     //batMan = BatteryMonitor.getInstance();
-    initTime.addEpoch("Battery Monitor");
+    stt.mark("Battery Monitor");
 
     climb = Climber.getInstance();
-    initTime.addEpoch("Climber");
+    stt.mark("Climber");
 
     //bcd = new Ballcolordetector();
-    initTime.addEpoch("Ball Color Detector");
+    stt.mark("Ball Color Detector");
 
     di = DriverInput.getInstance();
     oi = OperatorInput.getInstance();
-    initTime.addEpoch("Driver IO");
+    stt.mark("Driver IO");
 
     dt = DrivetrainControl.getInstance();
-    initTime.addEpoch("Drivetrain Control");
+    stt.mark("Drivetrain Control");
 
     angle = RobotAngle.getInstance();
-    initTime.addEpoch("Robot Angle");
+    stt.mark("Robot Angle");
 
     in = Intake.getInstance();
-    initTime.addEpoch("Intake");
+    stt.mark("Intake");
 
 
     shooter = Shooter.getInstance();
-    initTime.addEpoch("Shooter");
+    stt.mark("Shooter");
 
     elevator = Elevator.getInstance();
-    initTime.addEpoch("Elevator");
+    stt.mark("Elevator");
 
 
     auto = Autonomous.getInstance();
     auto.loadSequencer();
-    initTime.addEpoch("Autonomous");
+    stt.mark("Autonomous");
 
 
     if(Robot.isSimulation()){
       simulationSetup();
     }
     syncSimPoseToEstimate();
-    initTime.addEpoch("Simulation");
+    stt.mark("Simulation");
 
 
     ledCont = LEDController.getInstance();
-    initTime.addEpoch("LED Control");
+    stt.mark("LED Control");
 
     PSC = new PneumaticsSupplyControl();
-    initTime.addEpoch("Pneumatics Supply Control");
+    stt.mark("Pneumatics Supply Control");
 
     SignalWrangler.getInstance().registerSignals(this);
-    initTime.addEpoch("Signal Registration");
+    stt.mark("Signal Registration");
 
     webserver.startServer();
-    initTime.addEpoch("Webserver Startup");
+    stt.mark("Webserver Startup");
 
     System.out.println("Init Stats:");
-    initTime.printEpochs();
+    stt.end();
 
   }
 
@@ -194,7 +194,6 @@ public class Robot extends TimedRobot {
     auto.reset();
     auto.startSequencer();
 
-
     // Ensure simulation resets to correct pose at the start of autonomous
     syncSimPoseToEstimate();
 
@@ -202,11 +201,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    loopPeriodSec = Timer.getFPGATimestamp() - startTimeSec;
-    startTimeSec = Timer.getFPGATimestamp();
+
+    stt.start();
 
     //Step the sequencer forward
     auto.update();
+    stt.mark("Auto Update");
 
   }
 
@@ -222,17 +222,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    loopPeriodSec = Timer.getFPGATimestamp() - startTimeSec;
-    startTimeSec = Timer.getFPGATimestamp();
+    stt.start();
 
     di.update();
+    stt.mark("Driver Input");
 
     oi.update();
-
-    in.update();
+    stt.mark("Operator Input");
 
     PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
-
 
     double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
     double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
@@ -250,6 +248,8 @@ public class Robot extends TimedRobot {
       shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
     shooter.setRun(di.getRunShooter());
 
+    stt.mark("Human Input Mapping");
+
 
   }
 
@@ -265,12 +265,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    loopPeriodSec = Timer.getFPGATimestamp() - startTimeSec;
-    startTimeSec = Timer.getFPGATimestamp();
+    stt.start();
+
     dt.calUpdate(false);
     shooter.calUpdate(false);
+    stt.mark("Cal Updates");
 
     auto.sampleDashboardSelector();
+    stt.mark("Auto Mode Update");
 
   }
 
@@ -287,6 +289,9 @@ public class Robot extends TimedRobot {
 
     //bcd.update();
     stt.mark("BallColorDetector");
+    
+    in.update();
+    stt.mark("Intake");
 
     shooter.update();
     stt.mark("Shooter");
@@ -313,8 +318,7 @@ public class Robot extends TimedRobot {
     telemetryUpdate();
     stt.mark("Telemetry");
 
-    stt.check();
-    loopDurationSec = Timer.getFPGATimestamp() - startTimeSec;
+    stt.end();
   }
 
   private void telemetryUpdate(){
@@ -336,13 +340,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit(){
-
     // Tell the subsystems that care that we're entering test mode.
     dt.testInit();
   }
 
   @Override
   public void testPeriodic(){
+    stt.start();
+
     // Nothing special here, yet
   }
 
