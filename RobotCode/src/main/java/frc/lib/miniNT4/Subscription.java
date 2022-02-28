@@ -13,14 +13,14 @@ public class Subscription{
     BaseClient clientRef;
 
     // Immediate mode - just force the network operation right away if true.
-    boolean isImmediate;
+    boolean isImmediate = false;
 
     //Periodic - background value rate
-    double periodicTxRate_sec;
+    double periodicTxRate_sec = 0.1;
 
     //If true, store values in a stack between transmissions
     //If false, just remember most recent.
-    boolean isLogging;
+    boolean isLogging = false;
 
     HashMap<Topic, LinkedList<TimestampedValue>> sampleQueues = new HashMap<Topic, LinkedList<TimestampedValue>>();
     Thread txThread;

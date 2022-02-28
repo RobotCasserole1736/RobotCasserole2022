@@ -243,20 +243,14 @@ public class Socket extends WebSocketAdapter {
                 
                 if(options.containsKey("immediate")){
                     newSub.isImmediate = (boolean) options.get("immediate");
-                } else {
-                    newSub.isImmediate = false;
                 }
 
                 if(options.containsKey("periodic")){
                     newSub.periodicTxRate_sec = ((Number)options.get("periodic")).doubleValue();
-                } else {
-                    newSub.periodicTxRate_sec = 0.1;
                 }
 
                 if(options.containsKey("logging")){
                     newSub.isLogging = (boolean) options.get("logging");
-                } else {
-                    newSub.isLogging = false;
                 }
 
                 newSub.start();
