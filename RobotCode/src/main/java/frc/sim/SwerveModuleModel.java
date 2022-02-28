@@ -38,6 +38,7 @@ class SwerveModuleModel{
     final double WHEEL_KINETIC_FRIC_FORCE_N = MODULE_NORMAL_FORCE_N*WHEEL_TREAD_KINETIC_COEF_FRIC;
     MapLookup2D kineticFrictionScaleFactor = new MapLookup2D(); 
 
+    final double azmthSensorOffsetRad;
 
     final double AZMTH_EFFECTIVE_MOI = 0.004;
 
@@ -52,12 +53,15 @@ class SwerveModuleModel{
     double crossTreadForceMag = 0;
 
 
-    public SwerveModuleModel(int wheelMotorIdx, int azmthMotorIdx, int azmthEncIdx){
+    public SwerveModuleModel(int wheelMotorIdx, int azmthMotorIdx, int azmthEncIdx, double azmthSensorOffset, boolean shouldInvert){
         wheelMotorCtrl = (SimSmartMotor) SimDeviceBanks.getCANDevice(wheelMotorIdx);
         azmthMotorCtrl = (SimSmartMotor) SimDeviceBanks.getCANDevice(azmthMotorIdx);
 
-        wheelMotor = new MotorGearboxWheelSim(DCMotor.getFalcon500(1), Constants.WHEEL_GEAR_RATIO, Units.inchesToMeters(Constants.WHEEL_RADIUS_IN * 2), 0.01);
+        wheelMotor = new MotorGearboxWheelSim(DCMotor.getFalcon500(1), Constants.WHEEL_GEAR_RATIO * (shouldInvert?-1.0:1.0), Units.inchesToMeters(Constants.WHEEL_RADIUS_IN * 2), 0.01);
         azmthMotor = new SimpleMotorWithMassModel(DCMotor.getNEO(1), Constants.AZMTH_GEAR_RATIO, AZMTH_EFFECTIVE_MOI);
+
+        //Model the magnet/housing offset in this encoder
+        this.azmthSensorOffsetRad = azmthSensorOffset;
 
         angleMotorEncoder = (SimSwerveAzmthEncoder) SimDeviceBanks.getDIDevice(azmthEncIdx);
 
@@ -84,7 +88,6 @@ class SwerveModuleModel{
         wheelMotorCtrl.sim_setSupplyVoltage(batteryVoltage);
         azmthMotorCtrl.sim_setSupplyVoltage(batteryVoltage);
 
-
         double wheelVoltage = 0;
         double azmthVoltage = 0;
 
@@ -95,7 +98,7 @@ class SwerveModuleModel{
 
         motionModel(wheelVoltage, azmthVoltage, batteryVoltage); 
 
-        angleMotorEncoder.setRawAngle(Units.rotationsToRadians(azmthMotor.getAzmthShaftPosition_Rev()));
+        angleMotorEncoder.setRawAngle(-1.0*azmthSensorOffsetRad + Units.rotationsToRadians(azmthMotor.getAzmthShaftPosition_Rev()));
 
         wheelMotorCtrl.sim_setActualPosition(Units.rotationsToRadians(wheelMotor.getMotorPosition_Rev()));
         azmthMotorCtrl.sim_setActualPosition(Units.rotationsToRadians(azmthMotor.getMotorPosition_Rev()));

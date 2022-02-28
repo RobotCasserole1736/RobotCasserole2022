@@ -358,20 +358,20 @@ public class Robot extends TimedRobot {
   RobotModel plant;
 
   public void simulationSetup(){
-    //plant = new RobotModel();
+    plant = new RobotModel();
     syncSimPoseToEstimate();
   }
 
   public void syncSimPoseToEstimate(){
     if(Robot.isSimulation()){
-      //plant.reset(dt.getCurEstPose());
+      plant.reset(dt.getCurEstPose());
     }
   }
 
   @Override
   public void simulationPeriodic(){
-    //plant.update(this.isDisabled());
-    //pt.setActualPose(plant.getCurActPose());
+    plant.update(this.isDisabled());
+    pt.setActualPose(plant.getCurActPose());
   }
 
 

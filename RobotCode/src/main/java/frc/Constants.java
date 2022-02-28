@@ -31,6 +31,11 @@ public class Constants {
     static public final double WHEEL_RADIUS_IN = 4.0/2.0; //four inch diameter wheels - https://www.swervedrivespecialties.com/collections/mk4i-parts/products/billet-wheel-4d-x-1-5w-bearing-bore
 
 
+    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(124.2);
+    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(273.3);
+    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(242.4);
+    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(310.4);
+
     //////////////////////////////////////////////////////////////////
     // Electrical
     //////////////////////////////////////////////////////////////////
