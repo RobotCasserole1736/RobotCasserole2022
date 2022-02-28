@@ -5,12 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Tracer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.Constants;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
+import frc.lib.LoadMon.SegmentTimeTracker;
 import frc.lib.Signal.SignalWrangler;
 import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Webserver2.Webserver2;
@@ -78,7 +81,7 @@ public class Robot extends TimedRobot {
   @Signal
   double loopPeriodSec;
 
-  
+  SegmentTimeTracker stt = new SegmentTimeTracker("Robot.java", 0.02);
 
 
   // ... 
@@ -92,50 +95,91 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
+    Tracer initTime = new Tracer();
+
     // Disable default behavior of the live-window output manipulation logic
     // We've got our own and never use this anyway.
     LiveWindow.setEnabled(false);
+    LiveWindow.disableAllTelemetry();
+    initTime.addEpoch("LW Disable");
 
     NT4Server.getInstance(); // Ensure it starts
+    initTime.addEpoch("NT4");
+
 
     /* Init website utilties */
     webserver = new Webserver2();
+    initTime.addEpoch("Webserver2");
+
     CalWrangler.getInstance();
+    initTime.addEpoch("Cal Wrangler");
+
     pt = PoseTelemetry.getInstance();
+    initTime.addEpoch("Pose Telemetry");
+
     db = new Dashboard(webserver);
+    initTime.addEpoch("Dashboard");
 
     loadMon = new CasseroleRIOLoadMonitor();
+    initTime.addEpoch("RIO Load Monitor");
+
     //batMan = BatteryMonitor.getInstance();
+    initTime.addEpoch("Battery Monitor");
+
     climb = Climber.getInstance();
+    initTime.addEpoch("Climber");
+
     //bcd = new Ballcolordetector();
+    initTime.addEpoch("Ball Color Detector");
 
     di = DriverInput.getInstance();
-
     oi = OperatorInput.getInstance();
+    initTime.addEpoch("Driver IO");
 
     dt = DrivetrainControl.getInstance();
+    initTime.addEpoch("Drivetrain Control");
 
     angle = RobotAngle.getInstance();
+    initTime.addEpoch("Robot Angle");
 
     in = Intake.getInstance();
+    initTime.addEpoch("Intake");
+
 
     shooter = Shooter.getInstance();
+    initTime.addEpoch("Shooter");
+
     elevator = Elevator.getInstance();
+    initTime.addEpoch("Elevator");
+
 
     auto = Autonomous.getInstance();
     auto.loadSequencer();
+    initTime.addEpoch("Autonomous");
+
 
     if(Robot.isSimulation()){
       simulationSetup();
     }
+    syncSimPoseToEstimate();
+    initTime.addEpoch("Simulation");
+
 
     ledCont = LEDController.getInstance();
-    syncSimPoseToEstimate();
+    initTime.addEpoch("LED Control");
 
     PSC = new PneumaticsSupplyControl();
+    initTime.addEpoch("Pneumatics Supply Control");
 
     SignalWrangler.getInstance().registerSignals(this);
+    initTime.addEpoch("Signal Registration");
+
     webserver.startServer();
+    initTime.addEpoch("Webserver Startup");
+
+    System.out.println("Init Stats:");
+    initTime.printEpochs();
+
   }
 
 
@@ -158,6 +202,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    loopPeriodSec = Timer.getFPGATimestamp() - startTimeSec;
+    startTimeSec = Timer.getFPGATimestamp();
+
     //Step the sequencer forward
     auto.update();
 
@@ -175,16 +222,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    loopPeriodSec = Timer.getFPGATimestamp() - startTimeSec;
+    startTimeSec = Timer.getFPGATimestamp();
 
     di.update();
 
     oi.update();
 
     in.update();
-
-    elevator.update();
-
-    climb.update();
 
     PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
 
@@ -237,21 +282,38 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void robotPeriodic() {
+    angle.update();
+    stt.mark("AngleMeasurement");
+
     //bcd.update();
+    stt.mark("BallColorDetector");
+
     shooter.update();
+    stt.mark("Shooter");
+
     elevator.update();
+    stt.mark("Elevator");
+
+    
+    climb.update();
+    stt.mark("Climber");
+
 
     if(DriverStation.isTest() && !DriverStation.isDisabled()){
       dt.testUpdate();
     } else {
       dt.update();
     }
+    stt.mark("Drivetrain");
 
-    angle.update();
+
 
     db.updateDriverView();
+    stt.mark("Dashboard");
     telemetryUpdate();
+    stt.mark("Telemetry");
 
+    stt.check();
     loopDurationSec = Timer.getFPGATimestamp() - startTimeSec;
   }
 
