@@ -58,7 +58,7 @@ class SwerveModuleModel{
         azmthMotorCtrl = (SimSmartMotor) SimDeviceBanks.getCANDevice(azmthMotorIdx);
 
         wheelMotor = new MotorGearboxWheelSim(DCMotor.getFalcon500(1), Constants.WHEEL_GEAR_RATIO * (shouldInvert?-1.0:1.0), Units.inchesToMeters(Constants.WHEEL_RADIUS_IN * 2), 0.01);
-        azmthMotor = new SimpleMotorWithMassModel(DCMotor.getNEO(1), Constants.AZMTH_GEAR_RATIO, AZMTH_EFFECTIVE_MOI);
+        azmthMotor = new SimpleMotorWithMassModel(DCMotor.getNEO(1), Constants.AZMTH_GEAR_RATIO * -1.0, AZMTH_EFFECTIVE_MOI);
 
         //Model the magnet/housing offset in this encoder
         this.azmthSensorOffsetRad = azmthSensorOffset;
@@ -98,7 +98,7 @@ class SwerveModuleModel{
 
         motionModel(wheelVoltage, azmthVoltage, batteryVoltage); 
 
-        angleMotorEncoder.setRawAngle(-1.0*azmthSensorOffsetRad + Units.rotationsToRadians(azmthMotor.getAzmthShaftPosition_Rev()));
+        angleMotorEncoder.setRawAngle(azmthSensorOffsetRad + Units.rotationsToRadians(azmthMotor.getAzmthShaftPosition_Rev()));
 
         wheelMotorCtrl.sim_setActualPosition(Units.rotationsToRadians(wheelMotor.getMotorPosition_Rev()));
         azmthMotorCtrl.sim_setActualPosition(Units.rotationsToRadians(azmthMotor.getMotorPosition_Rev()));

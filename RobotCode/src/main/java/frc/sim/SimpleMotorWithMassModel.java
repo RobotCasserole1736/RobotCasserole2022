@@ -17,7 +17,13 @@ class SimpleMotorWithMassModel {
     FlywheelSim fwSim;
     double gearing;
 
+    boolean invertFlywheel = false;
+
     public SimpleMotorWithMassModel(DCMotor motor, double gearing, double moi){
+        if(gearing <= 0){
+            invertFlywheel = true;
+            gearing *= -1.0;
+        }
         fwSim = new FlywheelSim(motor, gearing, moi);
         this.gearing = gearing;
     }
@@ -40,7 +46,7 @@ class SimpleMotorWithMassModel {
 
         fwSim.update(Constants.SIM_SAMPLE_RATE_SEC);
 
-        speedAct_RPM = fwSim.getAngularVelocityRPM();
+        speedAct_RPM = fwSim.getAngularVelocityRPM() * (invertFlywheel?-1.0:1.0);
         current_A = fwSim.getCurrentDrawAmps();
 
         curDisplacement_Rev += speedAct_RPM / 60 * Constants.SIM_SAMPLE_RATE_SEC;

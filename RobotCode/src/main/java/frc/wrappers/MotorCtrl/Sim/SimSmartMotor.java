@@ -60,7 +60,7 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
 
     @Override
     public void setVoltageCmd(double cmd_v) {
-        curWindingVoltage = limitVoltage(cmd_v);
+        curWindingVoltage = limitVoltage(cmd_v) * (isInverted?-1.0:1.0);
         for(AbstractSimmableMotorController follower : simFollowers){
             follower.setVoltageCmd(curWindingVoltage);
         }
@@ -75,12 +75,12 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
 
     @Override
     public double getVelocity_radpersec() {
-        return curVel_radpersec;
+        return curVel_radpersec * (isInverted?-1.0:1.0);
     }
 
     @Override
     public double getPosition_rad() {
-        return curPos_rad;
+        return curPos_rad * (isInverted?-1.0:1.0);
     }
 
     public void sim_setActualVelocity(double velocity_radpersec){
@@ -123,7 +123,8 @@ public class SimSmartMotor extends AbstractSimmableMotorController {
      * A rough guess at the behavior of the closed loop controllers on the smart motor controllers
      */
     private double pidSim(double vel_cmd, double arb_ff_V){
-        var velError_RPM = Units.radiansPerSecondToRotationsPerMinute(vel_cmd - curVel_radpersec);
+
+        var velError_RPM = Units.radiansPerSecondToRotationsPerMinute(vel_cmd - getVelocity_radpersec());
         
         velErr_accum += velError_RPM;
         
