@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.lib.Signal.Annotations.Signal;
 
@@ -7,6 +8,11 @@ public class DriverInput {
     
     XboxController driverController;
     boolean compressorEnabled = true;
+
+    SlewRateLimiter fwdRevSlew = new SlewRateLimiter(3);
+    SlewRateLimiter rotSlew = new SlewRateLimiter(3);
+    SlewRateLimiter sideToSideSlew = new SlewRateLimiter(3);
+
 
     private static DriverInput di = null;
     public static synchronized DriverInput getInstance() {
@@ -105,7 +111,7 @@ public class DriverInput {
      * @return 
      */
     public double getFwdRevCmd(){
-        return curFwdRevCmd;
+        return fwdRevSlew.calculate(curFwdRevCmd);
     }
 
     /**
@@ -116,10 +122,10 @@ public class DriverInput {
      * @return 
      */
     public double getRotateCmd(){
-        return curRotCmd;
+        return rotSlew.calculate(curRotCmd);
     }
     public double getSideToSideCmd(){
-        return curSideToSideCmd;
+        return sideToSideSlew.calculate(curSideToSideCmd);
     }
 
     public boolean getRunShooter(){
