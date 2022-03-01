@@ -81,6 +81,9 @@ public class Robot extends TimedRobot {
   @Signal
   double loopPeriodSec;
 
+  @Signal (units="sec")
+  double elapsedTime;
+
   SegmentTimeTracker stt = new SegmentTimeTracker("Robot.java", 0.03);
 
 
@@ -232,9 +235,9 @@ public class Robot extends TimedRobot {
 
     PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
 
-    double fwdRevSpdCmd_mps = di.getFwdRevCmd() * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
-    double leftRightSpdCmd_mps = di.getSideToSideCmd() * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
-    double rotateCmd_radpersec = di.getRotateCmd() * Constants.MAX_FWD_REV_SPEED_MPS;
+    double fwdRevSpdCmd_mps = di.getFwdRevCmd_mps();
+    double leftRightSpdCmd_mps = di.getSideToSideCmd_mps();
+    double rotateCmd_radpersec = di.getRotateCmd_rps();
 
     if(!di.getRobotRelative()){ //temp, use robot relative by default
       dt.setCmdRobotRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
@@ -317,6 +320,8 @@ public class Robot extends TimedRobot {
     stt.mark("Dashboard");
     telemetryUpdate();
     stt.mark("Telemetry");
+
+    elapsedTime = Timer.getFPGATimestamp();
 
     stt.end();
   }

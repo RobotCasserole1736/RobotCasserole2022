@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 
@@ -11,9 +12,9 @@ public class DriverInput {
     XboxController driverController;
     boolean compressorEnabled = true;
 
-    SlewRateLimiter fwdRevSlew = new SlewRateLimiter(3);
-    SlewRateLimiter rotSlew = new SlewRateLimiter(3);
-    SlewRateLimiter sideToSideSlew = new SlewRateLimiter(3);
+    SlewRateLimiter fwdRevSlewLimiter;
+    SlewRateLimiter rotSlewLimiter;
+    SlewRateLimiter sideToSideSlewLimiter;
 
 
     private static DriverInput di = null;
@@ -23,6 +24,10 @@ public class DriverInput {
         return di;
     }
     Calibration stickDeadband;
+    Calibration fwdRevSlewRate;
+    Calibration rotSlewRate;
+    Calibration sideToSideSlewRate;
+
     @Signal(units="cmd")
     double curFwdRevCmd;
     @Signal(units="cmd")
@@ -33,6 +38,12 @@ public class DriverInput {
     @Signal(units="bool")
     boolean robotRelative;
    
+    @Signal (units="cmd")
+    double fwdRevSlewCmd;
+    @Signal (units="cmd")
+    double rotSlewCmd;
+    @Signal (units="cmd")
+    double sideToSideSlewCmd;
     @Signal(units="bool")
     boolean runShooter;
     @Signal(units="bool")
@@ -63,6 +74,14 @@ public class DriverInput {
         driverController = new XboxController(0);
         stickDeadband = new Calibration("StickDeadBand", "", 0.1);
 
+        fwdRevSlewRate = new Calibration("fwdRevSlewRate", "", 3);
+        rotSlewRate = new Calibration("rotSlewRate", "", 3);
+        sideToSideSlewRate = new Calibration("sideToSideSlewRate", "", 3);
+
+        fwdRevSlewLimiter = new SlewRateLimiter(fwdRevSlewRate.get());
+        rotSlewLimiter = new SlewRateLimiter(rotSlewRate.get());
+        sideToSideSlewLimiter = new SlewRateLimiter(sideToSideSlewRate.get());
+
     }
 
     public void update(){
@@ -72,14 +91,14 @@ public class DriverInput {
         curRotCmd = -1.0 * driverController.getRightX();
         curSideToSideCmd = -1.0 * driverController.getLeftX();
 
-
-        
-        curFwdRevCmd = MathUtil.applyDeadband( curFwdRevCmd,stickDeadband.get());
- 
+        curFwdRevCmd = MathUtil.applyDeadband( curFwdRevCmd,stickDeadband.get()); 
+        fwdRevSlewCmd = fwdRevSlewLimiter.calculate(curFwdRevCmd);
 
         curRotCmd = MathUtil.applyDeadband( curRotCmd,stickDeadband.get());
+        rotSlewCmd = rotSlewLimiter.calculate(curRotCmd);
       
         curSideToSideCmd = MathUtil.applyDeadband( curSideToSideCmd,stickDeadband.get());
+        sideToSideSlewCmd = sideToSideSlewLimiter.calculate(curSideToSideCmd);
         
         robotRelative = driverController.getRightBumper();
         runShooter = driverController.getLeftTriggerAxis()>0.5;
@@ -92,6 +111,19 @@ public class DriverInput {
         climbRetract = driverController.getPOV()==180 && driverController.getBButton();
         climbTilt = driverController.getPOV()==270 && driverController.getBButton();
         climbStraighten = driverController.getPOV()==90 && driverController.getBButton();
+
+        if(fwdRevSlewRate.isChanged() ||
+           rotSlewRate.isChanged() ||
+           sideToSideSlewRate.isChanged()) {
+                fwdRevSlewRate.acknowledgeValUpdate();
+                rotSlewRate.acknowledgeValUpdate();
+                sideToSideSlewRate.acknowledgeValUpdate();
+                fwdRevSlewLimiter = new SlewRateLimiter(fwdRevSlewRate.get());
+                rotSlewLimiter = new SlewRateLimiter(rotSlewRate.get());
+                sideToSideSlewLimiter = new SlewRateLimiter(sideToSideSlewRate.get());
+           }
+                
+        
 
         if(driverController.getStartButton()) {
             compressorEnabled = true;
@@ -108,8 +140,8 @@ public class DriverInput {
      * -1.0 means "fast as possible reverse"
      * @return 
      */
-    public double getFwdRevCmd(){
-        return fwdRevSlew.calculate(curFwdRevCmd);
+    public double getFwdRevCmd_mps(){
+        return fwdRevSlewLimiter.calculate(curFwdRevCmd) * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
     }
 
     /**
@@ -119,11 +151,11 @@ public class DriverInput {
      * -1.0 means "fast as possible to the right"
      * @return 
      */
-    public double getRotateCmd(){
-        return rotSlew.calculate(curRotCmd);
+    public double getRotateCmd_rps(){
+        return rotSlewLimiter.calculate(curRotCmd) * Constants.MAX_FWD_REV_SPEED_MPS;
     }
-    public double getSideToSideCmd(){
-        return sideToSideSlew.calculate(curSideToSideCmd);
+    public double getSideToSideCmd_mps(){
+        return sideToSideSlewLimiter.calculate(curSideToSideCmd) * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
     }
 
     public boolean getRunShooter(){
