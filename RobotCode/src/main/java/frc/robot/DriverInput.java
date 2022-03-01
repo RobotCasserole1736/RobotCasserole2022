@@ -1,7 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 
 public class DriverInput {
@@ -20,7 +22,7 @@ public class DriverInput {
             di = new DriverInput();
         return di;
     }
-
+    Calibration stickDeadband;
     @Signal(units="cmd")
     double curFwdRevCmd;
     @Signal(units="cmd")
@@ -59,6 +61,7 @@ public class DriverInput {
     private DriverInput(){
 
         driverController = new XboxController(0);
+        stickDeadband = new Calibration("StickDeadBand", "", 0.1);
 
     }
 
@@ -70,19 +73,14 @@ public class DriverInput {
         curSideToSideCmd = -1.0 * driverController.getLeftX();
 
 
-        //Temp, need to change these to the wpilib versions
-        if(Math.abs(curFwdRevCmd) < 0.1){
-            curFwdRevCmd = 0;
-        }
+        
+        curFwdRevCmd = MathUtil.applyDeadband( curFwdRevCmd,stickDeadband.get());
+ 
 
-        if(Math.abs(curRotCmd) < 0.1){
-            curRotCmd = 0;
-        }
-
-        if(Math.abs(curSideToSideCmd) < 0.1){
-            curSideToSideCmd = 0;
-        }
-
+        curRotCmd = MathUtil.applyDeadband( curRotCmd,stickDeadband.get());
+      
+        curSideToSideCmd = MathUtil.applyDeadband( curSideToSideCmd,stickDeadband.get());
+        
         robotRelative = driverController.getRightBumper();
         runShooter = driverController.getLeftTriggerAxis()>0.5;
         feedShooter = driverController.getLeftBumper();
