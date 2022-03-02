@@ -1,25 +1,27 @@
 package frc.wrappers.SwerveAzmthEncoder;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.lib.Signal.Annotations.Signal;
 
 public class RealSwerveAzmthEncoder extends AbstractSwerveAzmthEncoder {
 
-    DutyCycleEncoder dc;
+    DigitalInput m_digitalInput;
+    DutyCycle m_dutyCycle;
 
     @Signal(units="Hz")
     double freq;
 
     public RealSwerveAzmthEncoder(int port){
-        dc = new DutyCycleEncoder(port);
-        dc.setDistancePerRotation(2 * Math.PI);
-        dc.setDutyCycleRange(1.0/4096.0, 1.0);
+        m_digitalInput = new DigitalInput(port);
+        m_dutyCycle = new DutyCycle(m_digitalInput);
     }
 
     @Override
     public double getRawAngle_rad() {
-        freq = dc.getFrequency();//Track this for fault mode detection
-        return dc.getDistance();
+        freq = m_dutyCycle.getFrequency(); //Track this for fault mode detection
+        return m_dutyCycle.getOutput() * Math.PI * 2;
     }
 
     
