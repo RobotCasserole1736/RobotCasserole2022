@@ -66,7 +66,8 @@ public class DriverInput {
     boolean compEnable;
     @Signal(units="bool")
     boolean compDisable;
-
+    @Signal(units="bool")
+    boolean photonAlign;
 
 
     private DriverInput(){
@@ -131,6 +132,8 @@ public class DriverInput {
             compressorEnabled = false;
         } else {
         }
+        
+        photonAlign = driverController.getAButton();
     }
 
     /**
@@ -210,4 +213,7 @@ public class DriverInput {
         return compressorEnabled;
       }
     
+    public boolean getPhotonAlign(){
+        return photonAlign;
+    }
 }
