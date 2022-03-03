@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
@@ -29,15 +30,12 @@ public class Intake {
 	private static Intake intake = null;
 
     private CasseroleCANMotorCtrl horizIntakeMotor;
-    private CasseroleCANMotorCtrl vertIntakeMotorL;
-    private CasseroleCANMotorCtrl vertIntakeMotorR;
+    private Spark vertIntakeMotor;
 
     Calibration horizIntakeSpeed;
     Calibration horizEjectSpeed;
-    Calibration vertIntakeSpeedL;
-    Calibration vertEjectSpeedL;
-    Calibration vertIntakeSpeedR;
-    Calibration vertEjectSpeedR;
+    Calibration vertIntakeSpeed;
+    Calibration vertEjectSpeed;
 
 	public static synchronized Intake getInstance() {
 		if(intake == null)
@@ -47,15 +45,12 @@ public class Intake {
 
 	private Intake() {
         //horizIntakeMotor = new CasseroleCANMotorCtrl("intakeHoriz", Constants.HORIZ_INTAKE_MOTOR_CANID, CANMotorCtrlType.TALON_FX);
-        //vertIntakeMotorL = new CasseroleCANMotorCtrl("intakeVertL", Constants.LEFT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
-        //vertIntakeMotorR = new CasseroleCANMotorCtrl("intakeVertR", Constants.RIGHT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
+        vertIntakeMotor = new Spark( Constants.VERT_SPARK_MOTOR);
 
         horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.8);
         horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.8);
-        vertIntakeSpeedL = new Calibration("INT Left Vertical Intake Speed", "", 0.8);
-        vertEjectSpeedL = new Calibration("INT Left Vertical Eject Speed", "", -0.8);
-        vertIntakeSpeedR = new Calibration("INT Right Vertical Intake Speed", "", -0.8);
-        vertEjectSpeedR = new Calibration("INT Right Vertical Eject Speed", "", 0.8);
+        vertIntakeSpeed = new Calibration("INT Vertical Intake Speed", "", -0.8);
+        vertEjectSpeed = new Calibration("INT Vertical Eject Speed", "", 0.8);
 	}
 
     public enum intakeCmdState{

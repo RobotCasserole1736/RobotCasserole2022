@@ -41,8 +41,8 @@ public class Constants {
     //////////////////////////////////////////////////////////////////
 
     // PWM Bank
-    static public final int LED_CONTROLLER_PORT = 0; 
-    //static public final int UNUSED = 1;
+    static public final int VERT_SPARK_MOTOR = 0;
+    static public final int LED_CONTROLLER_PORT = 1; 
     //static public final int UNUSED = 2;
     //static public final int UNUSED = 3;
     //static public final int UNUSED = 4;
