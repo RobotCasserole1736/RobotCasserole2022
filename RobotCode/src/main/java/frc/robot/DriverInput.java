@@ -67,6 +67,8 @@ public class DriverInput {
     @Signal(units="bool")
     boolean compDisable;
 
+    boolean zeroAngleCmd;
+
 
 
     private DriverInput(){
