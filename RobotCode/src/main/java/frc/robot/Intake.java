@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
+import frc.lib.Signal.Annotations.Signal;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl.CANMotorCtrlType;
 
@@ -39,6 +40,9 @@ public class Intake {
     Calibration vertIntakeSpeedR;
     Calibration vertEjectSpeedR;
 
+    @Signal(units = "cmd")
+    intakeCmdState cmdState = intakeCmdState.STOP;
+
 	public static synchronized Intake getInstance() {
 		if(intake == null)
 			intake = new Intake();
@@ -75,7 +79,11 @@ public class Intake {
     }
 
     public void setCmd(intakeCmdState cmd_in){
-        //if(cmd_in == intakeCmdState.STOP) {
+       cmdState = cmd_in;
+    }
+
+    public void update(){
+         //if(cmd_in == intakeCmdState.STOP) {
         //    horizIntakeMotor.setVoltageCmd(0);
         //} else if(cmd_in == intakeCmdState.INTAKE) {
         //    horizIntakeMotor.setVoltageCmd(horizIntakeSpeed.get());
@@ -98,10 +106,6 @@ public class Intake {
         //} else if(cmd_in == intakeCmdState.EJECT) {
         //    vertIntakeMotorR.setVoltageCmd(vertIntakeSpeedR.get());
         //}
-    }
-
-    public void update(){
-
     }
 
 }
