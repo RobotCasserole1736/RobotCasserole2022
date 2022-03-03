@@ -86,13 +86,13 @@ public class Intake {
         //    horizIntakeMotor.setVoltageCmd(horizEjectSpeed.get());
         //} 
 
-        //if(cmd_in == intakeCmdState.STOP) {
-        //    vertIntakeMotorL.setVoltageCmd(0);
-        //} else if(cmd_in == intakeCmdState.INTAKE) {
-        //    vertIntakeMotorL.setVoltageCmd(vertIntakeSpeedL.get());
-        //} else if(cmd_in == intakeCmdState.EJECT) {
-        //    vertIntakeMotorL.setVoltageCmd(vertEjectSpeedL.get());
-        //}
+        if(cmdState == intakeCmdState.STOP) {
+           vertIntakeMotor.set(0);
+        } else if(cmdState == intakeCmdState.INTAKE) {
+           vertIntakeMotor.set(vertIntakeSpeed.get());
+        } else if(cmdState == intakeCmdState.EJECT) {
+           vertIntakeMotor.set(vertEjectSpeed.get());
+        }
 //
         //if(cmd_in == intakeCmdState.STOP) {
         //    vertIntakeMotorR.setVoltageCmd(0);
