@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.Constants;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.lib.LoadMon.SegmentTimeTracker;
@@ -198,6 +199,7 @@ public class Robot extends TimedRobot {
     System.out.println("Init Stats:");
     stt.end();
 
+    PhotonCamera.setVersionCheckEnabled(false);
   }
 
 
@@ -262,7 +264,7 @@ public class Robot extends TimedRobot {
       if (result.hasTargets()) {
           // Calculate angular turn power
           // -1.0 required to ensure positive PID controller effort _increases_ yaw
-          rotateCmd_radpersec = -turnController.calculate(result.getBestTarget().getYaw(), 0)* Constants.MAX_FWD_REV_SPEED_MPS;
+          rotateCmd_radpersec = turnController.calculate(result.getBestTarget().getYaw(), 0)* Constants.MAX_FWD_REV_SPEED_MPS;
       } else {
           // If we have no targets, stay still.
           rotateCmd_radpersec = 0;
