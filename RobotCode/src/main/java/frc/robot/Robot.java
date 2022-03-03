@@ -7,6 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
+import org.photonvision.PhotonCamera;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
@@ -84,7 +88,20 @@ public class Robot extends TimedRobot {
 
   SegmentTimeTracker stt = new SegmentTimeTracker("Robot.java", 0.03);
 
+  final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
+  final double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
+  // Angle between horizontal and the camera.
+  final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
 
+  // How far from the target we want to be
+  final double GOAL_RANGE_METERS = Units.feetToMeters(3);
+
+  // Change this to match the name of your camera
+  PhotonCamera camera = new PhotonCamera("photonvision");
+
+  final double ANGULAR_P = 0.1;
+  final double ANGULAR_D = 0.0;
+  PIDController turnController = new PIDController(ANGULAR_P, 0, ANGULAR_D);
   // ... 
   // But before here
   ///////////////////////////////////////////////////////////////////
@@ -236,6 +253,24 @@ public class Robot extends TimedRobot {
     double fwdRevSpdCmd_mps = di.getFwdRevCmd_mps();
     double leftRightSpdCmd_mps = di.getSideToSideCmd_mps();
     double rotateCmd_radpersec = di.getRotateCmd_rps();
+
+    if (di.getPhotonAlign()) {
+      // Vision-alignment mode
+      // Query the latest result from PhotonVision
+      var result = camera.getLatestResult();
+
+      if (result.hasTargets()) {
+          // Calculate angular turn power
+          // -1.0 required to ensure positive PID controller effort _increases_ yaw
+          rotateCmd_radpersec = -turnController.calculate(result.getBestTarget().getYaw(), 0)* Constants.MAX_FWD_REV_SPEED_MPS;
+      } else {
+          // If we have no targets, stay still.
+          rotateCmd_radpersec = 0;
+      }
+  } else {
+      // Manual Driver Mode
+      
+  }
 
     if(!di.getRobotRelative()){ //temp, use robot relative by default
       dt.setCmdRobotRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
