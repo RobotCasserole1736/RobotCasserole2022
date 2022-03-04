@@ -23,8 +23,13 @@
     "SmartDashboard": {
       "Field": {
         "open": true
-      },
-      "open": true
+      }
+    },
+    "photonvision": {
+      "open": true,
+      "photonvision": {
+        "open": true
+      }
     }
   }
 }

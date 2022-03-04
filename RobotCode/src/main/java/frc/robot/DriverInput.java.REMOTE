@@ -70,7 +70,6 @@ public class DriverInput {
     boolean photonAlign;
 
 
-
     private DriverInput(){
 
         driverController = new XboxController(0);

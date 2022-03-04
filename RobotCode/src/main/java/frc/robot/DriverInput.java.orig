@@ -66,9 +66,14 @@ public class DriverInput {
     boolean compEnable;
     @Signal(units="bool")
     boolean compDisable;
+<<<<<<< HEAD
+
+    boolean zeroAngleCmd;
+
+=======
     @Signal(units="bool")
     boolean photonAlign;
-
+>>>>>>> origin/Tyler_PhotonVisionAlignment
 
 
     private DriverInput(){

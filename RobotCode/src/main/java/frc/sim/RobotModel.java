@@ -13,6 +13,7 @@ public class RobotModel {
     //IntakeSim intake;
     DrivetrainModel dt;
     //ShooterSim shooter;
+    VisionSystem vs;
 
     PDPSim pdp;
 
@@ -31,6 +32,7 @@ public class RobotModel {
 
     public RobotModel(){
         dt = new DrivetrainModel();
+        vs = new VisionSystem();
         //shooter = new ShooterSim();
         ps = new PneumaticsSystemSim();
         //intake = new IntakeSim();
@@ -40,6 +42,7 @@ public class RobotModel {
 
     public void reset(Pose2d pose){
         dt.modelReset(pose);
+        vs.update(pose);
         ps.setStoragePressure_kPa(UnitUtils.psiTokPa(120));
     }
 
@@ -59,6 +62,8 @@ public class RobotModel {
             //intake.update(isDisabled, batteryVoltage_V, ps.getSupplyPressure_kPa());
             
             dt.update(isDisabled, batteryVoltage_V);
+            vs.update(dt.dtPoseForTelemetry);
+
             //shooter.update(isDisabled, batteryVoltage_V);
 
             currentDraw_A = QUIESCENT_CURRENT_DRAW_A + dt.getCurrentDraw() + ps.getCurrentDraw_A();
