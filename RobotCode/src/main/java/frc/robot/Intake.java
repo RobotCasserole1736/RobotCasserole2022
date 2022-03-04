@@ -1,7 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
+import frc.lib.Signal.Annotations.Signal;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl.CANMotorCtrlType;
 
@@ -29,15 +31,15 @@ public class Intake {
 	private static Intake intake = null;
 
     private CasseroleCANMotorCtrl horizIntakeMotor;
-    private CasseroleCANMotorCtrl vertIntakeMotorL;
-    private CasseroleCANMotorCtrl vertIntakeMotorR;
+    private Spark vertIntakeMotor;
 
     Calibration horizIntakeSpeed;
     Calibration horizEjectSpeed;
-    Calibration vertIntakeSpeedL;
-    Calibration vertEjectSpeedL;
-    Calibration vertIntakeSpeedR;
-    Calibration vertEjectSpeedR;
+    Calibration vertIntakeSpeed;
+    Calibration vertEjectSpeed;
+
+    @Signal(units = "cmd")
+    intakeCmdState cmdState = intakeCmdState.STOP;
 
 	public static synchronized Intake getInstance() {
 		if(intake == null)
@@ -47,15 +49,12 @@ public class Intake {
 
 	private Intake() {
         //horizIntakeMotor = new CasseroleCANMotorCtrl("intakeHoriz", Constants.HORIZ_INTAKE_MOTOR_CANID, CANMotorCtrlType.TALON_FX);
-        //vertIntakeMotorL = new CasseroleCANMotorCtrl("intakeVertL", Constants.LEFT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
-        //vertIntakeMotorR = new CasseroleCANMotorCtrl("intakeVertR", Constants.RIGHT_VERT_INTAKE_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
+        vertIntakeMotor = new Spark( Constants.VERT_SPARK_MOTOR);
 
         horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.8);
         horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.8);
-        vertIntakeSpeedL = new Calibration("INT Left Vertical Intake Speed", "", 0.8);
-        vertEjectSpeedL = new Calibration("INT Left Vertical Eject Speed", "", -0.8);
-        vertIntakeSpeedR = new Calibration("INT Right Vertical Intake Speed", "", -0.8);
-        vertEjectSpeedR = new Calibration("INT Right Vertical Eject Speed", "", 0.8);
+        vertIntakeSpeed = new Calibration("INT Vertical Intake Speed", "", -0.8);
+        vertEjectSpeed = new Calibration("INT Vertical Eject Speed", "", 0.8);
 	}
 
     public enum intakeCmdState{
@@ -75,7 +74,11 @@ public class Intake {
     }
 
     public void setCmd(intakeCmdState cmd_in){
-        //if(cmd_in == intakeCmdState.STOP) {
+       cmdState = cmd_in;
+    }
+
+    public void update(){
+         //if(cmd_in == intakeCmdState.STOP) {
         //    horizIntakeMotor.setVoltageCmd(0);
         //} else if(cmd_in == intakeCmdState.INTAKE) {
         //    horizIntakeMotor.setVoltageCmd(horizIntakeSpeed.get());
@@ -83,13 +86,13 @@ public class Intake {
         //    horizIntakeMotor.setVoltageCmd(horizEjectSpeed.get());
         //} 
 
-        //if(cmd_in == intakeCmdState.STOP) {
-        //    vertIntakeMotorL.setVoltageCmd(0);
-        //} else if(cmd_in == intakeCmdState.INTAKE) {
-        //    vertIntakeMotorL.setVoltageCmd(vertIntakeSpeedL.get());
-        //} else if(cmd_in == intakeCmdState.EJECT) {
-        //    vertIntakeMotorL.setVoltageCmd(vertEjectSpeedL.get());
-        //}
+        if(cmdState == intakeCmdState.STOP) {
+           vertIntakeMotor.set(0);
+        } else if(cmdState == intakeCmdState.INTAKE) {
+           vertIntakeMotor.set(vertIntakeSpeed.get());
+        } else if(cmdState == intakeCmdState.EJECT) {
+           vertIntakeMotor.set(vertEjectSpeed.get());
+        }
 //
         //if(cmd_in == intakeCmdState.STOP) {
         //    vertIntakeMotorR.setVoltageCmd(0);
@@ -98,10 +101,6 @@ public class Intake {
         //} else if(cmd_in == intakeCmdState.EJECT) {
         //    vertIntakeMotorR.setVoltageCmd(vertIntakeSpeedR.get());
         //}
-    }
-
-    public void update(){
-
     }
 
 }

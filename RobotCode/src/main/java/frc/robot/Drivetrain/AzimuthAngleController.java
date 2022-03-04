@@ -43,6 +43,8 @@ public class AzimuthAngleController{
 
     MapLookup2D azmthCmdLimitTbl;
 
+    double desAnglePrev = -123;
+
 
     public AzimuthAngleController(){
 
@@ -57,6 +59,7 @@ public class AzimuthAngleController{
 
     public void setInputs(double desiredAngle_in, double actualAngle_in, double curSpeed_fps_in){
         
+        desAnglePrev = desAng;
         desAng = desiredAngle_in;        
         actAng = actualAngle_in;
         netSpeed = curSpeed_fps_in; 
@@ -65,22 +68,27 @@ public class AzimuthAngleController{
 
     public void update(){
 
-
+        
         errNoInvert = UnitUtils.wrapAngleDeg(desAng - actAng);
         errInvert   = UnitUtils.wrapAngleDeg(desAng - actAng + 180);
 
-        if(Math.abs(errNoInvert) < Math.abs(errInvert)){
-            //don't invert the wheel direction
-            angSetpoint = actAng + errNoInvert;
-            invertWheelDirection = false;
-        } else {
-            //Invert wheel direction
+        if(desAnglePrev != desAng){
+            if(Math.abs(errNoInvert) < Math.abs(errInvert)){
+                //don't invert the wheel direction
+                invertWheelDirection = false;
+            } else {
+                //Invert wheel direction
+                invertWheelDirection = true;
+            }
+        }
+
+        if(invertWheelDirection){
             angSetpoint = actAng + errInvert;
-            invertWheelDirection = true;
+        } else {
+            angSetpoint = actAng + errNoInvert;
         }
 
         desAngleRateLimit = setpointRateLimiter.calculate(angSetpoint);
-
 
         azmthMotorCmd = azmthPIDCtrl.calculate(actAng, desAngleRateLimit);
         azmthMotorCmd = limitMag(azmthMotorCmd, azmthCmdLimitTbl.lookupVal(netSpeed));

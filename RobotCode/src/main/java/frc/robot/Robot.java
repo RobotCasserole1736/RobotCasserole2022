@@ -5,12 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Tracer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.Constants;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.lib.LoadMon.SegmentTimeTracker;
@@ -41,7 +39,7 @@ public class Robot extends TimedRobot {
 
   // Things
   CasseroleRIOLoadMonitor loadMon;
-  //BatteryMonitor batMan;
+  BatteryMonitor batMan;
   //Ballcolordetector bcd;
 
   // DriverInput
@@ -126,7 +124,7 @@ public class Robot extends TimedRobot {
     loadMon = new CasseroleRIOLoadMonitor();
     stt.mark("RIO Load Monitor");
 
-    //batMan = BatteryMonitor.getInstance();
+    batMan = BatteryMonitor.getInstance();
     stt.mark("Battery Monitor");
 
     climb = Climber.getInstance();
@@ -335,7 +333,7 @@ public class Robot extends TimedRobot {
     pt.setEstimatedPose(dt.getCurEstPose());
     
     pt.update(time);
-    //batMan.update();
+    batMan.update();
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
 

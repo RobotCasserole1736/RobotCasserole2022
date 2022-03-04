@@ -66,11 +66,11 @@ class SwerveModuleControl {
         wheelCmdLimitTbl = new MapLookup2D();
         wheelCmdLimitTbl.insertNewPoint(0.0, 1.0);
         wheelCmdLimitTbl.insertNewPoint(5.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(7.0, 0.8);
-        wheelCmdLimitTbl.insertNewPoint(15.0, 0.5);
-        wheelCmdLimitTbl.insertNewPoint(30.0, 0.1);
-        wheelCmdLimitTbl.insertNewPoint(45.0, 0.0);
-        wheelCmdLimitTbl.insertNewPoint(90.0, 0.0);
+        wheelCmdLimitTbl.insertNewPoint(7.0, 1.0);
+        wheelCmdLimitTbl.insertNewPoint(15.0, 1.0);
+        wheelCmdLimitTbl.insertNewPoint(30.0, 1.0);
+        wheelCmdLimitTbl.insertNewPoint(45.0, 1.0);
+        wheelCmdLimitTbl.insertNewPoint(90.0, 1.0);
                                           
 
     }

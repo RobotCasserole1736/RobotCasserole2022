@@ -45,7 +45,7 @@ export class SignalDAQNT4 {
     topicAnnounceHandler( newTopic ) {
         if(this.isSignalUnitsTopic(newTopic)){
             //If a signal units topic is announced, request what those units value actually is.
-            this.nt4Client.getValues(newTopic.name);
+            this.nt4Client.getValues([newTopic.name]);
         }
     }
 
