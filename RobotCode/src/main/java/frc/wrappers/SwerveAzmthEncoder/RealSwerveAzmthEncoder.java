@@ -21,7 +21,10 @@ public class RealSwerveAzmthEncoder extends AbstractSwerveAzmthEncoder {
     @Override
     public double getRawAngle_rad() {
         freq = m_dutyCycle.getFrequency(); //Track this for fault mode detection
-        return m_dutyCycle.getOutput() * Math.PI * 2;
+        int raw = m_dutyCycle.getOutputRaw();
+        double pulsetime = raw * 2.5E-8;
+        double anglerad = ((pulsetime - 1E-6) / (4.096E-3 - 1E-6)) * 2 * Math.PI;
+        return anglerad;
     }
 
     
