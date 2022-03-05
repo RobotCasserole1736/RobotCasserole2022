@@ -299,17 +299,17 @@ public class Robot extends TimedRobot {
       }
 
       shooter.setRun(true);
+      in.setCmd(intakeCmdState.STOP); 
 
     } else {
       // No shoot desired, just collect/store balls
-      shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
 
       if(di.getEject()){
         // eject everything
         elevator.setCmd(elevatorCmdState.EJECT);
         shooter.setFeed(Shooter.shooterFeedCmdState.EJECT);
         in.setCmd(intakeCmdState.EJECT);
-      } else if(di.getIntakeLowerAndRun()){
+      } else if(di.getIntakeLowerAndRun() && !elevator.isFull()){
         // Intake
         elevator.setCmd(elevatorCmdState.INTAKE);
         shooter.setFeed(Shooter.shooterFeedCmdState.INTAKE);

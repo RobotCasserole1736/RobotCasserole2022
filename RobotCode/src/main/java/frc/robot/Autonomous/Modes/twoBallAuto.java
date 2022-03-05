@@ -27,7 +27,7 @@ public class twoBallAuto extends AutoMode {
 
     @Override
     public Pose2d getInitialPose(){
-        return driveEvent.getInitialPose();
+        return Constants.DFLT_START_POSE;
     }
     
 }
