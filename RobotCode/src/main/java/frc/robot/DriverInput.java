@@ -1,7 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
@@ -68,7 +70,10 @@ public class DriverInput {
     boolean compDisable;
     @Signal(units="bool")
     boolean photonAlign;
+    @Signal(units="bool")
+    boolean resetOdometry;
 
+    Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
 
     private DriverInput(){
@@ -113,6 +118,8 @@ public class DriverInput {
         climbRetract = driverController.getPOV()==180 && driverController.getBButton();
         climbTilt = driverController.getPOV()==270 && driverController.getBButton();
         climbStraighten = driverController.getPOV()==90 && driverController.getBButton();
+
+        resetOdometry = resetOdoDbnc.calculate(driverController.getYButton());
 
         if(fwdRevSlewRate.isChanged() ||
            rotSlewRate.isChanged() ||
@@ -216,5 +223,9 @@ public class DriverInput {
     
     public boolean getPhotonAlign(){
         return photonAlign;
+    }
+
+    public boolean getOdoResetCmd(){
+        return resetOdometry;
     }
 }
