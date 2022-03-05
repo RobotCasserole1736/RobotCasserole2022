@@ -57,8 +57,8 @@ public class Constants {
     static public final int FR_AZMTH_ENC_IDX = 1;
     static public final int BL_AZMTH_ENC_IDX = 2;
     static public final int BR_AZMTH_ENC_IDX = 3;
-    //static public final int UNUSED = 4;
-    //static public final int UNUSED = 5;
+    static public final int ELEVATOR_LOWER_BALL_SENSOR = 4;
+    static public final int ELEVATOR_UPPER_BALL_SENSOR = 5;
     //static public final int UNUSED = 6;
     //static public final int UNUSED = 7;
     //static public final int UNUSED = 8;
@@ -101,6 +101,28 @@ public class Constants {
     //static public final int UNUSED = 7;
     //static public final int UNUSED = 8;
     //static public final int UNUSED = 9; 
+
+    // PDP Channels - for current measurement
+    //static public final int UNUSED = 0;
+    //static public final int UNUSED = 1;
+    //static public final int UNUSED = 2;
+    static public final int PD_UPPER_ELEVATOR = 3;
+    static public final int PD_LOWER_ELEVATOR = 4;
+    //static public final int UNUSED = 5;
+    //static public final int UNUSED = 6;
+    //static public final int UNUSED = 7;
+    //static public final int UNUSED = 8;
+    //static public final int UNUSED = 9;
+    //static public final int UNUSED = 10;
+    //static public final int UNUSED = 11;
+    //static public final int UNUSED = 12;
+    //static public final int UNUSED = 13;
+    //static public final int UNUSED = 14;
+    //static public final int UNUSED = 15;
+    static public final int PD_INTAKE = 16;
+    //static public final int UNUSED = 17;
+    //static public final int UNUSED = 18;
+    //static public final int UNUSED = 19;
     
      //////////////////////////////////////////////////////////////////
     // Shooter Constants

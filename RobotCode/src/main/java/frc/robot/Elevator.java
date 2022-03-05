@@ -50,8 +50,8 @@ public class Elevator {
 		advance = new Calibration("elevator advance speed", "cmd", 0.5);
 		eject = new Calibration("elevator eject speed", "cmd", 0.5);
 
-		lowerSensor = new DigitalInput(0);
-		upperSensor = new DigitalInput(1);
+		lowerSensor = new DigitalInput(Constants.ELEVATOR_LOWER_BALL_SENSOR);
+		upperSensor = new DigitalInput(Constants.ELEVATOR_UPPER_BALL_SENSOR);
 
 	}
 
