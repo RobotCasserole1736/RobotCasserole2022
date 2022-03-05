@@ -1,4 +1,4 @@
-![logo](ReadMeImages/RC-RedTextandTag.png)
+![logo](ReadMeImages/RC - Red Text and Tag.png)
 
 # RobotCasserole2022 🍲
 Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
@@ -14,7 +14,7 @@ Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
 ## 1. Driver View Website
 The Driver View web site is used to help test and tweak our code, and used to help drive team during match. The driver view is a javascript/HTML based viewer of data logs captured from the robot during operation. These data logs are then used to tweak code before, during, and after competition. 
 
-## 2. Main Source Code ![Baby Yoda](ReadMeResources/BabyYodaMark4.png)
+## 2. Main Source Code ![Baby Yoda](ReadMeImages/Boeing plane.jfif)
 The source code this year includes code for: running the intake, controlling hopper to get balls from intake to the conveyor, directing the conveyor to move the power cells where we want them, ramping up shooter wheel speed to score powercells, code to make a west coast drivetrain function as it should, code to auto-align the robot towards the outer goal, as well as code to make our robot look pretty (LEDS). If you care to look at it, look [here](https://github.com/RobotCasserole1736/RobotCasserole2020.git).
 
 ## 3. Log File Snagger & Log Viewer
