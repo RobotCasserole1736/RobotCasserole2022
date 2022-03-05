@@ -152,13 +152,10 @@ public class Shooter {
 
     // Returns whether the shooter is running at its setpoint speed or not.
     public boolean getSpooledUp(){
-        //var Speed_RPM = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
-        //if(Math.abs(Speed_RPM - shooter_Launch_Speed.get()) > allowed_Shooter_Error.get())
-        //    return false;
-//
-        //else
-        //    return true;
-        return false;
+        if(Math.abs(actual_Shooter_Speed - shooter_Launch_Speed.get()) > allowed_Shooter_Error.get())
+            return false;
+        else
+            return true;
     }
 
     public void calUpdate(boolean force){
