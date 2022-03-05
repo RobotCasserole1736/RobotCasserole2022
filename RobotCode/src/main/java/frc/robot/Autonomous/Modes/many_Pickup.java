@@ -9,22 +9,26 @@ import frc.robot.Autonomous.Events.AutoEventShoot;
 
 public class many_Pickup extends AutoMode {
 
-    AutoEventJSONTrajectory driveEvent = null;
+    AutoEventJSONTrajectory driveEvent1 = null;
+    AutoEventJSONTrajectory driveEvent2 = null;
 
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
-        driveEvent = new AutoEventJSONTrajectory("many_Pickup1", 0.80);
-        driveEvent.addChildEvent(new AutoEventIntake(3));
+        driveEvent1 = new AutoEventJSONTrajectory("many_Pickup1", 0.80);
+        driveEvent1.addChildEvent(new AutoEventIntake(3));
+        seq.addEvent(driveEvent1);
         seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));
-        driveEvent = new AutoEventJSONTrajectory("many_Pickup2", 0.80);
-        driveEvent.addChildEvent(new AutoEventIntake(5));
+        driveEvent2 = new AutoEventJSONTrajectory("many_Pickup2", 0.80);
+        driveEvent2.addChildEvent(new AutoEventIntake(5));
+        seq.addEvent(driveEvent2);
         seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));
        
     }
 
     @Override
     public Pose2d getInitialPose(){
-        return driveEvent.getInitialPose();
+        return driveEvent1.getInitialPose();
+        
     }
     
 }
