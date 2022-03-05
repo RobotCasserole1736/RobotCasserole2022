@@ -25,5 +25,5 @@ Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
 ## 4. Important Information!
   Java does not allow emojies as variable names. In other words, Java is against fun.😞
 
-## 
+## ATTENTION!!! Benoit Mandelbrot Made This
   ![FractyTime](ReadMeImages/kjsadfjklfdsljkdsfajlkdsafjkldfsajkljlkdsaflkjdsfajlkdsfajlkdsafjlk.gif) 
