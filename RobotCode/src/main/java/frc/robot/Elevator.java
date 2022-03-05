@@ -21,15 +21,16 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 
 public class Elevator {
-    // You will want to rename all instances of "EmptyClass" with your actual class name and "empty" with a variable name
 	private static Elevator elevator = null;
     //VictorSPX elevatorMotor;
+	DigitalInput lowerSensor;
+	DigitalInput upperSensor;
 
 	public static synchronized Elevator getInstance() {
 		if(elevator == null)
@@ -43,7 +44,11 @@ public class Elevator {
 		advance = new Calibration("elevator advance speed", "cmd", 0.5);
 		eject = new Calibration("elevator eject speed", "cmd", 0.5);
 
+		lowerSensor = new DigitalInput(0);
+		upperSensor = new DigitalInput(1);
+
 	}
+
 	Calibration advance;
     Calibration eject;
 	@Signal(units = "cmd")
@@ -57,6 +62,7 @@ public class Elevator {
 public enum elevatorCmdState{
     STOP(0),
     INTAKE(1),
+	SHOOT(2),
     EJECT(-1);
 
 	public final int value;
@@ -76,6 +82,16 @@ public void setCmd(elevatorCmdState cmd_in){
 }
 
 public void update(){
+	upperSensor.get();
+
+	if(upperSensor.get()) {
+		//stop elevator motor, intake motor, and feed wheels
+		//elevatorMotor.set(ControleMode.Velocity,0);
+		//vertIntakeMotor.set(0);
+	} else {
+		//
+	}
+	
 	//if(cmdState == elevatorCmdState.STOP) {
 	//	elevatorMotor.set(ControlMode.Velocity,0);
 	//} else if(cmdState == elevatorCmdState.INTAKE) {
