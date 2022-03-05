@@ -72,6 +72,8 @@ public class DriverInput {
     boolean photonAlign;
     @Signal(units="bool")
     boolean resetOdometry;
+    @Signal(units="bool")
+    boolean isConnected;
 
     Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
@@ -79,6 +81,7 @@ public class DriverInput {
     private DriverInput(){
 
         driverController = new XboxController(0);
+
         stickDeadband = new Calibration("StickDeadBand", "", 0.1);
 
         fwdRevSlewRate = new Calibration("fwdRevSlewRate", "", 3);
@@ -93,6 +96,7 @@ public class DriverInput {
 
     public void update(){
 
+        isConnected = driverController.isConnected();
         
         curFwdRevCmd = -1.0 * driverController.getLeftY();
         curRotCmd = -1.0 * driverController.getRightX();

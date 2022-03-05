@@ -31,17 +31,17 @@ public class Constants {
     static public final double WHEEL_RADIUS_IN = 4.0/2.0; //four inch diameter wheels - https://www.swervedrivespecialties.com/collections/mk4i-parts/products/billet-wheel-4d-x-1-5w-bearing-bore
 
 
-    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(124.2);
-    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(273.3);
-    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(242.4);
-    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(310.4);
+    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = 2.048;
+    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = 4.6685;
+    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = 4.1085;
+    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = 5.471;
 
     //////////////////////////////////////////////////////////////////
     // Electrical
     //////////////////////////////////////////////////////////////////
 
     // PWM Bank
-    static public final int VERT_SPARK_MOTOR = 0;
+    static public final int VERT_INTAKE_SPARK_MOTOR = 0;
     static public final int LED_CONTROLLER_PORT = 1; 
     //static public final int UNUSED = 2;
     //static public final int UNUSED = 3;
@@ -83,11 +83,11 @@ public class Constants {
     static public final int BR_AZMTH_MOTOR_CANID = 9;
     static public final int SHOOTER_MOTOR_CANID = 10;
     static public final int HORIZ_INTAKE_MOTOR_CANID  = 11;
-    static public final int LEFT_VERT_INTAKE_MOTOR_CANID = 12;
-    static public final int RIGHT_VERT_INTAKE_MOTOR_CANID = 13;
-    static public final int SHOOTER_FEED_MOTOR_1_CANID = 14;
-    static public final int SHOOTER_FEED_MOTOR_2_CANID = 15;
-    static public final int Elevator_Motor_Canid = 16;
+    //static public final int UNUSED = 12;
+    //static public final int UNUSED = 13;
+    //static public final int UNUSED = 14;
+    static public final int SHOOTER_FEED_MOTOR_CANID = 15; // AKA Elevator Upper Motor
+    static public final int ELEVATOR_LOWER_CANID = 16;
     //static public final int UNUSED = 17;
 
     // Pneumatics Hub
