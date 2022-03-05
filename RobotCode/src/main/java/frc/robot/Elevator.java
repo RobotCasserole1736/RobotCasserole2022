@@ -57,6 +57,7 @@ public class Elevator {
 public enum elevatorCmdState{
     STOP(0),
     INTAKE(1),
+	SHOOT(2),
     EJECT(-1);
 
 	public final int value;

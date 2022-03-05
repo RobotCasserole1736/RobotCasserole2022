@@ -23,6 +23,8 @@ import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.Drivetrain.DrivetrainControl;
+import frc.robot.Elevator.elevatorCmdState;
+import frc.robot.Intake.intakeCmdState;
 import frc.sim.RobotModel;
 
 
@@ -237,7 +239,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     SignalWrangler.getInstance().logger.startLoggingTeleop();
-
   }
 
   @Override
@@ -252,9 +253,11 @@ public class Robot extends TimedRobot {
 
     PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
 
+    /////////////////////////////////////
+    // Drivetrain Input Mapping, with vision alignment
     double fwdRevSpdCmd_mps = di.getFwdRevCmd_mps();
     double leftRightSpdCmd_mps = di.getSideToSideCmd_mps();
-    double rotateCmd_radpersec = di.getRotateCmd_rps();
+    double rotateCmd_radpersec = 0;
 
     if (di.getPhotonAlign()) {
       // Vision-alignment mode
@@ -269,22 +272,59 @@ public class Robot extends TimedRobot {
           // If we have no targets, stay still.
           rotateCmd_radpersec = 0;
       }
-  } else {
-      // Manual Driver Mode
-      
-  }
+    } else {
+        // Manual Driver Mode
+        rotateCmd_radpersec = di.getRotateCmd_rps();
+    }
 
     if(!di.getRobotRelative()){ //temp, use robot relative by default
       dt.setCmdRobotRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
     } else {
       dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
     }
+    
 
-    if(di.getFeedShooter())
-      shooter.setFeed(Shooter.shooterFeedCmdState.FEED);
-    else
+    ////////////////////////////////////////
+    // Shooter & Superstructure control
+    if(di.getFeedShooter()){
+      // Attempting to Shoot
+      if(shooter.getSpooledUp()){
+        //At up to speed, allow feed
+        shooter.setFeed(Shooter.shooterFeedCmdState.FEED);
+        elevator.setCmd(elevatorCmdState.SHOOT);
+      } else {
+        // Not at speed yet, hold off on feeding
+        shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
+        elevator.setCmd(elevatorCmdState.INTAKE);
+      }
+
+      shooter.setRun(true);
+
+    } else {
+      // No shoot desired, just collect/store balls
       shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
-    shooter.setRun(di.getRunShooter());
+
+      if(di.getEject()){
+        // eject everything
+        elevator.setCmd(elevatorCmdState.EJECT);
+        shooter.setFeed(Shooter.shooterFeedCmdState.EJECT);
+        in.setCmd(intakeCmdState.EJECT);
+      } else if(di.getIntakeLowerAndRun()){
+        // Intake
+        elevator.setCmd(elevatorCmdState.INTAKE);
+        shooter.setFeed(Shooter.shooterFeedCmdState.INTAKE);
+        in.setCmd(intakeCmdState.INTAKE);
+      } else {
+        // Stop
+        elevator.setCmd(elevatorCmdState.STOP);
+        shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
+        in.setCmd(intakeCmdState.STOP);     
+      }
+
+      // Allow preemptively spooling up the shooter
+      shooter.setRun(di.getRunShooter());
+
+    }
 
     stt.mark("Human Input Mapping");
 
