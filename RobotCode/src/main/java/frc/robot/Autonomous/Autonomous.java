@@ -18,6 +18,7 @@ import frc.robot.Autonomous.Modes.DoNothing;
 import frc.robot.Autonomous.Modes.DriveFwd;
 import frc.robot.Autonomous.Modes.Wait;
 import frc.robot.Autonomous.Modes.many_Pickup;
+import frc.robot.Autonomous.Modes.twoBallAuto;
 import frc.robot.Drivetrain.DrivetrainControl;
 
 
@@ -83,7 +84,7 @@ public class Autonomous extends LocalClient  {
         mainModeList.add(new DriveFwd());
         mainModeList.add(new DoNothing());
         mainModeList.add(new many_Pickup());
-        
+        mainModeList.add(new twoBallAuto());
 
         // Create and subscribe to NT4 topics
         curDelayModeTopic = NT4Server.getInstance().publishTopic(delayModeList.getCurModeTopicName(), NT4TypeStr.INT, this);
