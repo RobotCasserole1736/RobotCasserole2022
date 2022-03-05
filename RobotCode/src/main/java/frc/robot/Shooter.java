@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Encoder;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
@@ -57,6 +58,11 @@ public class Shooter {
     Calibration ejectSpeed;
     Calibration intakeSpeed;
 
+    Encoder feedWheelEncoder;
+
+    @Signal(units = "RPM")
+    double feedWheelSpeed;
+
     SimpleMotorFeedforward shooterMotorFF;
 
 	public static synchronized Shooter getInstance() {
@@ -83,6 +89,9 @@ public class Shooter {
         intakeSpeed = new Calibration("intake speed","Cmd",0.5);
 
         shooterMotorFF = new SimpleMotorFeedforward(0,0);
+
+        feedWheelEncoder = new Encoder(Constants.SHOOTER_FEED_ENC_A, Constants.SHOOTER_FEED_ENC_B);
+        feedWheelEncoder.setDistancePerPulse(Constants.SHOOTER_FEED_ENC_REV_PER_PULSE);
 
         run_Cmd = false;
         feed_Cmd = shooterFeedCmdState.STOP;
@@ -122,6 +131,7 @@ public class Shooter {
 
     //Call this in a periodic loop to keep the shooter up to date
     public void update(){
+        feedWheelSpeed = feedWheelEncoder.getRate() * 60.0;
         //actual_Shooter_Speed = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
 
         if (run_Cmd){

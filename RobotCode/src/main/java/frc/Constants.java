@@ -53,14 +53,14 @@ public class Constants {
     //static public final int UNUSED = 9;
 
     // DIO Bank
-    static public final int FL_AZMTH_ENC_IDX = 0; //TODO - are these actually going to be here?
+    static public final int FL_AZMTH_ENC_IDX = 0; 
     static public final int FR_AZMTH_ENC_IDX = 1;
     static public final int BL_AZMTH_ENC_IDX = 2;
     static public final int BR_AZMTH_ENC_IDX = 3;
     static public final int ELEVATOR_LOWER_BALL_SENSOR = 4;
     static public final int ELEVATOR_UPPER_BALL_SENSOR = 5;
-    //static public final int UNUSED = 6;
-    //static public final int UNUSED = 7;
+    static public final int SHOOTER_FEED_ENC_A = 6;
+    static public final int SHOOTER_FEED_ENC_B = 7;
     //static public final int UNUSED = 8;
     //static public final int UNUSED = 9;
 
@@ -124,11 +124,12 @@ public class Constants {
     //static public final int UNUSED = 18;
     //static public final int UNUSED = 19;
     
-     //////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
     // Shooter Constants
     //////////////////////////////////////////////////////////////////
     public static final double SINGLE_BALL_SHOT_TIME = 1.5;
     public static final double DOUBLE_BALL_SHOT_TIME = 2.0;
+    public static final double SHOOTER_FEED_ENC_REV_PER_PULSE = 1.0/2048.0; // see https://www.revrobotics.com/rev-11-1271/
 
     //////////////////////////////////////////////////////////////////
     // Nominal Sample Times
