@@ -1,4 +1,4 @@
-![logo](ReadMeResources/InfiniteRecharge2020CasseroleBannerLogoEdited.jpg)
+![logo](ReadMeResources/download(1).png)
 
 # RobotCasserole2022 🍲
 Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
