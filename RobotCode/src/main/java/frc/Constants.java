@@ -92,8 +92,12 @@ public class Constants {
 
     // Pneumatics Hub
     static public final int INTAKE_SOLENOID = 0; 
-    static public final int TILT_SOLENOID = 1;
-    static public final int CLIMBER_SOLENOID = 2;
+    static public final int TILT_SOLENOID_FWD = 1;
+    static public final int TILT_SOLENOID_REV = 2;
+    static public final int CLIMBER_SOLENOID1_REV = 3;
+    static public final int CLIMBER_SOLENOID1_FWD = 4;
+    static public final int CLIMBER_SOLENOID2_REV = 5;
+    static public final int CLIMBER_SOLENOID2_FWD = 6;
     //static public final int UNUSED = 3;
     //static public final int UNUSED = 4;
     //static public final int UNUSED = 5;

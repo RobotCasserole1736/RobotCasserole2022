@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.Constants;
@@ -28,8 +29,9 @@ import frc.lib.Signal.Annotations.Signal;
 public class Climber {
 	// You will want to rename all instances of "Climber" with your actual class name and "climber" with a variable name
 	private static Climber climber = null;
-    Solenoid tilt;
-    Solenoid climb;
+    DoubleSolenoid tilt;
+    DoubleSolenoid climb1;
+    DoubleSolenoid climb2;
     @Signal (units="command")
     boolean tiltState;
    @Signal (units="command")
@@ -43,8 +45,9 @@ public class Climber {
     // This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
     // The constructor should set an initial state for each solenoid - straightened for the tilt solenoid and retracted for the climb solenoid.
     private Climber() {
-        tilt = new Solenoid (PneumaticsModuleType.REVPH, Constants.TILT_SOLENOID);
-        climb = new Solenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID);
+        tilt = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.TILT_SOLENOID_FWD,Constants.TILT_SOLENOID_REV);
+        climb1 = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID1_FWD,Constants.CLIMBER_SOLENOID1_REV);
+        climb2 = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID2_FWD,Constants.CLIMBER_SOLENOID2_REV);
         extendTiltClimber();
         retractClimber();
 
@@ -70,8 +73,20 @@ public class Climber {
         
     }
     public void update () {
-        climb.set(climbState);
-        tilt.set(tiltState);
+        if(climbState){
+            climb1.set(DoubleSolenoid.Value.kForward);
+            climb2.set(DoubleSolenoid.Value.kForward);
+        }
+        else{
+            climb1.set(DoubleSolenoid.Value.kReverse);
+            climb2.set(DoubleSolenoid.Value.kReverse);
+        }
+        if(tiltState){
+            tilt.set(DoubleSolenoid.Value.kForward);
+        }else{
+            tilt.set(DoubleSolenoid.Value.kReverse);
+        }
+        
     }
 	
 }
