@@ -81,16 +81,6 @@ public class Robot extends TimedRobot {
 
   PneumaticsSupplyControl psc;
 
-  @Signal
-  double loopDurationSec;
-  double startTimeSec;
-
-  @Signal
-  double loopPeriodSec;
-
-  @Signal (units="sec")
-  double elapsedTime;
-
   SegmentTimeTracker stt = new SegmentTimeTracker("Robot.java", 0.03);
 
   final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
@@ -421,8 +411,6 @@ public class Robot extends TimedRobot {
     stt.mark("Dashboard");
     telemetryUpdate();
     stt.mark("Telemetry");
-
-    elapsedTime = Timer.getFPGATimestamp();
 
     stt.end();
   }

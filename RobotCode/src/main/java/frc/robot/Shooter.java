@@ -79,6 +79,8 @@ public class Shooter {
         shooterMotor = new CasseroleCANMotorCtrl("shooter", Constants.SHOOTER_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
         feedMotor = new VictorSPX(Constants.SHOOTER_FEED_MOTOR_CANID);
 
+        shooterMotor.setInverted(true);
+
         shooter_P = new Calibration("shooter P","",0.01);
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);

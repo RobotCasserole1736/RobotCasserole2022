@@ -92,8 +92,8 @@ public class Elevator {
 	}
 
 	public void update(){
-		upperBallPresent = upperSensor.get();
-		lowerBallPresent = lowerSensor.get();
+		upperBallPresent = !upperSensor.get(); //invert due to sensor technology
+		lowerBallPresent = !lowerSensor.get();
 		
 		if(cmdState == elevatorCmdState.STOP) {
 			lowerElevatorMotorCmd = 0;

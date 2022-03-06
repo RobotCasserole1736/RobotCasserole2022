@@ -57,7 +57,7 @@ public class RealTalonFX extends AbstractSimmableMotorController {
         // d = volts / (rad/sec error) / seconds
 
         // I don't know why we need to do this, but it makes sim line up with real life.
-        p /= 100;
+        p /= 1000;
 
         //Convert to CTRE Units
         p = ( CMD_PER_V ) *  RevtoCTRENativeUnits(Units.radiansToRotations(p));

@@ -26,7 +26,7 @@ public class PneumaticsSupplyControl {
     
     private PneumaticsSupplyControl () {
         phCompressor = new Compressor(1, PneumaticsModuleType.REVPH);
-        phCompressor.enableDigital();
+        phCompressor.enableAnalog(100, 120);
     }
 
     public void setCompressorEnabledCmd(boolean cmd_in){
@@ -38,7 +38,7 @@ public class PneumaticsSupplyControl {
         compressorCurrent = phCompressor.getCurrent();
 
         if(compressorEnableCmd){
-            phCompressor.enableDigital();
+            phCompressor.enableAnalog(100, 120);
         } else {
             phCompressor.disable();
         }
