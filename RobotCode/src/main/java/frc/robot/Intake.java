@@ -50,6 +50,7 @@ public class Intake {
 	private Intake() {
         //horizIntakeMotor = new CasseroleCANMotorCtrl("intakeHoriz", Constants.HORIZ_INTAKE_MOTOR_CANID, CANMotorCtrlType.TALON_FX);
         vertIntakeMotor = new Spark( Constants.VERT_INTAKE_SPARK_MOTOR);
+        vertIntakeMotor.setInverted(true);
 
         horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.8);
         horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.8);

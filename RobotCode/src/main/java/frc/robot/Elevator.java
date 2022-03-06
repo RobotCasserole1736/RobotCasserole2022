@@ -51,6 +51,7 @@ public class Elevator {
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private Elevator() {
         lowerElevatorMotor = new VictorSPX(Constants.ELEVATOR_LOWER_CANID);
+		lowerElevatorMotor.setInverted(true);
 		advance = new Calibration("elevator advance speed", "cmd", 0.5);
 		eject = new Calibration("elevator eject speed", "cmd", 0.5);
 

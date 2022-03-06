@@ -81,7 +81,7 @@ public class Shooter {
 
         shooterMotor.setInverted(true);
 
-        shooter_P = new Calibration("shooter P","",0.01);
+        shooter_P = new Calibration("shooter P","",0.00);
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);
         shooter_F = new Calibration("shooter F","",0.006);
