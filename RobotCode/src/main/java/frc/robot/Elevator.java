@@ -27,8 +27,8 @@ import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 
 public class Elevator {
-	private static Elevator elevator = null;
-    VictorSPX elevatorMotor;
+    VictorSPX lowerElevatorMotor;
+
 	DigitalInput lowerSensor;
 	DigitalInput upperSensor;
 
@@ -38,6 +38,10 @@ public class Elevator {
 	@Signal
 	boolean lowerBallPresent;
 
+	@Signal ( units = "cmd")
+	double lowerElevatorMotorCmd;
+
+	private static Elevator elevator = null;
 	public static synchronized Elevator getInstance() {
 		if(elevator == null)
 			elevator = new Elevator();
@@ -46,7 +50,7 @@ public class Elevator {
 
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private Elevator() {
-        elevatorMotor = new VictorSPX(Constants.ELEVATOR_LOWER_CANID);
+        lowerElevatorMotor = new VictorSPX(Constants.ELEVATOR_LOWER_CANID);
 		advance = new Calibration("elevator advance speed", "cmd", 0.5);
 		eject = new Calibration("elevator eject speed", "cmd", 0.5);
 
@@ -92,18 +96,19 @@ public class Elevator {
 		lowerBallPresent = lowerSensor.get();
 		
 		if(cmdState == elevatorCmdState.STOP) {
-			elevatorMotor.set(ControlMode.Velocity,0);
-
+			lowerElevatorMotorCmd = 0;
 		} else if(cmdState == elevatorCmdState.INTAKE) {
-			elevatorMotor.set(ControlMode.Velocity,advance.get());
-
+			lowerElevatorMotorCmd = advance.get();
 		} else if(cmdState == elevatorCmdState.SHOOT) {
-			elevatorMotor.set(ControlMode.Velocity,advance.get());
-
+			lowerElevatorMotorCmd = advance.get();
 		} else if(cmdState == elevatorCmdState.EJECT) {
-			elevatorMotor.set(ControlMode.Velocity,eject.get());
+			lowerElevatorMotorCmd = -1.0 * eject.get();
+		} else {
+			lowerElevatorMotorCmd = 0;
+		}
 
-		} 
+		lowerElevatorMotor.set(ControlMode.PercentOutput,lowerElevatorMotorCmd);
+
 
 	}
 

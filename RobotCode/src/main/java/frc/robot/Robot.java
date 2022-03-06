@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
 
   LEDController ledCont;
 
-  PneumaticsSupplyControl PSC;
+  PneumaticsSupplyControl psc;
 
   @Signal
   double loopDurationSec;
@@ -191,7 +191,7 @@ public class Robot extends TimedRobot {
     ledCont = LEDController.getInstance();
     stt.mark("LED Control");
 
-    PSC = new PneumaticsSupplyControl();
+    psc = PneumaticsSupplyControl.getInstance();
     stt.mark("Pneumatics Supply Control");
 
     SignalWrangler.getInstance().registerSignals(this);
@@ -253,7 +253,7 @@ public class Robot extends TimedRobot {
     oi.update();
     stt.mark("Operator Input");
 
-    PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
+    psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
 
     /////////////////////////////////////
     // Drivetrain Input Mapping, with vision alignment

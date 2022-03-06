@@ -143,6 +143,7 @@ public class DriverInput {
         } else if(driverController.getBackButton()) {
             compressorEnabled = false;
         } else {
+            //Maintain old command
         }
         
         photonAlign = driverController.getAButton();

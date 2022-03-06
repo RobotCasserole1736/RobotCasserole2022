@@ -36,7 +36,7 @@ import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl.CANMotorCtrlType;
 public class Shooter {
 	private static Shooter shooter = null;
     private CasseroleCANMotorCtrl shooterMotor;
-    private VictorSPX feedMotor;
+    private VictorSPX feedMotor; // AKA Upper Elevator Motor
 
     @Signal (units = "RPM")
     double actualSpeed;
@@ -86,7 +86,7 @@ public class Shooter {
         shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",2000);
         allowed_Shooter_Error = new Calibration("allowed shooter error","RPM",100);
         feedSpeed = new Calibration("feed speed","Cmd",0.5);
-        ejectSpeed = new Calibration("eject speed","Cmd",-0.5);
+        ejectSpeed = new Calibration("eject speed","Cmd",0.5);
         intakeSpeed = new Calibration("intake speed","Cmd",0.5);
 
         shooterMotorFF = new SimpleMotorFeedforward(0,0);
@@ -146,9 +146,9 @@ public class Shooter {
         if(feedCmdState == shooterFeedCmdState.STOP) {
             feedMotorCmd = 0;
         } else if(feedCmdState == shooterFeedCmdState.INTAKE) {
-            feedMotorCmd = intakeSpeed.get();
+            feedMotorCmd = -1.0 * intakeSpeed.get();
         } else if(feedCmdState == shooterFeedCmdState.EJECT) {
-            feedMotorCmd = ejectSpeed.get();
+            feedMotorCmd = -1.0 * ejectSpeed.get();
         } else if(feedCmdState == shooterFeedCmdState.FEED) {
             feedMotorCmd = feedSpeed.get();
         } else {
