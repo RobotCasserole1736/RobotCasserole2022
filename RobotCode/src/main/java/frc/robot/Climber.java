@@ -62,11 +62,11 @@ public class Climber {
         climbState = true;
     }
     public boolean getIsTilted() {
-        return false;
+        return (tiltState == true);
 
     }
     public boolean getIsExtended() {
-        return false;
+        return (climbState == false);
         
     }
     public void update () {

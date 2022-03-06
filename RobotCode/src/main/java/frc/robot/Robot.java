@@ -253,8 +253,6 @@ public class Robot extends TimedRobot {
     oi.update();
     stt.mark("Operator Input");
 
-    psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
-
     /////////////////////////////////////
     // Drivetrain Input Mapping, with vision alignment
     double fwdRevSpdCmd_mps = di.getFwdRevCmd_mps();
@@ -294,7 +292,7 @@ public class Robot extends TimedRobot {
 
     ////////////////////////////////////////
     // Shooter & Superstructure control
-    if(di.getFeedShooter()){
+    if(di.getFeedShooter() || oi.getfeedShooter()){
       // Attempting to Shoot
       if(shooter.getSpooledUp()){
         //At up to speed, allow feed
@@ -312,12 +310,12 @@ public class Robot extends TimedRobot {
     } else {
       // No shoot desired, just collect/store balls
 
-      if(di.getEject()){
+      if(di.getEject() || oi.getEject()){
         // eject everything
         elevator.setCmd(elevatorCmdState.EJECT);
         shooter.setFeed(Shooter.shooterFeedCmdState.EJECT);
         in.setCmd(intakeCmdState.EJECT);
-      } else if(di.getIntakeLowerAndRun() && !elevator.isFull()){
+      } else if( (di.getIntakeLowerAndRun() || oi.getIntakeLowerAndRun()) && !elevator.isFull()){
         // Intake
         elevator.setCmd(elevatorCmdState.INTAKE);
         shooter.setFeed(Shooter.shooterFeedCmdState.INTAKE);
@@ -330,9 +328,30 @@ public class Robot extends TimedRobot {
       }
 
       // Allow preemptively spooling up the shooter
-      shooter.setRun(di.getRunShooter());
+      shooter.setRun(di.getRunShooter() || oi.getRunShooter());
 
     }
+
+    
+    ////////////////////////////////////////
+    // Climber Control
+    if(di.getClimbExtend() || oi.getClimbExtend()){
+      climb.extendClimber();
+    } else if (di.getClimbRetract() || oi.getClimbRetract()) {
+      climb.retractClimber();
+    } else {
+      //maintain state
+    }
+
+    if(di.getClimbTilt() || oi.getClimbTilt()){
+      climb.extendTiltClimber();
+    } else if (di.getClimbStraighten() || oi.getClimbStraighten()) {
+      climb.retractTiltClimber();
+    } else {
+      //maintain state
+    }
+
+    psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
 
     stt.mark("Human Input Mapping");
 

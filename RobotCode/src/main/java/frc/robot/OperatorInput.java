@@ -13,7 +13,6 @@ public class OperatorInput {
             di = new OperatorInput();
         return di;
     }
-
    
     @Signal(units="bool")
     boolean runShooter;
@@ -34,17 +33,10 @@ public class OperatorInput {
     @Signal(units="bool")
     boolean eject;
     @Signal(units="bool")
-    boolean compEnable;
-    @Signal(units="bool")
-    boolean compDisable;
-    @Signal(units="bool")
     boolean isConnected;
 
-
     private OperatorInput(){
-
         operatorController = new XboxController(1);
-
     }
 
     public void update(){
@@ -56,31 +48,26 @@ public class OperatorInput {
             feedShooter = operatorController.getLeftBumper();
             intakeLowerAndRun = operatorController.getRightTriggerAxis()>0.5;
             eject = operatorController.getXButtonPressed();
-            compEnable = operatorController.getStartButton();
-            compDisable = operatorController.getBackButton();
             climbExtend = operatorController.getPOV()==0 && operatorController.getBButton();
             climbRetract = operatorController.getPOV()==180 && operatorController.getBButton();
             climbTilt = operatorController.getPOV()==270 && operatorController.getBButton();
             climbStraighten = operatorController.getPOV()==90 && operatorController.getBButton();
     
         } else {
+            //USB controller not connected
             runShooter = false;
             feedShooter = false;
             intakeLowerAndRun = false;
             eject = false;
-            compEnable = false;
-            compDisable = false;
             climbExtend = false;
             climbRetract = false;
             climbTilt = false;
-            climbStraighten = false;
-            
+            climbStraighten = false;  
         }
-
 
     }
 
-    public boolean getrunShooter(){
+    public boolean getRunShooter(){
         return runShooter;
     }
 
@@ -88,23 +75,23 @@ public class OperatorInput {
         return feedShooter;
     }
 
-    public boolean getclimbExtend(){
+    public boolean getClimbExtend(){
         return climbExtend;
     }
 
-    public boolean getclimbRetract(){
+    public boolean getClimbRetract(){
         return climbRetract;
     }
 
-    public boolean getclimbTilt(){
+    public boolean getClimbTilt(){
         return climbTilt;
     }
 
-    public boolean getclimbStraighten(){
+    public boolean getClimbStraighten(){
         return climbStraighten;
     }
 
-    public boolean getintakeLowerAndRun(){
+    public boolean getIntakeLowerAndRun(){
         return intakeLowerAndRun;
     }
 
@@ -112,16 +99,8 @@ public class OperatorInput {
         return intakeRaise;
     }
 
-    public boolean geteject(){
+    public boolean getEject(){
         return eject;
     }
 
-    public boolean getcompEnable(){
-        return compEnable;
-    }
-
-    public boolean getcompDisable(){
-        return compDisable;
-    }
-    
 }

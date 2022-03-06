@@ -137,7 +137,6 @@ public class DriverInput {
            }
                 
         
-
         if(driverController.getStartButton()) {
             compressorEnabled = true;
         } else if(driverController.getBackButton()) {
