@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
 
 public class BatteryMonitor {
@@ -22,6 +23,15 @@ public class BatteryMonitor {
 	@Signal(units="V")
 	double busRail6v;
 
+	@Signal(units="A")
+	double upperElevatorCurrent;
+
+	@Signal(units="A")
+	double lowerElevatorCurrent;
+
+	@Signal(units="A")
+	double intakeCurrent;
+
 	public static synchronized BatteryMonitor getInstance() {
 		if(moniter == null)
 			moniter = new BatteryMonitor();
@@ -36,6 +46,11 @@ public class BatteryMonitor {
 	public void update (){
 		batteryVoltage = pd.getVoltage();
 		batteryAmps = pd.getTotalCurrent();
+
+		upperElevatorCurrent = pd.getCurrent(Constants.PD_UPPER_ELEVATOR);
+		lowerElevatorCurrent = pd.getCurrent(Constants.PD_LOWER_ELEVATOR);
+		intakeCurrent = pd.getCurrent(Constants.PD_INTAKE);
+
 		rioBrownOutStatus = RobotController.isBrownedOut();
 		busRail3v3 = RobotController.getVoltage3V3();
 		busRail5v = RobotController.getVoltage5V();

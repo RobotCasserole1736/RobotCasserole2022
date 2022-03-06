@@ -31,17 +31,17 @@ public class Constants {
     static public final double WHEEL_RADIUS_IN = 4.0/2.0; //four inch diameter wheels - https://www.swervedrivespecialties.com/collections/mk4i-parts/products/billet-wheel-4d-x-1-5w-bearing-bore
 
 
-    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(124.2);
-    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(273.3);
-    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(242.4);
-    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = Units.degreesToRadians(310.4);
+    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = 2.048;
+    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = 4.6685;
+    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = 4.1085;
+    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = 5.471;
 
     //////////////////////////////////////////////////////////////////
     // Electrical
     //////////////////////////////////////////////////////////////////
 
     // PWM Bank
-    static public final int VERT_SPARK_MOTOR = 0;
+    static public final int VERT_INTAKE_SPARK_MOTOR = 0;
     static public final int LED_CONTROLLER_PORT = 1; 
     //static public final int UNUSED = 2;
     //static public final int UNUSED = 3;
@@ -53,14 +53,14 @@ public class Constants {
     //static public final int UNUSED = 9;
 
     // DIO Bank
-    static public final int FL_AZMTH_ENC_IDX = 0; //TODO - are these actually going to be here?
+    static public final int FL_AZMTH_ENC_IDX = 0; 
     static public final int FR_AZMTH_ENC_IDX = 1;
     static public final int BL_AZMTH_ENC_IDX = 2;
     static public final int BR_AZMTH_ENC_IDX = 3;
-    //static public final int UNUSED = 4;
-    //static public final int UNUSED = 5;
-    //static public final int UNUSED = 6;
-    //static public final int UNUSED = 7;
+    static public final int ELEVATOR_LOWER_BALL_SENSOR = 4;
+    static public final int ELEVATOR_UPPER_BALL_SENSOR = 5;
+    static public final int SHOOTER_FEED_ENC_A = 6;
+    static public final int SHOOTER_FEED_ENC_B = 7;
     //static public final int UNUSED = 8;
     //static public final int UNUSED = 9;
 
@@ -83,11 +83,11 @@ public class Constants {
     static public final int BR_AZMTH_MOTOR_CANID = 9;
     static public final int SHOOTER_MOTOR_CANID = 10;
     static public final int HORIZ_INTAKE_MOTOR_CANID  = 11;
-    static public final int LEFT_VERT_INTAKE_MOTOR_CANID = 12;
-    static public final int RIGHT_VERT_INTAKE_MOTOR_CANID = 13;
-    static public final int SHOOTER_FEED_MOTOR_1_CANID = 14;
-    static public final int SHOOTER_FEED_MOTOR_2_CANID = 15;
-    static public final int Elevator_Motor_Canid = 16;
+    //static public final int UNUSED = 12;
+    //static public final int UNUSED = 13;
+    //static public final int UNUSED = 14;
+    static public final int SHOOTER_FEED_MOTOR_CANID = 15; // AKA Elevator Upper Motor
+    static public final int ELEVATOR_LOWER_CANID = 16;
     //static public final int UNUSED = 17;
 
     // Pneumatics Hub
@@ -101,12 +101,35 @@ public class Constants {
     //static public final int UNUSED = 7;
     //static public final int UNUSED = 8;
     //static public final int UNUSED = 9; 
+
+    // PDP Channels - for current measurement
+    //static public final int UNUSED = 0;
+    //static public final int UNUSED = 1;
+    //static public final int UNUSED = 2;
+    static public final int PD_UPPER_ELEVATOR = 3;
+    static public final int PD_LOWER_ELEVATOR = 4;
+    //static public final int UNUSED = 5;
+    //static public final int UNUSED = 6;
+    //static public final int UNUSED = 7;
+    //static public final int UNUSED = 8;
+    //static public final int UNUSED = 9;
+    //static public final int UNUSED = 10;
+    //static public final int UNUSED = 11;
+    //static public final int UNUSED = 12;
+    //static public final int UNUSED = 13;
+    //static public final int UNUSED = 14;
+    //static public final int UNUSED = 15;
+    static public final int PD_INTAKE = 16;
+    //static public final int UNUSED = 17;
+    //static public final int UNUSED = 18;
+    //static public final int UNUSED = 19;
     
-     //////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
     // Shooter Constants
     //////////////////////////////////////////////////////////////////
     public static final double SINGLE_BALL_SHOT_TIME = 1.5;
     public static final double DOUBLE_BALL_SHOT_TIME = 2.0;
+    public static final double SHOOTER_FEED_ENC_REV_PER_PULSE = 1.0/2048.0; // see https://www.revrobotics.com/rev-11-1271/
 
     //////////////////////////////////////////////////////////////////
     // Nominal Sample Times

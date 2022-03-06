@@ -21,15 +21,22 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 
 public class Elevator {
-    // You will want to rename all instances of "EmptyClass" with your actual class name and "empty" with a variable name
 	private static Elevator elevator = null;
-    //VictorSPX elevatorMotor;
+    VictorSPX elevatorMotor;
+	DigitalInput lowerSensor;
+	DigitalInput upperSensor;
+
+	@Signal
+	boolean upperBallPresent;
+
+	@Signal
+	boolean lowerBallPresent;
 
 	public static synchronized Elevator getInstance() {
 		if(elevator == null)
@@ -39,52 +46,69 @@ public class Elevator {
 
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private Elevator() {
-        //elevatorMotor = new VictorSPX(Constants.Elevator_Motor_Canid);
+        elevatorMotor = new VictorSPX(Constants.ELEVATOR_LOWER_CANID);
 		advance = new Calibration("elevator advance speed", "cmd", 0.5);
 		eject = new Calibration("elevator eject speed", "cmd", 0.5);
 
+		lowerSensor = new DigitalInput(Constants.ELEVATOR_LOWER_BALL_SENSOR);
+		upperSensor = new DigitalInput(Constants.ELEVATOR_UPPER_BALL_SENSOR);
+
 	}
+
 	Calibration advance;
     Calibration eject;
 	@Signal(units = "cmd")
 	elevatorCmdState cmdState = elevatorCmdState.STOP;
 
-    
-// Possible states we could want the elevator to be running in
-// STOP: don't move
-// INTAKE: move cargo into and through the singulator into the elevator
-// EJECT: move cargo toward the intake 
-public enum elevatorCmdState{
-    STOP(0),
-    INTAKE(1),
-	SHOOT(2),
-    EJECT(-1);
+		
+	// Possible states we could want the elevator to be running in
+	// STOP: don't move
+	// INTAKE: move cargo into and through the singulator into the elevator
+	// EJECT: move cargo toward the intake 
+	public enum elevatorCmdState{
+		STOP(0),
+		INTAKE(1),
+		SHOOT(2),
+		EJECT(-1);
 
-	public final int value;
+		public final int value;
 
-	private elevatorCmdState(int value) {
-		this.value = value;
+		private elevatorCmdState(int value) {
+			this.value = value;
+		}
+
+		public int toInt() {
+			return this.value;
+		}
 	}
 
-	public int toInt() {
-		return this.value;
+	public void setCmd(elevatorCmdState cmd_in){
+		cmdState = cmd_in;
+
 	}
-}
 
-public void setCmd(elevatorCmdState cmd_in){
-	cmdState = cmd_in;
+	public void update(){
+		upperBallPresent = upperSensor.get();
+		lowerBallPresent = lowerSensor.get();
+		
+		if(cmdState == elevatorCmdState.STOP) {
+			elevatorMotor.set(ControlMode.Velocity,0);
 
-}
+		} else if(cmdState == elevatorCmdState.INTAKE) {
+			elevatorMotor.set(ControlMode.Velocity,advance.get());
 
-public void update(){
-	//if(cmdState == elevatorCmdState.STOP) {
-	//	elevatorMotor.set(ControlMode.Velocity,0);
-	//} else if(cmdState == elevatorCmdState.INTAKE) {
-	//	elevatorMotor.set(ControlMode.Velocity,advance.get());
-	//} else if(cmdState == elevatorCmdState.EJECT) {
-	//	elevatorMotor.set(ControlMode.Velocity,eject.get());
-	//} 
+		} else if(cmdState == elevatorCmdState.SHOOT) {
+			elevatorMotor.set(ControlMode.Velocity,advance.get());
 
+		} else if(cmdState == elevatorCmdState.EJECT) {
+			elevatorMotor.set(ControlMode.Velocity,eject.get());
+
+		} 
+
+	}
+
+	public boolean isFull(){
+		return upperBallPresent && lowerBallPresent;
 	}
 
 }
