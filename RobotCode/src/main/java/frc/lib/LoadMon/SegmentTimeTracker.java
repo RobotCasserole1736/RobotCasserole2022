@@ -38,8 +38,8 @@ public class SegmentTimeTracker {
     public void end(){
         loopDurationSec = Timer.getFPGATimestamp() - startTimeSec;
         if (loopDurationSec > max_dur_sec) {
-            //System.out.println(name + " Long Loop Detected:");
-            //trace.printEpochs(System.out::println);
+            System.out.println(name + " Long Loop Detected:");
+            trace.printEpochs(System.out::println);
         }
     }
 
