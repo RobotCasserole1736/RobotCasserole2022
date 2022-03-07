@@ -53,6 +53,7 @@ export class CircularGauge {
         // Draw Title Text
         this.ctx.font = (this.titleTextSize) + "px localMichroma";
         this.ctx.textBaseline = 'middle';
+        this.ctx.textAlign = 'center';
         this.ctx.fillStyle = "#FFFFFF";
         this.ctx.fillText(this.title, this.titleTextAnchorX, this.titleTextAnchorY);
 
@@ -111,11 +112,11 @@ export class CircularGauge {
         this.gaugeCenterY = this.canvas.height/1.9;
 
         this.titleTextSize = Math.round(this.canvas.height*0.09);
-        this.titleTextAnchorX = this.canvas.width * 0.05;
+        this.titleTextAnchorX = this.canvas.width * 0.5;
         this.titleTextAnchorY = this.canvas.height * 0.075;
 
         this.valueTextSize = Math.round(this.canvas.height*0.12);
-        this.valueTextAnchorX = this.gaugeCenterX * 0.5;
+        this.valueTextAnchorX = this.canvas.width * 0.5;
         this.valueTextAnchorY = this.canvas.height * 0.85;
         this.valueTextSpacing = this.valueTextSize*1.0
 
@@ -172,24 +173,27 @@ export class CircularGauge {
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
 
-        var xPos = startX;
+        var spacing = this.valueTextSpacing;
+        var totalLen = string.length * spacing;
 
         if(string[0] == '-'){
-            xPos -= this.valueTextSpacing;
+            totalLen -= spacing;
         }
 
         if(string.includes('.')){
-            xPos -= this.valueTextSpacing*0.25;
+            totalLen -= spacing*0.25;
         }
 
+        var xPos = startX - totalLen/2;
+
         for(var idx=0; idx < string.length; idx++){
-            var spacing = this.valueTextSpacing;
+            var thisSpace = spacing;
             if(string[idx] == '.'){
-                spacing *= 0.5;
+                thisSpace *= 0.5;
             }
-            xPos += spacing/2;
+            xPos += thisSpace/2;
             this.ctx.fillText(string[idx], xPos, startY);
-            xPos += spacing/2;
+            xPos += thisSpace/2;
         }
     } 
 

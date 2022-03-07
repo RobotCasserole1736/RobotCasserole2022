@@ -71,8 +71,8 @@ public class Dashboard {
         d.addAutoChooser(Autonomous.getInstance().delayModeList, CENTER_COL, ROW3, 1.0);
         d.addAutoChooser(Autonomous.getInstance().mainModeList, CENTER_COL, ROW4, 1.0);
 
-        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_shooterSpeed"), "Shooter Speed", "rpm", 0, 5000, 1000, 2000, CENTER_COL-7, ROW1, 1.0);
-        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_pneumaticsPressure"), "Pneum. Pressure", "psi", 0, 130, 80, 120, CENTER_COL+13, ROW1, 1.0);
+        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_shooterSpeed"), "Shooter", "RPM", 0, 5000, 1000, 3000, CENTER_COL-7, ROW1, 1.0);
+        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_pneumaticsPressure"), "Pressure", "psi", 0, 130, 80, 120, CENTER_COL+13, ROW1, 1.0);
 
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberTilt"),"Climber Tilt", "#FFFF00", "icons/climb.svg", CENTER_COL+12, ROW2, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberExtend"),"Climber Extend", "#FFFF00", "icons/climb.svg", CENTER_COL+6, ROW2, 1.0);

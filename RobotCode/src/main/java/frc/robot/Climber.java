@@ -2,7 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
 
@@ -48,12 +47,10 @@ public class Climber {
         tilt = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.TILT_SOLENOID_EXTEND, Constants.TILT_SOLENOID_RETRACT);
         climb1 = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID1_EXTEND,Constants.CLIMBER_SOLENOID1_RETRACT);
         climb2 = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID2_EXTEND,Constants.CLIMBER_SOLENOID2_RETRACT);
+        
+        // Set defaults
         extendTiltClimber();
         retractClimber();
-
-        //Default state
-        tiltExtendCmd = true; // default, extend tilt cylinders
-        climbExtendCmd = false; // retract climb cylinders
 
 	}
     public void extendTiltClimber() {
@@ -69,7 +66,7 @@ public class Climber {
         climbExtendCmd = false;
     }
     public boolean getIsTilted() {
-        return (tiltExtendCmd == true);
+        return (tiltExtendCmd == false);
 
     }
     public boolean getIsExtended() {
