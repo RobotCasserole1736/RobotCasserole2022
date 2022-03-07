@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
 
   // Things
   CasseroleRIOLoadMonitor loadMon;
-  //BatteryMonitor batMan;
+  BatteryMonitor batMan;
   //Ballcolordetector bcd;
 
   // DriverInput
@@ -136,7 +136,7 @@ public class Robot extends TimedRobot {
     loadMon = new CasseroleRIOLoadMonitor();
     stt.mark("RIO Load Monitor");
 
-    //batMan = BatteryMonitor.getInstance();
+    batMan = BatteryMonitor.getInstance();
     stt.mark("Battery Monitor");
 
     climb = Climber.getInstance();
@@ -424,7 +424,7 @@ public class Robot extends TimedRobot {
     pt.setEstimatedPose(dt.getCurEstPose());
     
     pt.update(time);
-    //batMan.update();
+    batMan.update();
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
 

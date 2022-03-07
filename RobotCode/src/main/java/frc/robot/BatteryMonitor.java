@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -32,6 +33,13 @@ public class BatteryMonitor {
 	@Signal(units="A")
 	double intakeCurrent;
 
+	@Signal(units="count")
+	double canRXErrors;
+	@Signal(units="count")
+	double canTXErrors;
+	@Signal(units="pct")
+	double canBusLoad;
+
 	public static synchronized BatteryMonitor getInstance() {
 		if(moniter == null)
 			moniter = new BatteryMonitor();
@@ -55,6 +63,11 @@ public class BatteryMonitor {
 		busRail3v3 = RobotController.getVoltage3V3();
 		busRail5v = RobotController.getVoltage5V();
 		busRail6v = RobotController.getVoltage6V();
+
+		CANStatus tmp = RobotController.getCANStatus();
+		canRXErrors = tmp.receiveErrorCount;
+		canTXErrors = tmp.transmitErrorCount;
+		canBusLoad = tmp.percentBusUtilization;
 	}
 
 }
