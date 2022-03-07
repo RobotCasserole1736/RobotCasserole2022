@@ -11,6 +11,7 @@ public abstract class LocalClient extends BaseClient{
     public LocalClient(){
         super();
         this.friendlyName = this.getClass().getName();
+        this.postInit();
     }
 
 }

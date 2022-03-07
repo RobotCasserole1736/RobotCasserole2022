@@ -13,6 +13,10 @@ public abstract class BaseClient {
     HashMap<Integer, Subscription> subscriptions = new HashMap<Integer, Subscription>();
 
     public BaseClient(){
+    
+    }
+
+    public void postInit(){
         NT4Server.getInstance().registerClient(this);
     }
 
