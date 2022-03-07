@@ -10,9 +10,9 @@ import frc.lib.Signal.Annotations.Signal;
 public class RobotModel {
 
     PneumaticsSystemSim ps;
-    //IntakeSim intake;
+    IntakeSim intake;
     DrivetrainModel dt;
-    //ShooterSim shooter;
+    ShooterSim shooter;
     VisionSystem vs;
 
     PDPSim pdp;
@@ -33,9 +33,9 @@ public class RobotModel {
     public RobotModel(){
         dt = new DrivetrainModel();
         vs = new VisionSystem();
-        //shooter = new ShooterSim();
+        shooter = new ShooterSim();
         ps = new PneumaticsSystemSim();
-        //intake = new IntakeSim();
+        intake = new IntakeSim();
         pdp = new PDPSim();
         reset(Constants.DFLT_START_POSE);
     }
@@ -56,18 +56,17 @@ public class RobotModel {
             isBrownedOut = (batteryVoltage_V < 6.5);
             isDisabled |= isBrownedOut;
 
-            //ps.setSystemConsumption(intake.getCylFlow_lps());
+            ps.setSystemConsumption(intake.getCylFlow_lps());
             ps.update(isDisabled);
 
-            //intake.update(isDisabled, batteryVoltage_V, ps.getSupplyPressure_kPa());
+            intake.update(isDisabled, batteryVoltage_V, ps.getSupplyPressure_kPa());
             
             dt.update(isDisabled, batteryVoltage_V);
             vs.update(dt.dtPoseForTelemetry);
 
-            //shooter.update(isDisabled, batteryVoltage_V);
+            shooter.update(isDisabled, batteryVoltage_V);
 
-            currentDraw_A = QUIESCENT_CURRENT_DRAW_A + dt.getCurrentDraw() + ps.getCurrentDraw_A();
-            //currentDraw_A = QUIESCENT_CURRENT_DRAW_A + dt.getCurrentDraw() + shooter.getCurrentDraw_A() + intake.getCurrentDraw_A() + ps.getCurrentDraw_A();
+            currentDraw_A = QUIESCENT_CURRENT_DRAW_A + dt.getCurrentDraw() + shooter.getCurrentDraw_A() + intake.getCurrentDraw_A() + ps.getCurrentDraw_A();
 
             //batteryVoltage_V = BatterySim.calculateLoadedBatteryVoltage(BATTERY_NOMINAL_VOLTAGE, BATTERY_NOMINAL_RESISTANCE, currentDraw_A);
 
