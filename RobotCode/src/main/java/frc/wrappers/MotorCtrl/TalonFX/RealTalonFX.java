@@ -2,6 +2,8 @@ package frc.wrappers.MotorCtrl.TalonFX;
 
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -40,6 +42,16 @@ public class RealTalonFX extends AbstractSimmableMotorController {
         _talon.configVelocityMeasurementWindow(16, TIMEOUT_MS);
         _talon.configVoltageCompSaturation(MAX_VOLTAGE, TIMEOUT_MS);
         _talon.setNeutralMode(NeutralMode.Coast);
+
+        //Reduce CAN bus rates on things we don't quite carea bout
+        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, TIMEOUT_MS); //Applied motor output, faults
+        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, TIMEOUT_MS); //Position/Velocity
+        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 9999, TIMEOUT_MS); // Quadrature - unused
+        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 200, TIMEOUT_MS); // Includes input supply voltage, which we might care about
+        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 9999, TIMEOUT_MS); // No idea, not used
+        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 9999, TIMEOUT_MS); // Not using motion magic
+        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 9999, TIMEOUT_MS); // No external feedback sensors connected
+        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 9999, TIMEOUT_MS); // No no auxilary PID used
     }
 
 
