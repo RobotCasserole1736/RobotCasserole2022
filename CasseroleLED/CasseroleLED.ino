@@ -37,38 +37,37 @@ void setup()
  */
 void loop()
 {
-  if ((pulseLen_us >= -50) && (pulseLen_us <= 50))
+  if (pulseLen_us == 0)
   {
-    //Disabled Pattern
-    //CasseroleColorStripeChase_update();
+    // No pulse recieved - robot must be disabled
     Fire_update();
   }
-  else if ((pulseLen_us >= 900) && (pulseLen_us <= 1000))
+  else if ((pulseLen_us > 800) && (pulseLen_us <= 1200))
   {
-    //TODO - Call periodic update for pattern 0
-    ColorSparkle_update(255, 0, 0);
+    // Case - pulse length nominal 1.0 ms
+    ColorSparkle_update(255, 0, 0); 
     //red color sparkle
   }
-  else if ((pulseLen_us >= 1200) && (pulseLen_us <= 1299))
+  else if ((pulseLen_us > 1200) && (pulseLen_us <= 1400))
   {
-    //TODO - Call periodic update for pattern 1
+    // Case - pulse length nominal 1.3 ms
     ColorSparkle_update(0, 0, 255);
     //blue color sparkle
   }
-  else if ((pulseLen_us >= 1600) && (pulseLen_us <= 1699))
+  else if ((pulseLen_us > 1400) && (pulseLen_us <= 1600))
   {
-    //TODO - Call periodic update for pattern 4
+    // Case - pulse length nominal 1.5 ms
     Blue_Fade();
   }
-  else if ((pulseLen_us >= 1700) && (pulseLen_us <= 1799))
+  else if ((pulseLen_us > 1600) && (pulseLen_us <= 1800))
   {
-    //TODO - Call periodic update for pattern 5
+    // Case - pulse length nominal 1.7 ms
     Red_Fade();
   }
-  else if ((pulseLen_us >= 1901) && (pulseLen_us <= 2000))
+  else if ((pulseLen_us > 1800) && (pulseLen_us <= 2200))
   {
-    //TODO - Call periodic update for pattern 6
-    Rainbow_Fade_Chase();
+    // Case - pulse length nominal 2.0 ms
+    CasseroleColorStripeChase_update();
   }
 
   // send the 'leds' array out to the actual LED strip
@@ -189,7 +188,7 @@ double randFloat(double minVal, double maxVal){
 }
 
 void Fire_init_particle(int idx){
-  particle_locations[idx] = 0;
+  particle_locations[idx] = 1;
   particle_velocities[idx] = randFloat(0.3,0.8);
   particle_temperatures[idx] = randFloat(0.8,1);
   particle_cooling_rates[idx] = randFloat(0.015,0.04);
@@ -226,6 +225,8 @@ void Fire_update()
     for(int idx = 0; idx < NUM_PARTICLES; idx++){
       particle_locations[idx] += particle_velocities[idx];
       particle_temperatures[idx] -= particle_cooling_rates[idx];
+
+      //terminal case, reset particle
       if(particle_locations[idx] > NUM_LEDS || particle_temperatures[idx] < 0){
         Fire_init_particle(idx);
       }
@@ -244,11 +245,11 @@ void Fire_update()
       
       int firstLEDIdx = floor(particle_locations[idx]);
       int secondLEDIdx = ceil(particle_locations[idx]);
-      double firstLEDFrac = particle_locations[idx] - firstLEDIdx;
-      double secondLEDFrac = secondLEDIdx - particle_locations[idx];
+      double firstLEDFrac = 1.0 - (particle_locations[idx] - (double)firstLEDIdx);
+      double secondLEDFrac = 1.0 - ((double)secondLEDIdx - particle_locations[idx]);
       
-      led[firstLEDIdx] += CHSV(hue, sat, value * firstLEDFrac * 2);
-      led[secondLEDIdx] += CHSV(hue, sat, value * secondLEDFrac * 2);
+      led[firstLEDIdx] += CHSV(hue, sat, value * firstLEDFrac);
+      led[secondLEDIdx] += CHSV(hue, sat, value * secondLEDFrac);
     }
 
     //Bottom Blue source
