@@ -81,13 +81,13 @@ public class Shooter {
 
         shooterMotor.setInverted(true);
 
-        shooter_P = new Calibration("shooter P","",0.00);
+        shooter_P = new Calibration("shooter P","",0.000015);
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);
-        shooter_F = new Calibration("shooter F","",0.006);
-        shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",2000);
-        allowed_Shooter_Error = new Calibration("allowed shooter error","RPM",100);
-        feedSpeed = new Calibration("feed speed","Cmd",0.5);
+        shooter_F = new Calibration("shooter F","",0.2);
+        shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",3500);
+        allowed_Shooter_Error = new Calibration("allowed shooter error","RPM",200);
+        feedSpeed = new Calibration("feed speed","Cmd",0.75);
         ejectSpeed = new Calibration("eject speed","Cmd",0.5);
         intakeSpeed = new Calibration("intake speed","Cmd",0.5);
 
