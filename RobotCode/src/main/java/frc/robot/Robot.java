@@ -81,7 +81,12 @@ public class Robot extends TimedRobot {
 
   PneumaticsSupplyControl psc;
 
-  SegmentTimeTracker stt = new SegmentTimeTracker("Robot.java", 0.03);
+  SegmentTimeTracker stt;
+
+  @Signal(units = "sec")
+  double mainLoopDuration;
+  @Signal(units = "sec")
+  double mainLoopPeriod;
 
   final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
   final double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
@@ -107,6 +112,8 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void robotInit() {
+
+    stt = new SegmentTimeTracker("Robot.java", 0.25);
 
     stt.start();
 
@@ -425,6 +432,10 @@ public class Robot extends TimedRobot {
     
     pt.update(time);
     batMan.update();
+
+    mainLoopDuration = stt.loopDurationSec;
+    mainLoopPeriod = stt.loopPeriodSec;
+
     SignalWrangler.getInstance().sampleAllSignals(time);
   }
 

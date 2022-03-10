@@ -2,7 +2,6 @@ package frc.lib.LoadMon;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Tracer;
-import frc.lib.Signal.Annotations.Signal;
 
 public class SegmentTimeTracker {
     private Tracer trace;
@@ -11,10 +10,8 @@ public class SegmentTimeTracker {
     private final double max_dur_sec;
 
 
-    @Signal(units="sec")
-    double loopPeriodSec;
-    @Signal(units="sec")
-    double loopDurationSec;
+    public double loopPeriodSec;
+    public double loopDurationSec;
 
     double startTimeSec;
 

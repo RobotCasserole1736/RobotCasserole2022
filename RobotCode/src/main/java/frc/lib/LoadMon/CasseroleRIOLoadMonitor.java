@@ -143,7 +143,7 @@ public class CasseroleRIOLoadMonitor {
 		String CPUTotalLoadRawLine = new String();
 		File file;
 
-		double sample_time_ms = Timer.getFPGATimestamp();
+		double sample_time_sec = Timer.getFPGATimestamp();
 		
 		if(giveUp == false){
 			
@@ -275,9 +275,9 @@ public class CasseroleRIOLoadMonitor {
 		totalJVMMemUsedPct = (jvmTotalMem - jvmFreeMem)/(jvmTotalMem) * 100.0;
 
 		//Update Telemetry
-		rioCPULoad.addSample(sample_time_ms,this.getCPULoadPct());
-        rioMemLoad.addSample(sample_time_ms,this.getMemLoadPct());
-        rioJVMMemLoad.addSample(sample_time_ms,this.getJVMMemLoadPct());
+		rioCPULoad.addSample(sample_time_sec,this.getCPULoadPct());
+        rioMemLoad.addSample(sample_time_sec,this.getMemLoadPct());
+        rioJVMMemLoad.addSample(sample_time_sec,this.getJVMMemLoadPct());
 		
 		
 	}

@@ -7,6 +7,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import frc.Constants;
 import frc.UnitUtils;
+import frc.lib.LoadMon.SegmentTimeTracker;
 import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Util.MapLookup2D;
 import frc.lib.Webserver2.DashboardConfig.SwerveStateTopicSet;
