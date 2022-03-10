@@ -211,6 +211,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     SignalWrangler.getInstance().logger.startLoggingAuto();
 
+    climb.retractTiltClimber();
+    
     //Reset sequencer
     auto.reset();
     auto.startSequencer();
@@ -237,6 +239,9 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void teleopInit() {
+   
+    climb.retractTiltClimber();
+
     SignalWrangler.getInstance().logger.startLoggingTeleop();
   }
 
