@@ -1,4 +1,4 @@
-![logo](ReadMeImages/RC-RedTextandTag.png)
+![logo](ReadMeImages/Rusty%20air.png)
 
 # RobotCasserole2022 🍲
 Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
@@ -16,14 +16,19 @@ Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
 
 ## 2. Main Source Code
 ![Boeing plane](ReadMeImages/Boeing%20plane.jfif)
-
-  The source code this year includes code for: running the intake, controlling hopper to get balls from intake to the conveyor, directing the conveyor to move the power cells where we want them, ramping up shooter wheel speed to score powercells, code to make a west coast drivetrain function as it should, code to auto-align the robot towards the outer goal, as well as code to make our robot look pretty (LEDS). If you care to look at it, look [here](https://github.com/RobotCasserole1736/RobotCasserole2020.git).
+  What we currently have for our 2022 Robot Code is a fully functioning swerve drive and a simplistic photonvision ball allignment.  In addition we have worked on improving the quality of life for the Robot Dashboard.  A 2, 3, and 4 ball auto has been produced in simulation with the code, as well as a fully mapped out teleoperated controller.  We have rough simulated code for the robot that allows it to climb.
+   [here](https://github.com/RobotCasserole1736/RobotCasserole2022/tree/main/RobotCode).
 
 ## 3. Log File Snagger & Log Viewer
   The log file snagger is a python script used to  communticate with the roborio and grab all csv logs in a certain directory and put them in a log viewer where we can view them when the robot does somthing wacky.
-
-## 4. Important Information!
-  Java does not allow emojies as variable names. In other words, Java is against fun.😞
+  
+## 4. LocalHost website 
+  Here is a link to the localhost website used for sims and robot testing.  Some minor updates have occured but otherwise it is the classic website.
+  (Just a heads up you'll need running code in simulation for the link to work.)
+  [Click here if you dare](http://localhost:5805/)
 
 ## ATTENTION!!! Benoit Mandelbrot Made This
   ![FractyTime](ReadMeImages/kjsadfjklfdsljkdsfajlkdsafjkldfsajkljlkdsaflkjdsfajlkdsfajlkdsafjlk.gif) 
+
+
+![logo](ReadMeImages/RC-RedTextandTag.png)
