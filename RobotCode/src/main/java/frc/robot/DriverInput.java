@@ -118,10 +118,17 @@ public class DriverInput {
         eject = driverController.getXButtonPressed();
         compEnable = driverController.getStartButton();
         compDisable = driverController.getBackButton();
-        climbExtend = driverController.getPOV()==0 && driverController.getBButton();
-        climbRetract = driverController.getPOV()==180 && driverController.getBButton();
-        climbTilt = driverController.getPOV()==270 && driverController.getBButton();
-        climbStraighten = driverController.getPOV()==90 && driverController.getBButton();
+        if(driverController.getBButton()){
+            climbExtend = driverController.getPOV()==0;
+            climbRetract = driverController.getPOV()==180;
+            climbTilt = driverController.getPOV()==270;
+            climbStraighten = driverController.getPOV()==90;    
+        } else {
+            climbExtend = false;
+            climbRetract = true;
+            climbTilt = true;
+            climbStraighten = false;  
+        }
 
         resetOdometry = resetOdoDbnc.calculate(driverController.getYButton());
 

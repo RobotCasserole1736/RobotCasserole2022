@@ -1,6 +1,7 @@
 package frc.wrappers.ADXRS453;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import frc.lib.Signal.Annotations.Signal;
 import frc.robot.Robot;
 
@@ -24,7 +25,7 @@ public class CasseroleADXRS453  {
     public void update(){
         // Gyros are inverted in reference frame (positive clockwise)
         // and we maintain our own offset in code when rezeroing.
-        curAngle_rad = gyro.getRawAngle() * -1.0 + offset_rad;
+        curAngle_rad = Units.degreesToRadians(gyro.getRawAngle()) * -1.0 + offset_rad;
     }
 
     public void reset(double curAngle_rad) {

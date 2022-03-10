@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
@@ -41,9 +42,19 @@ public class Intake {
     Calibration horizEjectSpeed;
     Calibration vertIntakeSpeed;
     Calibration vertEjectSpeed;
+    Calibration horizStartDelay;
 
     @Signal(units = "cmd")
     intakeCmdState cmdState = intakeCmdState.STOP;
+    intakeCmdState cmdStatePrev = intakeCmdState.STOP;
+
+    @Signal(units = "cmd")
+    intakeCmdState horizMotorCmd = intakeCmdState.STOP;
+    
+    @Signal
+    boolean intakeSolenoidCmd = false;
+
+    double horizIntakeStartTime = 0;
 
 	public static synchronized Intake getInstance() {
 		if(intake == null)
@@ -63,6 +74,8 @@ public class Intake {
         horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.5);
         vertIntakeSpeed = new Calibration("INT Vertical Intake Speed", "", -0.8);
         vertEjectSpeed = new Calibration("INT Vertical Eject Speed", "", 0.8);
+
+        horizStartDelay = new Calibration("INT Horizontal Intake Start Delay", "sec", 0.5);
 	}
 
     public enum intakeCmdState{
@@ -86,24 +99,47 @@ public class Intake {
     }
 
     public void update(){
+
+        // Handle intake solenoid
+        intakeSolenoidCmd =  (cmdState != intakeCmdState.STOP);
+        intakeSolenoid.set(intakeSolenoidCmd);
+
+        // Handle vertical motor
         if(cmdState == intakeCmdState.STOP) {
-            horizIntakeMotor.setVoltageCmd(0);
-            intakeSolenoid.set(false);
+            vertIntakeMotor.set(0);
         } else if(cmdState == intakeCmdState.INTAKE) {
-            horizIntakeMotor.setVoltageCmd(horizIntakeSpeed.get()*12);
-            intakeSolenoid.set(true);
+            vertIntakeMotor.set(vertIntakeSpeed.get());
         } else if(cmdState == intakeCmdState.EJECT) {
+            vertIntakeMotor.set(vertEjectSpeed.get());
+        }
+
+        // Handle Horizontal motor
+        if(cmdState == intakeCmdState.INTAKE && cmdStatePrev != intakeCmdState.INTAKE ){
+            //Reset timer on first loop of intake
+            horizIntakeStartTime = Timer.getFPGATimestamp() + horizStartDelay.get();
+        }
+
+        if(cmdState == intakeCmdState.INTAKE){
+            //Keep intake stopped until we're past the start time.
+            if(Timer.getFPGATimestamp() > horizIntakeStartTime){
+                horizMotorCmd = intakeCmdState.INTAKE;
+            } else {
+                horizMotorCmd = intakeCmdState.STOP;
+            }
+        } else {
+            horizMotorCmd = cmdState;
+        }
+
+        
+        if(horizMotorCmd == intakeCmdState.STOP){
+            horizIntakeMotor.setVoltageCmd(0.0);
+        } else if(horizMotorCmd == intakeCmdState.INTAKE) {
+            horizIntakeMotor.setVoltageCmd(horizIntakeSpeed.get()*12);
+        } else if(horizMotorCmd == intakeCmdState.EJECT) {
             horizIntakeMotor.setVoltageCmd(horizEjectSpeed.get()*12);
-            intakeSolenoid.set(true);
         } 
 
-        if(cmdState == intakeCmdState.STOP) {
-           vertIntakeMotor.set(0);
-        } else if(cmdState == intakeCmdState.INTAKE) {
-           vertIntakeMotor.set(vertIntakeSpeed.get());
-        } else if(cmdState == intakeCmdState.EJECT) {
-           vertIntakeMotor.set(vertEjectSpeed.get());
-        }
+        cmdStatePrev = cmdState;
 
 
     }

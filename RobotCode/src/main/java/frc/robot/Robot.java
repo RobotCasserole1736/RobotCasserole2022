@@ -240,8 +240,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
    
-    climb.retractTiltClimber();
-
     SignalWrangler.getInstance().logger.startLoggingTeleop();
   }
 
