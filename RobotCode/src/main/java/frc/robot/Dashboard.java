@@ -82,6 +82,13 @@ public class Dashboard {
     
       public void updateDriverView() {
 
+        shooterSpeed = Shooter.getInstance().getShooterSpeed();
+        pnuemPressure = PneumaticsSupplyControl.getInstance().getStoragePressure();
+        shooterSpoolup = Shooter.getInstance().getSpooledUp();
+        climberTilt = Climber.getInstance().getIsTilted();
+        climberExtend = Climber.getInstance().getIsExtended();
+
+
         //master caution handling
         if (pneumaticPressureLow ) {
           masterCautionTxt = "Low Pneumatic Pressure";
@@ -94,12 +101,7 @@ public class Dashboard {
           masterCaution = false;
         }
 
-        shooterSpeed = Shooter.getInstance().getShooterSpeed();
-        pnuemPressure = PneumaticsSupplyControl.getInstance().getStoragePressure();
-        shooterSpoolup = Shooter.getInstance().getSpooledUp();
-        climberTilt = Climber.getInstance().getIsTilted();
-        climberExtend = Climber.getInstance().getIsExtended();
-
+        
       }
     
 
