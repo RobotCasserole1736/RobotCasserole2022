@@ -10,7 +10,7 @@ Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
 2. Main Source Code
 3. Log File Snagger & Log Viewer
 4. Spooky Scary LocalHost Link
-?. Necessary Fractal
+5. Necessary Fractal
 
 ## 1. Driver View Website
   The Driver View web site is used to help test and tweak our code, and used to help drive team during match. The driver view is a javascript/HTML based viewer of data logs captured from the robot during operation. These data logs are then used to tweak code before, during, and after competition. 
@@ -28,7 +28,7 @@ Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
   (Just a heads up you'll need running code in simulation for the link to work.)
   [Click here if you dare](http://localhost:5805/)
 
-## ATTENTION!!! Benoit Mandelbrot Made This
+## 5. ATTENTION!!! Benoit Mandelbrot Made This
   ![FractyTime](ReadMeImages/kjsadfjklfdsljkdsfajlkdsafjkldfsajkljlkdsaflkjdsfajlkdsfajlkdsafjlk.gif) 
 
 
