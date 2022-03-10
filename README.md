@@ -1,4 +1,4 @@
-![logo](ReadMeImages/RC%20-%20Red%20Text%20and%20Tag.png)
+![logo](ReadMeImages/RC-RedTextandTag.png)
 
 # RobotCasserole2022 🍲
 Software for Robot Casserole's 2022 FIRST Rapid React 🔋 Competition Season
