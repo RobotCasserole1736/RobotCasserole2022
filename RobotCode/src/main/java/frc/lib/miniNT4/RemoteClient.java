@@ -8,12 +8,13 @@ import java.util.Set;
 
 public class RemoteClient extends BaseClient{
 
-    Socket parentSocket;
+    private Socket parentSocket;
 
     public RemoteClient(Socket ps_in, String name){
         super();
         parentSocket = ps_in;
         friendlyName = name;
+        this.postInit();
     }
 
     void onDisconnect(){

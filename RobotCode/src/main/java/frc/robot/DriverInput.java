@@ -1,7 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
@@ -68,12 +70,18 @@ public class DriverInput {
     boolean compDisable;
     @Signal(units="bool")
     boolean photonAlign;
+    @Signal(units="bool")
+    boolean resetOdometry;
+    @Signal(units="bool")
+    boolean isConnected;
 
+    Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
 
     private DriverInput(){
 
         driverController = new XboxController(0);
+
         stickDeadband = new Calibration("StickDeadBand", "", 0.1);
 
         fwdRevSlewRate = new Calibration("fwdRevSlewRate", "", 3);
@@ -88,6 +96,7 @@ public class DriverInput {
 
     public void update(){
 
+        isConnected = driverController.isConnected();
         
         curFwdRevCmd = -1.0 * driverController.getLeftY();
         curRotCmd = -1.0 * driverController.getRightX();
@@ -114,6 +123,8 @@ public class DriverInput {
         climbTilt = driverController.getPOV()==270 && driverController.getBButton();
         climbStraighten = driverController.getPOV()==90 && driverController.getBButton();
 
+        resetOdometry = resetOdoDbnc.calculate(driverController.getYButton());
+
         if(fwdRevSlewRate.isChanged() ||
            rotSlewRate.isChanged() ||
            sideToSideSlewRate.isChanged()) {
@@ -126,12 +137,12 @@ public class DriverInput {
            }
                 
         
-
         if(driverController.getStartButton()) {
             compressorEnabled = true;
         } else if(driverController.getBackButton()) {
             compressorEnabled = false;
         } else {
+            //Maintain old command
         }
         
         photonAlign = driverController.getAButton();
@@ -216,5 +227,9 @@ public class DriverInput {
     
     public boolean getPhotonAlign(){
         return photonAlign;
+    }
+
+    public boolean getOdoResetCmd(){
+        return resetOdometry;
     }
 }

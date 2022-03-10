@@ -13,16 +13,6 @@ public class OperatorInput {
             di = new OperatorInput();
         return di;
     }
-
-    @Signal(units="cmd")
-    double curFwdRevCmd;
-    @Signal(units="cmd")
-    double curRotCmd;
-    @Signal(units="cmd")
-    double curSideToSideCmd;
-
-    @Signal(units="bool")
-    boolean robotRelative;
    
     @Signal(units="bool")
     boolean runShooter;
@@ -43,63 +33,41 @@ public class OperatorInput {
     @Signal(units="bool")
     boolean eject;
     @Signal(units="bool")
-    boolean compEnable;
-    @Signal(units="bool")
-    boolean compDisable;
-
-
+    boolean isConnected;
 
     private OperatorInput(){
-
-        operatorController = new XboxController(0);
-
-
+        operatorController = new XboxController(1);
     }
 
     public void update(){
-        curFwdRevCmd = -1.0 * operatorController.getLeftY();
-        curRotCmd = -1.0 * operatorController.getRightX();
-        curSideToSideCmd = -1.0 * operatorController.getLeftX();
-        robotRelative = operatorController.getRightBumper();
-        runShooter = operatorController.getLeftTriggerAxis()>0.5;
-        feedShooter = operatorController.getLeftBumper();
-        intakeLowerAndRun = operatorController.getRightTriggerAxis()>0.5;
-        eject = operatorController.getXButtonPressed();
-        compEnable = operatorController.getStartButton();
-        compDisable = operatorController.getBackButton();
-        climbExtend = operatorController.getPOV()==0 && operatorController.getBButton();
-        climbRetract = operatorController.getPOV()==180 && operatorController.getBButton();
-        climbTilt = operatorController.getPOV()==270 && operatorController.getBButton();
-        climbStraighten = operatorController.getPOV()==90 && operatorController.getBButton();
+
+        isConnected = operatorController.isConnected();
+
+        if(isConnected){
+            runShooter = operatorController.getLeftTriggerAxis()>0.5;
+            feedShooter = operatorController.getLeftBumper();
+            intakeLowerAndRun = operatorController.getRightTriggerAxis()>0.5;
+            eject = operatorController.getXButtonPressed();
+            climbExtend = operatorController.getPOV()==0 && operatorController.getBButton();
+            climbRetract = operatorController.getPOV()==180 && operatorController.getBButton();
+            climbTilt = operatorController.getPOV()==270 && operatorController.getBButton();
+            climbStraighten = operatorController.getPOV()==90 && operatorController.getBButton();
+    
+        } else {
+            //USB controller not connected
+            runShooter = false;
+            feedShooter = false;
+            intakeLowerAndRun = false;
+            eject = false;
+            climbExtend = false;
+            climbRetract = false;
+            climbTilt = false;
+            climbStraighten = false;  
+        }
 
     }
 
-    /**
-     * Gets the driver command for fwd/rev
-     * 1.0 means "fast as possible forward"
-     * 0.0 means stop
-     * -1.0 means "fast as possible reverse"
-     * @return 
-     */
-    public double getFwdRevCmd(){
-        return curFwdRevCmd;
-    }
-
-    /**
-     * Gets the driver command for rotate
-     * 1.0 means "fast as possible to the left"
-     * 0.0 means stop
-     * -1.0 means "fast as possible to the right"
-     * @return 
-     */
-    public double getRotateCmd(){
-        return curRotCmd;
-    }
-    public double getSideToSideCmd(){
-        return curSideToSideCmd;
-    }
-
-    public boolean getrunShooter(){
+    public boolean getRunShooter(){
         return runShooter;
     }
 
@@ -107,23 +75,23 @@ public class OperatorInput {
         return feedShooter;
     }
 
-    public boolean getclimbExtend(){
+    public boolean getClimbExtend(){
         return climbExtend;
     }
 
-    public boolean getclimbRetract(){
+    public boolean getClimbRetract(){
         return climbRetract;
     }
 
-    public boolean getclimbTilt(){
+    public boolean getClimbTilt(){
         return climbTilt;
     }
 
-    public boolean getclimbStraighten(){
+    public boolean getClimbStraighten(){
         return climbStraighten;
     }
 
-    public boolean getintakeLowerAndRun(){
+    public boolean getIntakeLowerAndRun(){
         return intakeLowerAndRun;
     }
 
@@ -131,16 +99,8 @@ public class OperatorInput {
         return intakeRaise;
     }
 
-    public boolean geteject(){
+    public boolean getEject(){
         return eject;
     }
 
-    public boolean getcompEnable(){
-        return compEnable;
-    }
-
-    public boolean getcompDisable(){
-        return compDisable;
-    }
-    
 }

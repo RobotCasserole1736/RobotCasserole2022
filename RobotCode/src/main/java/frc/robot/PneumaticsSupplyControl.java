@@ -9,29 +9,43 @@ public class PneumaticsSupplyControl {
     Compressor phCompressor;
     
     @Signal (units = "PSI")
-    double currentPressure;
+    double storagePressure;
+
+    @Signal(units="A")
+    double compressorCurrent;
+
+    @Signal
+    boolean compressorEnableCmd;
+
+    private static PneumaticsSupplyControl inst = null;
+	public static synchronized PneumaticsSupplyControl getInstance() {
+		if(inst == null)
+            inst = new PneumaticsSupplyControl();
+		return inst;
+	}
     
-    public PneumaticsSupplyControl () {
+    private PneumaticsSupplyControl () {
         phCompressor = new Compressor(1, PneumaticsModuleType.REVPH);
-        phCompressor.enableDigital();
+        phCompressor.enableAnalog(100, 120);
     }
 
     public void setCompressorEnabledCmd(boolean cmd_in){
-        if(cmd_in){
-            phCompressor.enableDigital();
-        } else {
-            phCompressor.disable();
-        }
-        
-    }
-
-    public void setCompressorRun(boolean run_cmd){
-
+        compressorEnableCmd = cmd_in;
     }
 
     public void update(){
-        currentPressure = phCompressor.getPressure();
+        storagePressure= phCompressor.getPressure(); //using the rev pressure sensor
+        compressorCurrent = phCompressor.getCurrent();
 
+        if(compressorEnableCmd){
+            phCompressor.enableAnalog(100, 120);
+        } else {
+            phCompressor.disable();
+        }
+    }
+
+    public double getStoragePressure(){
+        return storagePressure;
     }
 }
 

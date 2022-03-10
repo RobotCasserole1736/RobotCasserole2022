@@ -9,7 +9,7 @@ import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl.CANMotorCtrlType;
 
 /*
  *******************************************************************************************
- * Copyright (C) 2020 FRC Team 1736 Robot Casserole - www.robotcasserole.org
+ * Copyright (C) 2022 FRC Team 1736 Robot Casserole - www.robotcasserole.org
  *******************************************************************************************
  *
  * This software is released under the MIT Licence - see the license.txt
@@ -30,7 +30,7 @@ import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl.CANMotorCtrlType;
 public class Intake {
 	private static Intake intake = null;
 
-    private CasseroleCANMotorCtrl horizIntakeMotor;
+    //private CasseroleCANMotorCtrl horizIntakeMotor;
     private Spark vertIntakeMotor;
 
     Calibration horizIntakeSpeed;
@@ -49,7 +49,8 @@ public class Intake {
 
 	private Intake() {
         //horizIntakeMotor = new CasseroleCANMotorCtrl("intakeHoriz", Constants.HORIZ_INTAKE_MOTOR_CANID, CANMotorCtrlType.TALON_FX);
-        vertIntakeMotor = new Spark( Constants.VERT_SPARK_MOTOR);
+        vertIntakeMotor = new Spark( Constants.VERT_INTAKE_SPARK_MOTOR);
+        vertIntakeMotor.setInverted(true);
 
         horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.8);
         horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.8);

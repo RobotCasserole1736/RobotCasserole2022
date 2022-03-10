@@ -1,7 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
 
@@ -28,12 +28,13 @@ import frc.lib.Signal.Annotations.Signal;
 public class Climber {
 	// You will want to rename all instances of "Climber" with your actual class name and "climber" with a variable name
 	private static Climber climber = null;
-    Solenoid tilt;
-    Solenoid climb;
-    @Signal (units="command")
-    boolean tiltState;
-   @Signal (units="command")
-    boolean climbState;
+    DoubleSolenoid tilt;
+    DoubleSolenoid climb1;
+    DoubleSolenoid climb2;
+    @Signal (units="cmd")
+    boolean tiltExtendCmd;
+   @Signal (units="cmd")
+    boolean climbExtendCmd;
 	public static synchronized Climber getInstance() {
 		if(climber == null)
 			climber = new Climber();
@@ -43,35 +44,50 @@ public class Climber {
     // This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
     // The constructor should set an initial state for each solenoid - straightened for the tilt solenoid and retracted for the climb solenoid.
     private Climber() {
-        tilt = new Solenoid (PneumaticsModuleType.REVPH, Constants.TILT_SOLENOID);
-        climb = new Solenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID);
+        tilt = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.TILT_SOLENOID_EXTEND, Constants.TILT_SOLENOID_RETRACT);
+        climb1 = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID1_EXTEND,Constants.CLIMBER_SOLENOID1_RETRACT);
+        climb2 = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID2_EXTEND,Constants.CLIMBER_SOLENOID2_RETRACT);
+        
+        // Set defaults
         extendTiltClimber();
         retractClimber();
 
 	}
     public void extendTiltClimber() {
-        tiltState = true;
+        tiltExtendCmd = true;
     }
     public void retractTiltClimber() {
-        tiltState = false;
+        tiltExtendCmd = false;
     }
     public void extendClimber() {
-        climbState = false;
+        climbExtendCmd = true;
     }
     public void retractClimber() {
-        climbState = true;
+        climbExtendCmd = false;
     }
     public boolean getIsTilted() {
-        return false;
+        return (tiltExtendCmd == false);
 
     }
     public boolean getIsExtended() {
-        return false;
+        return (climbExtendCmd == true);
         
     }
     public void update () {
-        climb.set(climbState);
-        tilt.set(tiltState);
+        if(climbExtendCmd){
+            climb1.set(DoubleSolenoid.Value.kForward);
+            climb2.set(DoubleSolenoid.Value.kForward);
+        } else {
+            climb1.set(DoubleSolenoid.Value.kReverse);
+            climb2.set(DoubleSolenoid.Value.kReverse);
+        }
+
+        if(tiltExtendCmd){
+            tilt.set(DoubleSolenoid.Value.kForward);
+        } else {
+            tilt.set(DoubleSolenoid.Value.kReverse);
+        }
+        
     }
 	
 }

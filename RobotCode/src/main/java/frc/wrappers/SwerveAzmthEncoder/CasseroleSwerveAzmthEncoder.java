@@ -1,6 +1,7 @@
 package frc.wrappers.SwerveAzmthEncoder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.UnitUtils;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 import frc.robot.Robot;
@@ -25,7 +26,7 @@ public class CasseroleSwerveAzmthEncoder  {
     }
 
     public void update(){
-        curAngleRad = enc.getRawAngle_rad() - mountingOffsetCal.get();
+        curAngleRad = UnitUtils.wrapAngleRad( enc.getRawAngle_rad() - mountingOffsetCal.get());
     }
 
     public double getAngle_rad(){

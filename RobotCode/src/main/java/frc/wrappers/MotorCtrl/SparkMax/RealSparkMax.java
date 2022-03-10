@@ -6,6 +6,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.util.Units;
 import frc.UnitUtils;
@@ -25,6 +26,13 @@ public class RealSparkMax extends AbstractSimmableMotorController {
         m_pidController = m_motor.getPIDController();
         m_encoder = m_motor.getEncoder();
         m_motor.setIdleMode(IdleMode.kCoast);
+
+        //Reduce CAN bus load for things which we aren't using
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);// Status 0 = Motor output and Faults
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);// Status 1 = Motor velocity & electrical data
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65500);// Status 2 = Motor Position
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65500);// Status 3 = Analog Sensor Input
+        
     }
 
 

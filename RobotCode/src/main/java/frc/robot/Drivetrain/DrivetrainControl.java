@@ -9,11 +9,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
+import frc.lib.LoadMon.SegmentTimeTracker;
 import frc.lib.Util.FunctionGenerator;
-import frc.lib.Util.MapLookup2D;
 
 public class DrivetrainControl {
     
@@ -25,6 +24,8 @@ public class DrivetrainControl {
         }
         return instance;
     }
+
+    SegmentTimeTracker stt = new SegmentTimeTracker("DrivetrainControl.java", 0.015);
 
     // The four swerve modules under our control
     // Naming assumes you are looking down on the top of the robot
@@ -171,6 +172,8 @@ public class DrivetrainControl {
     // Main periodic step function for Teleop, Autonomous, and Disabled
     public void update(){
 
+        stt.start();
+
         if(Math.abs(desChSpd.vxMetersPerSecond) > 0.01 | Math.abs(desChSpd.vyMetersPerSecond) > 0.01 | Math.abs(desChSpd.omegaRadiansPerSecond) > 0.01){
             //In motion
             desModState = Constants.m_kinematics.toSwerveModuleStates(desChSpd);
@@ -182,14 +185,20 @@ public class DrivetrainControl {
             desModState[2] = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
             desModState[3] = new SwerveModuleState(0, Rotation2d.fromDegrees(-45));
         }
+        stt.mark("State Calc");
+
 
         worstError = getMaxErrorMag();
+        stt.mark("Worst Error Calc");
+
 
         updateCommon();
     }
 
     // Special Test periodic step function which injects function-generator inputs into the modules
     public void testUpdate(){
+
+        stt.start();
 
         double azmthCmd = azmthFG.getValue();
         double wheelCmd = wheelFG.getValue();
@@ -215,16 +224,20 @@ public class DrivetrainControl {
         moduleFR.setDesiredState(desModState[1]);
         moduleBL.setDesiredState(desModState[2]);
         moduleBR.setDesiredState(desModState[3]);
+        stt.mark("Module Des State Command");
 
         var curActualSpeed_ftpersec = pe.getSpeedFtpSec();
-
         moduleFL.update(curActualSpeed_ftpersec, worstError);
         moduleFR.update(curActualSpeed_ftpersec, worstError);
         moduleBL.update(curActualSpeed_ftpersec, worstError);
         moduleBR.update(curActualSpeed_ftpersec, worstError);
+        stt.mark("Module Updates");
+
 
         pe.update();
+        stt.mark("Pose Estimator Update");
 
+        stt.end();
     }
 
 

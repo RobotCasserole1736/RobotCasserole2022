@@ -1,8 +1,8 @@
 #include <FastLED.h>
 
 //Constants related to hardware setup
-#define NUM_LEDS 31
-#define LED_PIN 2
+#define NUM_LEDS 47
+#define LED_PIN 7
 #define ROBORIO_DATA_PIN 9
 
 // Overall brigness control
@@ -29,43 +29,45 @@ void setup()
   pinMode(ROBORIO_DATA_PIN, INPUT);
 
   FastLED.show(); //Ensure we get one LED update in prior to periodic - should blank out all LED's
+
+  Fire_init();
 }
 /**
  * Periodic call. Will be called again and again.
  */
 void loop()
 {
-  if ((pulseLen_us >= -50) && (pulseLen_us <= 50))
+  if (pulseLen_us == 0)
   {
-    //Disabled Pattern
-    CasseroleColorStripeChase_update();
-    }
-  else if ((pulseLen_us >= 900) && (pulseLen_us <= 1000))
+    // No pulse recieved - robot must be disabled
+    Fire_update();
+  }
+  else if ((pulseLen_us > 800) && (pulseLen_us <= 1200))
   {
-    //TODO - Call periodic update for pattern 0
-    ColorSparkle_update(255, 0, 0);
+    // Case - pulse length nominal 1.0 ms
+    ColorSparkle_update(255, 0, 0); 
     //red color sparkle
   }
-  else if ((pulseLen_us >= 1200) && (pulseLen_us <= 1299))
+  else if ((pulseLen_us > 1200) && (pulseLen_us <= 1400))
   {
-    //TODO - Call periodic update for pattern 1
+    // Case - pulse length nominal 1.3 ms
     ColorSparkle_update(0, 0, 255);
     //blue color sparkle
   }
-  else if ((pulseLen_us >= 1600) && (pulseLen_us <= 1699))
+  else if ((pulseLen_us > 1400) && (pulseLen_us <= 1600))
   {
-    //TODO - Call periodic update for pattern 4
+    // Case - pulse length nominal 1.5 ms
     Blue_Fade();
   }
-  else if ((pulseLen_us >= 1700) && (pulseLen_us <= 1799))
+  else if ((pulseLen_us > 1600) && (pulseLen_us <= 1800))
   {
-    //TODO - Call periodic update for pattern 5
+    // Case - pulse length nominal 1.7 ms
     Red_Fade();
   }
-  else if ((pulseLen_us >= 1901) && (pulseLen_us <= 2000))
+  else if ((pulseLen_us > 1800) && (pulseLen_us <= 2200))
   {
-    //TODO - Call periodic update for pattern 6
-    Rainbow_Fade_Chase();
+    // Case - pulse length nominal 2.0 ms
+    CasseroleColorStripeChase_update();
   }
 
   // send the 'leds' array out to the actual LED strip
@@ -168,6 +170,97 @@ void Rainbow_Fade_Chase()
   fadeall();
   led[counter] = CHSV(hue++, 255, 255);
   fadeall();
+}
+
+
+
+//**************************************************************
+// Pattern: Particle Fire
+//**************************************************************
+#define NUM_PARTICLES 20
+double particle_locations[NUM_PARTICLES];
+double particle_velocities[NUM_PARTICLES];
+double particle_temperatures[NUM_PARTICLES];
+double particle_cooling_rates[NUM_PARTICLES];
+
+double randFloat(double minVal, double maxVal){
+  return random(minVal * 1000.0, maxVal * 1000.0) / 1000.0;
+}
+
+void Fire_init_particle(int idx){
+  particle_locations[idx] = 1;
+  particle_velocities[idx] = randFloat(0.3,0.8);
+  particle_temperatures[idx] = randFloat(0.8,1);
+  particle_cooling_rates[idx] = randFloat(0.015,0.04);
+}
+
+void Fire_init()
+{
+  for(int idx = 0; idx < NUM_PARTICLES; idx++){
+    Fire_init_particle(idx);
+  }
+
+}
+
+//maps a 0-1 temperatiure to a hue
+double Fire_temp_to_hue(double temp_in){
+  return 0 + temp_in * 45.0;
+}
+
+//Maps a 0-1 temperature to an  intensity
+double Fire_temp_to_intensity(double temp_in){
+  return temp_in  * 255;
+}
+
+//Maps a 0-1 temperature to a saturation
+double Fire_temp_to_sat(double temp_in){
+  return (1.0 - 0.5*(temp_in * temp_in)) * 255;
+}
+
+
+void Fire_update()
+{
+
+    //update all particles
+    for(int idx = 0; idx < NUM_PARTICLES; idx++){
+      particle_locations[idx] += particle_velocities[idx];
+      particle_temperatures[idx] -= particle_cooling_rates[idx];
+
+      //terminal case, reset particle
+      if(particle_locations[idx] > NUM_LEDS || particle_temperatures[idx] < 0){
+        Fire_init_particle(idx);
+      }
+    }
+
+    //clear all leds
+    for(int idx = 0; idx < NUM_LEDS; idx++){
+      led[idx] = CHSV(0, 0, 0);
+    }
+
+    // display all particles
+    for(int idx = 0; idx < NUM_PARTICLES; idx++){
+      int hue = round(Fire_temp_to_hue(particle_temperatures[idx]));
+      int sat = round(Fire_temp_to_sat(particle_temperatures[idx]));
+      int value = round(Fire_temp_to_intensity(particle_temperatures[idx]));
+      
+      int firstLEDIdx = floor(particle_locations[idx]);
+      int secondLEDIdx = ceil(particle_locations[idx]);
+      double firstLEDFrac = 1.0 - (particle_locations[idx] - (double)firstLEDIdx);
+      double secondLEDFrac = 1.0 - ((double)secondLEDIdx - particle_locations[idx]);
+      
+      led[firstLEDIdx] += CHSV(hue, sat, value * firstLEDFrac);
+      led[secondLEDIdx] += CHSV(hue, sat, value * secondLEDFrac);
+    }
+
+    //Bottom Blue source
+    led[0] += CRGB(0, 0, 200);
+    led[1] += CRGB(0, 0, 100);
+    led[2] += CRGB(0, 0, 50);
+
+
+
+    
+
 }
 
 //**************************************************************

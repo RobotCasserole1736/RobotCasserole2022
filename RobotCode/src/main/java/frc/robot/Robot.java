@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -77,17 +79,7 @@ public class Robot extends TimedRobot {
 
   LEDController ledCont;
 
-  PneumaticsSupplyControl PSC;
-
-  @Signal
-  double loopDurationSec;
-  double startTimeSec;
-
-  @Signal
-  double loopPeriodSec;
-
-  @Signal (units="sec")
-  double elapsedTime;
+  PneumaticsSupplyControl psc;
 
   SegmentTimeTracker stt = new SegmentTimeTracker("Robot.java", 0.03);
 
@@ -189,7 +181,7 @@ public class Robot extends TimedRobot {
     ledCont = LEDController.getInstance();
     stt.mark("LED Control");
 
-    PSC = new PneumaticsSupplyControl();
+    psc = PneumaticsSupplyControl.getInstance();
     stt.mark("Pneumatics Supply Control");
 
     SignalWrangler.getInstance().registerSignals(this);
@@ -251,8 +243,6 @@ public class Robot extends TimedRobot {
     oi.update();
     stt.mark("Operator Input");
 
-    PSC.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
-
     /////////////////////////////////////
     // Drivetrain Input Mapping, with vision alignment
     double fwdRevSpdCmd_mps = di.getFwdRevCmd_mps();
@@ -282,11 +272,17 @@ public class Robot extends TimedRobot {
     } else {
       dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
     }
+
+    if(di.getOdoResetCmd()){
+      //Reset pose estimate to angle 0, but at the same translation we're at
+      Pose2d newPose = new Pose2d(dt.getCurEstPose().getTranslation(), new Rotation2d(0.0));
+      dt.setKnownPose(newPose);
+    }
     
 
     ////////////////////////////////////////
     // Shooter & Superstructure control
-    if(di.getFeedShooter()){
+    if(di.getFeedShooter() || oi.getfeedShooter()){
       // Attempting to Shoot
       if(shooter.getSpooledUp()){
         //At up to speed, allow feed
@@ -299,17 +295,17 @@ public class Robot extends TimedRobot {
       }
 
       shooter.setRun(true);
+      in.setCmd(intakeCmdState.STOP); 
 
     } else {
       // No shoot desired, just collect/store balls
-      shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
 
-      if(di.getEject()){
+      if(di.getEject() || oi.getEject()){
         // eject everything
         elevator.setCmd(elevatorCmdState.EJECT);
         shooter.setFeed(Shooter.shooterFeedCmdState.EJECT);
         in.setCmd(intakeCmdState.EJECT);
-      } else if(di.getIntakeLowerAndRun()){
+      } else if( (di.getIntakeLowerAndRun() || oi.getIntakeLowerAndRun()) && !elevator.isFull()){
         // Intake
         elevator.setCmd(elevatorCmdState.INTAKE);
         shooter.setFeed(Shooter.shooterFeedCmdState.INTAKE);
@@ -322,12 +318,32 @@ public class Robot extends TimedRobot {
       }
 
       // Allow preemptively spooling up the shooter
-      shooter.setRun(di.getRunShooter());
+      shooter.setRun(di.getRunShooter() || oi.getRunShooter());
 
     }
 
-    stt.mark("Human Input Mapping");
+    
+    ////////////////////////////////////////
+    // Climber Control
+    if(di.getClimbExtend() || oi.getClimbExtend()){
+      climb.extendClimber();
+    } else if (di.getClimbRetract() || oi.getClimbRetract()) {
+      climb.retractClimber();
+    } else {
+      //maintain state
+    }
 
+    if(di.getClimbTilt() || oi.getClimbTilt()){
+      climb.extendTiltClimber();
+    } else if (di.getClimbStraighten() || oi.getClimbStraighten()) {
+      climb.retractTiltClimber();
+    } else {
+      //maintain state
+    }
+
+    psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
+
+    stt.mark("Human Input Mapping");
 
   }
 
@@ -395,8 +411,6 @@ public class Robot extends TimedRobot {
     stt.mark("Dashboard");
     telemetryUpdate();
     stt.mark("Telemetry");
-
-    elapsedTime = Timer.getFPGATimestamp();
 
     stt.end();
   }

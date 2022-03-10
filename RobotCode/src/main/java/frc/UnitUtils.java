@@ -18,6 +18,10 @@ public class UnitUtils{
         return angle;
     }
 
+    public static double wrapAngleRad(double angle){
+       return Units.degreesToRadians(wrapAngleDeg(Units.radiansToDegrees(angle)));
+    }
+
     public static double dtLinearSpeedToMotorSpeed_radpersec(double linear_mps_in){
         return linear_mps_in / (Units.inchesToMeters(Constants.WHEEL_RADIUS_IN)) * Constants.WHEEL_GEAR_RATIO;
     }
