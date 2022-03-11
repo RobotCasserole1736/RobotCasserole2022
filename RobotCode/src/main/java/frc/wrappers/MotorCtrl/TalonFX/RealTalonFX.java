@@ -1,8 +1,8 @@
 package frc.wrappers.MotorCtrl.TalonFX;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -28,30 +28,62 @@ public class RealTalonFX extends AbstractSimmableMotorController {
 
     public RealTalonFX(int can_id){
         _talon = new WPI_TalonFX(can_id);
-        _talon.configFactoryDefault();
-        _talon.configNeutralDeadband(0.001);
-        _talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
-                                               0, 
-                                               TIMEOUT_MS);
-        _talon.configNominalOutputForward(0, TIMEOUT_MS);
-        _talon.configNominalOutputReverse(0, TIMEOUT_MS);
-        _talon.configPeakOutputForward(1,  TIMEOUT_MS);
-        _talon.configPeakOutputReverse(-1, TIMEOUT_MS);
+
+        boolean success = false;
+
         _talon.enableVoltageCompensation(true);
-        _talon.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_20Ms, TIMEOUT_MS);
-        _talon.configVelocityMeasurementWindow(16, TIMEOUT_MS);
-        _talon.configVoltageCompSaturation(MAX_VOLTAGE, TIMEOUT_MS);
         _talon.setNeutralMode(NeutralMode.Coast);
 
-        //Reduce CAN bus rates on things we don't quite carea bout
-        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, TIMEOUT_MS); //Applied motor output, faults
-        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, TIMEOUT_MS); //Position/Velocity
-        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 9999, TIMEOUT_MS); // Quadrature - unused
-        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 200, TIMEOUT_MS); // Includes input supply voltage, which we might care about
-        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 9999, TIMEOUT_MS); // No idea, not used
-        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 9999, TIMEOUT_MS); // Not using motion magic
-        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 9999, TIMEOUT_MS); // No external feedback sensors connected
-        _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 9999, TIMEOUT_MS); // No no auxilary PID used
+        while(!success){
+            var err0 = _talon.configFactoryDefault();
+            var err1 = _talon.configNeutralDeadband(0.001);
+            var err2 = _talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
+                                                0, 
+                                                TIMEOUT_MS);
+            var err3 = _talon.configNominalOutputForward(0, TIMEOUT_MS);
+            var err4 = _talon.configNominalOutputReverse(0, TIMEOUT_MS);
+            var err5 = _talon.configPeakOutputForward(1,  TIMEOUT_MS);
+            var err6 = _talon.configPeakOutputReverse(-1, TIMEOUT_MS);   
+            var err7 = _talon.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_20Ms, TIMEOUT_MS);
+            var err8 = _talon.configVelocityMeasurementWindow(16, TIMEOUT_MS);
+            var err9 = _talon.configVoltageCompSaturation(MAX_VOLTAGE, TIMEOUT_MS);
+
+            //Reduce CAN bus rates on things we don't quite carea bout
+            var err10 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, TIMEOUT_MS); //Applied motor output, faults
+            var err11 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, TIMEOUT_MS); //Position/Velocity
+            var err12 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 9999, TIMEOUT_MS); // Quadrature - unused
+            var err13 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 200, TIMEOUT_MS); // Includes input supply voltage, which we might care about
+            var err14 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 9999, TIMEOUT_MS); // No idea, not used
+            var err15 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 9999, TIMEOUT_MS); // Not using motion magic
+            var err16 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 9999, TIMEOUT_MS); // No external feedback sensors connected
+            var err17 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 9999, TIMEOUT_MS); // No no auxilary PID used
+
+            success = (
+                err0 == ErrorCode.OK &&
+                err1 == ErrorCode.OK &&
+                err2 == ErrorCode.OK &&
+                err3 == ErrorCode.OK &&
+                err4 == ErrorCode.OK &&
+                err5 == ErrorCode.OK &&
+                err6 == ErrorCode.OK &&
+                err7 == ErrorCode.OK &&
+                err8 == ErrorCode.OK &&
+                err9 == ErrorCode.OK &&
+                err10 == ErrorCode.OK &&
+                err11 == ErrorCode.OK &&
+                err12 == ErrorCode.OK &&
+                err13 == ErrorCode.OK &&
+                err14 == ErrorCode.OK &&
+                err15 == ErrorCode.OK &&
+                err16 == ErrorCode.OK &&
+                err17 == ErrorCode.OK
+            );
+
+            if(!success){
+                System.out.println("Configuration Failed, retrying....");
+            }
+
+        }
     }
 
 
