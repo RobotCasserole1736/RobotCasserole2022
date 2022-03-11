@@ -388,6 +388,10 @@ public class Robot extends TimedRobot {
   ///////////////////////////////////////////////////////////////////
   @Override
   public void robotPeriodic() {
+
+    psc.update();
+    stt.mark("Pneumatics Supply Control");
+
     angle.update();
     stt.mark("AngleMeasurement");
 
