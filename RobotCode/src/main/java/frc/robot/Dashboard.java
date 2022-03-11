@@ -52,7 +52,7 @@ public class Dashboard {
         final double ROW3 = 75;
         final double ROW4 = 85;
 
-        //d.addCamera("cam1", "http://10.17.36.10:1181/stream.mjpg", LEFT_COL, ROW2, 0.75);
+        d.addCamera("cam1", "http://10.17.36.10:1181/stream.mjpg", LEFT_COL, ROW2, 0.75);
         //d.addCamera("cam2", "http://10.17.36.10:1182/stream.mjpg", RIGHT_COL, ROW2, 0.75);
 
         d.addFieldPose("pose", "Field", LEFT_COL, ROW1, 0.75);
