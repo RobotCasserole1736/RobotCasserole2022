@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.photonvision.PhotonCamera;
 
@@ -389,9 +390,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-    psc.update();
-    stt.mark("Pneumatics Supply Control");
-
     angle.update();
     stt.mark("AngleMeasurement");
 
@@ -407,10 +405,8 @@ public class Robot extends TimedRobot {
     elevator.update();
     stt.mark("Elevator");
 
-    
     climb.update();
     stt.mark("Climber");
-
 
     if(DriverStation.isTest() && !DriverStation.isDisabled()){
       dt.testUpdate();
@@ -418,7 +414,6 @@ public class Robot extends TimedRobot {
       dt.update();
     }
     stt.mark("Drivetrain");
-
 
 
     db.updateDriverView();
@@ -438,7 +433,6 @@ public class Robot extends TimedRobot {
     pt.setEstimatedPose(dt.getCurEstPose());
     
     pt.update(time);
-    batMan.update();
 
     mainLoopDuration = stt.loopDurationSec;
     mainLoopPeriod = stt.loopPeriodSec;

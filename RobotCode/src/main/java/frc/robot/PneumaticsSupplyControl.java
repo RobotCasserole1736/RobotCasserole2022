@@ -16,6 +16,7 @@ public class PneumaticsSupplyControl {
 
     @Signal
     boolean compressorEnableCmd;
+    boolean compressorEnableCmdPrev;
 
     private static PneumaticsSupplyControl inst = null;
 	public static synchronized PneumaticsSupplyControl getInstance() {
@@ -27,21 +28,47 @@ public class PneumaticsSupplyControl {
     private PneumaticsSupplyControl () {
         phCompressor = new Compressor(1, PneumaticsModuleType.REVPH);
         phCompressor.enableAnalog(100, 120);
+
+		// Kick off monitor in brand new thread.
+	    // Thanks to Team 254 for an example of how to do this!
+	    Thread monitorThread = new Thread(new Runnable() {
+	        @Override
+	        public void run() {
+	            try {
+	            	while(!Thread.currentThread().isInterrupted()){
+	            		update();
+	            		Thread.sleep(250);
+	            	}
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+
+	        }
+		});
+
+	    //Set up thread properties and start it off
+	    monitorThread.setName("PneumaticsSupplyControl");
+	    monitorThread.setPriority(Thread.MIN_PRIORITY);
+	    monitorThread.start();
     }
 
     public void setCompressorEnabledCmd(boolean cmd_in){
         compressorEnableCmd = cmd_in;
     }
 
-    public void update(){
+    private void update(){
         storagePressure= phCompressor.getPressure(); //using the rev pressure sensor
         compressorCurrent = phCompressor.getCurrent();
 
-        if(compressorEnableCmd){
-            phCompressor.enableAnalog(100, 120);
-        } else {
-            phCompressor.disable();
+        if(compressorEnableCmdPrev != compressorEnableCmd){
+            if(compressorEnableCmd){
+                phCompressor.enableAnalog(100, 120);
+            } else {
+                phCompressor.disable();
+            }
         }
+
+        compressorEnableCmdPrev = compressorEnableCmd;
     }
 
     public double getStoragePressure(){

@@ -50,7 +50,7 @@ public class RealTalonFX extends AbstractSimmableMotorController {
 
             //Reduce CAN bus rates on things we don't quite carea bout
             var err10 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, TIMEOUT_MS); //Applied motor output, faults
-            var err11 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20, TIMEOUT_MS); //Position/Velocity
+            var err11 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 60, TIMEOUT_MS); //Position/Velocity
             var err12 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 9999, TIMEOUT_MS); // Quadrature - unused
             var err13 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 200, TIMEOUT_MS); // Includes input supply voltage, which we might care about
             var err14 = _talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 9999, TIMEOUT_MS); // No idea, not used

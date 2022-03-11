@@ -1,16 +1,17 @@
 package frc.robot;
 
 import edu.wpi.first.hal.can.CANStatus;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
 
 public class BatteryMonitor {
-	private static BatteryMonitor moniter = null;
 	private PowerDistribution pd;
 
+	@Signal(units="V")
+	double rioVoltage;
 	@Signal(units="V")
 	double batteryVoltage;
 	@Signal(units="A")
@@ -40,6 +41,12 @@ public class BatteryMonitor {
 	@Signal(units="pct")
 	double canBusLoad;
 
+	final int UPDATE_RATE_MS = 100;
+
+	final double CAN_BUS_FILTER_CUTOFF_FREQ_HZ = 1.0;
+	LinearFilter canBusLoadFilter = LinearFilter.singlePoleIIR( 1.0/( 1000.0/UPDATE_RATE_MS * 2 * Math.PI * CAN_BUS_FILTER_CUTOFF_FREQ_HZ ) ,UPDATE_RATE_MS/1000.0);
+
+	private static BatteryMonitor moniter = null;
 	public static synchronized BatteryMonitor getInstance() {
 		if(moniter == null)
 			moniter = new BatteryMonitor();
@@ -49,15 +56,40 @@ public class BatteryMonitor {
 	private BatteryMonitor() {
 		pd = new PowerDistribution(1,ModuleType.kRev);
 		
+		// Kick off monitor in brand new thread.
+	    // Thanks to Team 254 for an example of how to do this!
+	    Thread monitorThread = new Thread(new Runnable() {
+	        @Override
+	        public void run() {
+	            try {
+	            	while(!Thread.currentThread().isInterrupted()){
+	            		update();
+	            		Thread.sleep(100);
+	            	}
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+
+	        }
+		});
+
+	    //Set up thread properties and start it off
+	    monitorThread.setName("BatteryMonitor");
+	    monitorThread.setPriority(Thread.MIN_PRIORITY);
+	    monitorThread.start();
+		
 	}
 
-	public void update (){
+	
+
+	private void update (){ 
 		batteryVoltage = pd.getVoltage();
 		batteryAmps = pd.getTotalCurrent();
+		rioVoltage = RobotController.getBatteryVoltage();
 
-		upperElevatorCurrent = pd.getCurrent(Constants.PD_UPPER_ELEVATOR);
-		lowerElevatorCurrent = pd.getCurrent(Constants.PD_LOWER_ELEVATOR);
-		intakeCurrent = pd.getCurrent(Constants.PD_INTAKE);
+		//upperElevatorCurrent = pd.getCurrent(Constants.PD_UPPER_ELEVATOR);
+		//lowerElevatorCurrent = pd.getCurrent(Constants.PD_LOWER_ELEVATOR);
+		//intakeCurrent = pd.getCurrent(Constants.PD_INTAKE);
 
 		rioBrownOutStatus = RobotController.isBrownedOut();
 		busRail3v3 = RobotController.getVoltage3V3();
@@ -67,7 +99,7 @@ public class BatteryMonitor {
 		CANStatus tmp = RobotController.getCANStatus();
 		canRXErrors = tmp.receiveErrorCount;
 		canTXErrors = tmp.transmitErrorCount;
-		canBusLoad = tmp.percentBusUtilization;
+		canBusLoad = canBusLoadFilter.calculate(100.0 * tmp.percentBusUtilization);
 	}
 
 }

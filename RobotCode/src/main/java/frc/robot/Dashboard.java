@@ -48,9 +48,9 @@ public class Dashboard {
         final double RIGHT_COL = 83;
 
         final double ROW1 = 15;
-        final double ROW2 = 50;
-        final double ROW3 = 75;
-        final double ROW4 = 85;
+        final double ROW2 = 45;
+        final double ROW3 = 55;
+        final double ROW4 = 68;
 
         d.addCamera("cam1", "http://10.17.36.10:1181/stream.mjpg", LEFT_COL, ROW2, 0.75);
         //d.addCamera("cam2", "http://10.17.36.10:1182/stream.mjpg", RIGHT_COL, ROW2, 0.75);
@@ -63,19 +63,19 @@ public class Dashboard {
         topicList[3] = new SwerveStateTopicSet("BR",3);
         d.addSwerveState(topicList, "SwerveState", RIGHT_COL+3.5, ROW1, 0.8);
 
-        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_masterCaution"),"Master Caution", "#FF0000", "icons/alert.svg", CENTER_COL-6, ROW2, 1.0);
-        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_visionTargetVisible"),"Vision Target Visible", "#00FF00", "icons/vision.svg", CENTER_COL, ROW2, 1.0);
-
-        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_shooterSpoolup"),"Shooter Spoolup", "#FFFF00", "icons/speed.svg", CENTER_COL-12, ROW2, 1.0);
-
-        d.addAutoChooser(Autonomous.getInstance().delayModeList, CENTER_COL, ROW3, 1.0);
-        d.addAutoChooser(Autonomous.getInstance().mainModeList, CENTER_COL, ROW4, 1.0);
-
         d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_shooterSpeed"), "Shooter", "RPM", 0, 5000, 1000, 3000, CENTER_COL-7, ROW1, 1.0);
         d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_pneumaticsPressure"), "Pressure", "psi", 0, 130, 80, 120, CENTER_COL+13, ROW1, 1.0);
 
-        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberTilt"),"Climber Tilt", "#FFFF00", "icons/climb.svg", CENTER_COL+12, ROW2, 1.0);
-        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberExtend"),"Climber Extend", "#FFFF00", "icons/climb.svg", CENTER_COL+6, ROW2, 1.0);
+        
+        d.addAutoChooser(Autonomous.getInstance().delayModeList, CENTER_COL, ROW2, 1.0);
+        d.addAutoChooser(Autonomous.getInstance().mainModeList, CENTER_COL, ROW3, 1.0);
+
+
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_masterCaution"),"Master Caution", "#FF0000", "icons/alert.svg", CENTER_COL-6, ROW4, 1.0);
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_visionTargetVisible"),"Vision Target Visible", "#00FF00", "icons/vision.svg", CENTER_COL, ROW4, 1.0);
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberTilt"),"Climber Tilt", "#FFFF00", "icons/climb.svg", CENTER_COL+12, ROW4, 1.0);
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberExtend"),"Climber Extend", "#FFFF00", "icons/climb.svg", CENTER_COL+6, ROW4, 1.0);
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_shooterSpoolup"),"Shooter Spoolup", "#FFFF00", "icons/speed.svg", CENTER_COL-12, ROW4, 1.0);
 
 
       }
@@ -90,7 +90,7 @@ public class Dashboard {
 
 
         //master caution handling
-        if (pneumaticPressureLow ) {
+        if ( pnuemPressure < 80.0 ) {
           masterCautionTxt = "Low Pneumatic Pressure";
           masterCaution = true;
         //}else if( !Vision.getInstance().getCamOnline() ) {

@@ -162,7 +162,7 @@ public class Shooter {
         feedMotor.set(ControlMode.PercentOutput, feedMotorCmd);
         shooterMotor.update();
 
-        isSpooledUp = spooledUpDebounce.calculate(Math.abs(actualSpeed - shooter_Launch_Speed.get()) > allowed_Shooter_Error.get());
+        isSpooledUp = spooledUpDebounce.calculate(Math.abs(actualSpeed - shooter_Launch_Speed.get()) < allowed_Shooter_Error.get());
     }
 
     // Returns whether the shooter is running at its setpoint speed or not.
