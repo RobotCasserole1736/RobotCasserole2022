@@ -26,7 +26,6 @@ import frc.lib.Signal.Annotations.Signal;
  */
 
 public class Climber {
-	// You will want to rename all instances of "Climber" with your actual class name and "climber" with a variable name
 	private static Climber climber = null;
     DoubleSolenoid tilt;
     DoubleSolenoid climb1;

@@ -48,11 +48,17 @@ public class OperatorInput {
             feedShooter = operatorController.getLeftBumper();
             intakeLowerAndRun = operatorController.getRightTriggerAxis()>0.5;
             eject = operatorController.getXButtonPressed();
-            climbExtend = operatorController.getPOV()==0 && operatorController.getBButton();
-            climbRetract = operatorController.getPOV()==180 && operatorController.getBButton();
-            climbTilt = operatorController.getPOV()==270 && operatorController.getBButton();
-            climbStraighten = operatorController.getPOV()==90 && operatorController.getBButton();
-    
+            if(operatorController.getBButton()){
+                climbExtend = operatorController.getPOV()==0;
+                climbRetract = operatorController.getPOV()==180;
+                climbTilt = operatorController.getPOV()==270;
+                climbStraighten = operatorController.getPOV()==90;    
+            } else {
+                climbExtend = false;
+                climbRetract = true;
+                climbTilt = true;
+                climbStraighten = false;  
+            }
         } else {
             //USB controller not connected
             runShooter = false;

@@ -8,7 +8,8 @@ public class RealADXRS453 extends AbstractADXRS453 {
     ADXRS450_Gyro realGyro;
 
     public RealADXRS453(){
-        realGyro = new ADXRS450_Gyro(Port.kOnboardCS2);
+        realGyro = new ADXRS450_Gyro(Port.kOnboardCS0);
+        realGyro.calibrate();
     }
 
     @Override

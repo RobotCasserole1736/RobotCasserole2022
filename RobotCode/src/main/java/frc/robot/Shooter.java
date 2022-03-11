@@ -86,10 +86,10 @@ public class Shooter {
         shooter_D = new Calibration("shooter D","",0);
         shooter_F = new Calibration("shooter F","",0.2);
         shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",3500);
-        allowed_Shooter_Error = new Calibration("allowed shooter error","RPM",200);
-        feedSpeed = new Calibration("feed speed","Cmd",0.75);
-        ejectSpeed = new Calibration("eject speed","Cmd",0.5);
-        intakeSpeed = new Calibration("intake speed","Cmd",0.5);
+        allowed_Shooter_Error = new Calibration("shooter allowed shooter error","RPM",200);
+        feedSpeed = new Calibration("shooter feed speed","Cmd",0.75);
+        ejectSpeed = new Calibration("shooter eject speed","Cmd",0.5);
+        intakeSpeed = new Calibration("shooter intake speed","Cmd",0.5);
 
         shooterMotorFF = new SimpleMotorFeedforward(0,0);
 
