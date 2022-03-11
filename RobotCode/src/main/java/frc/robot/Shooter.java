@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import frc.Constants;
@@ -65,7 +67,9 @@ public class Shooter {
     @Signal(units = "RPM")
     double feedWheelSpeed;
 
-    SimpleMotorFeedforward shooterMotorFF;
+    @Signal
+    boolean isSpooledUp = false;
+    Debouncer spooledUpDebounce = new Debouncer(0.25, DebounceType.kRising);
 
 	public static synchronized Shooter getInstance() {
 		if(shooter == null)
@@ -84,14 +88,12 @@ public class Shooter {
         shooter_P = new Calibration("shooter P","",0.000015);
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);
-        shooter_F = new Calibration("shooter F","",0.2);
+        shooter_F = new Calibration("shooter F","",0.021);
         shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",3500);
         allowed_Shooter_Error = new Calibration("shooter allowed shooter error","RPM",200);
         feedSpeed = new Calibration("shooter feed speed","Cmd",0.75);
         ejectSpeed = new Calibration("shooter eject speed","Cmd",0.5);
         intakeSpeed = new Calibration("shooter intake speed","Cmd",0.5);
-
-        shooterMotorFF = new SimpleMotorFeedforward(0,0);
 
         feedWheelEncoder = new Encoder(Constants.SHOOTER_FEED_ENC_A, Constants.SHOOTER_FEED_ENC_B);
         feedWheelEncoder.setDistancePerPulse(Constants.SHOOTER_FEED_ENC_REV_PER_PULSE);
@@ -159,14 +161,13 @@ public class Shooter {
 
         feedMotor.set(ControlMode.PercentOutput, feedMotorCmd);
         shooterMotor.update();
+
+        isSpooledUp = spooledUpDebounce.calculate(Math.abs(actualSpeed - shooter_Launch_Speed.get()) > allowed_Shooter_Error.get());
     }
 
     // Returns whether the shooter is running at its setpoint speed or not.
     public boolean getSpooledUp(){
-        if(Math.abs(actualSpeed - shooter_Launch_Speed.get()) > allowed_Shooter_Error.get())
-            return false;
-        else
-            return true;
+        return isSpooledUp;
     }
 
     public void calUpdate(boolean force){
