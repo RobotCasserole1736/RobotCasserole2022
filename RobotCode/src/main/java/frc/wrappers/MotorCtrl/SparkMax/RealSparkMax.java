@@ -2,6 +2,7 @@ package frc.wrappers.MotorCtrl.SparkMax;
 
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -22,16 +23,29 @@ public class RealSparkMax extends AbstractSimmableMotorController {
 
     public RealSparkMax(int can_id){
         m_motor = new CANSparkMax(can_id, MotorType.kBrushless);
-        m_motor.restoreFactoryDefaults();
         m_pidController = m_motor.getPIDController();
         m_encoder = m_motor.getEncoder();
-        m_motor.setIdleMode(IdleMode.kCoast);
 
-        //Reduce CAN bus load for things which we aren't using
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);// Status 0 = Motor output and Faults
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);// Status 1 = Motor velocity & electrical data
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65500);// Status 2 = Motor Position
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65500);// Status 3 = Analog Sensor Input
+        boolean success = false;
+
+        while(!success){    
+            var err0 = m_motor.restoreFactoryDefaults();
+            var err1 = m_motor.setIdleMode(IdleMode.kCoast);
+            var err2 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);// Status 0 = Motor output and Faults
+            var err3 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);// Status 1 = Motor velocity & electrical data
+            var err4 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65500);// Status 2 = Motor Position
+            var err5 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65500);// Status 3 = Analog Sensor Input
+            success = (err0 == REVLibError.kOk &&
+                       err1 == REVLibError.kOk &&
+                       err2 == REVLibError.kOk &&
+                       err3 == REVLibError.kOk &&
+                       err4 == REVLibError.kOk &&
+                       err5 == REVLibError.kOk );
+        
+            if(!success){
+                System.out.println("Configuration Failed, retrying....");
+            }
+        }
         
     }
 

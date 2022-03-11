@@ -31,6 +31,10 @@ public class CasseroleCANMotorCtrl {
     private double actPos;
 
     public CasseroleCANMotorCtrl(String prefix, int can_id, CANMotorCtrlType type){
+
+        System.out.println("======================================");
+        System.out.println("== Starting motor controller init for " + prefix + " CANID = " + Integer.toString(can_id));
+
         if(Robot.isSimulation()){
             ctrl = new SimSmartMotor(can_id);
         } else {
@@ -43,6 +47,9 @@ public class CasseroleCANMotorCtrl {
                     break;
             }
         }
+        System.out.println("== ... Done!");
+        System.out.println("======================================");
+
     }
     
 
