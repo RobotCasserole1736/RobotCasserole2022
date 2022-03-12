@@ -102,7 +102,7 @@ export class SignalDAQLocalFile {
         var dataValuesList = row.split(',');
 
         if(dataValuesList.length == (this.signalNameList.length + 1)){
-            var timestamp = parseFloat(dataValuesList[0]);
+            var timestamp = parseFloat(dataValuesList[0]) * 1000000; //timestamp should be in microseconds
             for(var sigIdx = 0; sigIdx < this.signalNameList.length; sigIdx++){
                 var dataValStr = dataValuesList[sigIdx + 1].trim();
                 if(dataValStr.length > 0){

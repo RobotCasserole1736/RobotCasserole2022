@@ -35,6 +35,7 @@ if("fname" in vars){
     goFiles();
     var url = "http://" + window.location.hostname + ":" + window.location.port + "/" + fname;
 
+    setFileStatusText("Downloading file...");
     var request = new XMLHttpRequest();
     request.open('GET', url, true);
     request.send(null);
@@ -42,9 +43,12 @@ if("fname" in vars){
         if (request.readyState === 4 && request.status === 200) {
             var type = request.getResponseHeader('Content-Type');
             if (type.indexOf("text") !== 1) {
+                setFileStatusText("Parsing File...");
                 mainDAQ.parseFileContents(request.responseText);
                 handleZoomFullBtnClick();
                 setFileStatusText(fname);
+            } else {
+                setFileStatusText("Error on download!");
             }
         }
     }
