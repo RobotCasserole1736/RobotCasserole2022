@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
 
@@ -27,9 +26,9 @@ import frc.lib.Signal.Annotations.Signal;
 
 public class Climber {
 	private static Climber climber = null;
-    DoubleSolenoid tilt;
-    DoubleSolenoid climb1;
-    DoubleSolenoid climb2;
+    PulsedDoubleSolenoid tilt;
+    PulsedDoubleSolenoid climb1;
+    PulsedDoubleSolenoid climb2;
     @Signal (units="cmd")
     boolean tiltExtendCmd;
    @Signal (units="cmd")
@@ -43,9 +42,9 @@ public class Climber {
     // This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
     // The constructor should set an initial state for each solenoid - straightened for the tilt solenoid and retracted for the climb solenoid.
     private Climber() {
-        tilt = new DoubleSolenoid (PneumaticsModuleType.CTREPCM, Constants.TILT_SOLENOID_EXTEND, Constants.TILT_SOLENOID_RETRACT);
-        climb1 = new DoubleSolenoid (PneumaticsModuleType.CTREPCM, Constants.CLIMBER_SOLENOID1_EXTEND,Constants.CLIMBER_SOLENOID1_RETRACT);
-        climb2 = new DoubleSolenoid (PneumaticsModuleType.CTREPCM, Constants.CLIMBER_SOLENOID2_EXTEND,Constants.CLIMBER_SOLENOID2_RETRACT);
+        tilt   = new PulsedDoubleSolenoid(Constants.TILT_SOLENOID_EXTEND, Constants.TILT_SOLENOID_RETRACT);
+        climb1 = new PulsedDoubleSolenoid(Constants.CLIMBER_SOLENOID1_EXTEND,Constants.CLIMBER_SOLENOID1_RETRACT);
+        climb2 = new PulsedDoubleSolenoid(Constants.CLIMBER_SOLENOID2_EXTEND,Constants.CLIMBER_SOLENOID2_RETRACT);
         
         // Set defaults
         extendTiltClimber();
@@ -86,6 +85,10 @@ public class Climber {
         } else {
             tilt.set(DoubleSolenoid.Value.kReverse);
         }
+
+        tilt.update();
+        climb1.update();
+        climb2.update();
         
     }
 	
