@@ -64,7 +64,7 @@ public class Dashboard {
         d.addSwerveState(topicList, "SwerveState", RIGHT_COL+3.5, ROW1, 0.8);
 
         d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_shooterSpeed"), "Shooter", "RPM", 0, 5000, 1500, 4000, CENTER_COL-7, ROW1, 1.0);
-        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_pneumaticsPressure"), "Pressure", "psi", 0, 130, 80, 120, CENTER_COL+13, ROW1, 1.0);
+        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_pneumaticsPressure"), "Pressure", "psi", 0, 140, 80, 130, CENTER_COL+13, ROW1, 1.0);
 
         
         d.addAutoChooser(Autonomous.getInstance().delayModeList, CENTER_COL, ROW2, 1.0);

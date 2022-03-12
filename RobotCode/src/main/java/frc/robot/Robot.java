@@ -44,6 +44,8 @@ import frc.sim.RobotModel;
  */
 public class Robot extends TimedRobot {
 
+  public static double loopStartTime;
+
   ///////////////////////////////////////////////////////////////////
   // Instatntiate new classes after here 
   // ...
@@ -230,8 +232,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-
     stt.start();
+    loopStartTime = Timer.getFPGATimestamp();
 
     //Step the sequencer forward
     auto.update();
@@ -252,6 +254,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     stt.start();
+    loopStartTime = Timer.getFPGATimestamp();
 
     di.update();
     stt.mark("Driver Input");
@@ -283,7 +286,7 @@ public class Robot extends TimedRobot {
         rotateCmd_radpersec = di.getRotateCmd_rps();
     }
 
-    if(!di.getRobotRelative()){ //temp, use robot relative by default
+    if(di.getRobotRelative()){
       dt.setCmdRobotRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
     } else {
       dt.setCmdFieldRelative(fwdRevSpdCmd_mps, leftRightSpdCmd_mps, rotateCmd_radpersec);
@@ -376,6 +379,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     stt.start();
+    loopStartTime = Timer.getFPGATimestamp();
+
 
     dt.calUpdate(false);
     shooter.calUpdate(false);
@@ -430,7 +435,7 @@ public class Robot extends TimedRobot {
   }
 
   private void telemetryUpdate(){
-    double time = Timer.getFPGATimestamp();
+    double time = loopStartTime;
 
     dt.updateTelemetry();
 
@@ -458,6 +463,8 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic(){
     stt.start();
+    loopStartTime = Timer.getFPGATimestamp();
+
 
     // Nothing special here, yet
   }

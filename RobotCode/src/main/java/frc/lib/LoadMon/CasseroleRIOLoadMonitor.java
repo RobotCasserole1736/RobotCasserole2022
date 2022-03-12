@@ -143,7 +143,7 @@ public class CasseroleRIOLoadMonitor {
 		String CPUTotalLoadRawLine = new String();
 		File file;
 
-		double sample_time_sec = Timer.getFPGATimestamp();
+		double sample_time_sec = Robot.loopStartTime;
 		
 		if(giveUp == false){
 			

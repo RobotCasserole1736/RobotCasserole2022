@@ -43,8 +43,7 @@ public class BatteryMonitor {
 
 	final int UPDATE_RATE_MS = 100;
 
-	final double CAN_BUS_FILTER_CUTOFF_FREQ_HZ = 1.0;
-	LinearFilter canBusLoadFilter = LinearFilter.singlePoleIIR( 1.0/( 1000.0/UPDATE_RATE_MS * 2 * Math.PI * CAN_BUS_FILTER_CUTOFF_FREQ_HZ ) ,UPDATE_RATE_MS/1000.0);
+	LinearFilter canBusLoadFilter = LinearFilter.movingAverage(40);
 
 	private static BatteryMonitor moniter = null;
 	public static synchronized BatteryMonitor getInstance() {

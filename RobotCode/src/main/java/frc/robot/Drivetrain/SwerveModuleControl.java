@@ -11,6 +11,7 @@ import frc.lib.LoadMon.SegmentTimeTracker;
 import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Util.MapLookup2D;
 import frc.lib.Webserver2.DashboardConfig.SwerveStateTopicSet;
+import frc.robot.Robot;
 import frc.wrappers.MotorCtrl.CasseroleCANMotorCtrl;
 import frc.wrappers.SwerveAzmthEncoder.CasseroleSwerveAzmthEncoder;
 
@@ -115,7 +116,7 @@ class SwerveModuleControl {
      * Broadcast signals specific to the visualiation
      */
     public void updateTelemetry(){
-        double sampleTime = Timer.getFPGATimestamp(); //TODO - this should actually be coming from the loop timing utility, whenever Lucas finishes it up.
+        double sampleTime = Robot.loopStartTime;
 
         azmthPosDesSig.addSample(sampleTime, azmthCtrl.getSetpoint_deg());
         azmthPosActSig.addSample(sampleTime, Units.radiansToDegrees(azmth_enc.getAngle_rad()));
