@@ -12,6 +12,8 @@ import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -200,12 +202,6 @@ public class Robot extends TimedRobot {
 
     webserver.startServer();
     stt.mark("Webserver Startup");
-
-    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-    mjpegServer1.setSource(usbCamera);
-    stt.mark("Driver Camera");
-
 
     System.out.println("Init Stats:");
     stt.end();
