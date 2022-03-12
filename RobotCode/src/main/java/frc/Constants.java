@@ -91,18 +91,14 @@ public class Constants {
     //static public final int UNUSED = 17;
 
     // Pneumatics Hub
-    static public final int INTAKE_SOLENOID = 13; 
-    static public final int TILT_SOLENOID_RETRACT = 15;
-    static public final int TILT_SOLENOID_EXTEND = 14;
     static public final int CLIMBER_SOLENOID1_RETRACT = 0;
-    static public final int CLIMBER_SOLENOID1_EXTEND = 2;
     static public final int CLIMBER_SOLENOID2_RETRACT = 1;
+    static public final int CLIMBER_SOLENOID1_EXTEND = 2;
     static public final int CLIMBER_SOLENOID2_EXTEND = 3;
-    //static public final int UNUSED = 3;
     //static public final int UNUSED = 4;
-    //static public final int UNUSED = 5;
-    //static public final int UNUSED = 6;
-    //static public final int UNUSED = 7;
+    static public final int TILT_SOLENOID_EXTEND = 5;
+    static public final int TILT_SOLENOID_RETRACT = 6;
+    static public final int INTAKE_SOLENOID = 7; 
     //static public final int UNUSED = 8;
     //static public final int UNUSED = 9; 
 
