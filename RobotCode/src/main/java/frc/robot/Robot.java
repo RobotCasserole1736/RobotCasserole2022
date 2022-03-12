@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.photonvision.PhotonCamera;
 
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -28,6 +30,7 @@ import frc.robot.Autonomous.Autonomous;
 import frc.robot.Drivetrain.DrivetrainControl;
 import frc.robot.Elevator.elevatorCmdState;
 import frc.robot.Intake.intakeCmdState;
+import frc.robot.Shooter.shooterLaunchState;
 import frc.sim.RobotModel;
 
 
@@ -198,6 +201,12 @@ public class Robot extends TimedRobot {
     webserver.startServer();
     stt.mark("Webserver Startup");
 
+    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    mjpegServer1.setSource(usbCamera);
+    stt.mark("Driver Camera");
+
+
     System.out.println("Init Stats:");
     stt.end();
 
@@ -293,7 +302,7 @@ public class Robot extends TimedRobot {
 
     ////////////////////////////////////////
     // Shooter & Superstructure control
-    if(di.getFeedShooter() || oi.getfeedShooter()){
+    if(di.getShootHighGoal() || di.getShootLowGoal()){
       // Attempting to Shoot
       if(shooter.getSpooledUp()){
         //At up to speed, allow feed
@@ -305,7 +314,8 @@ public class Robot extends TimedRobot {
         elevator.setCmd(elevatorCmdState.INTAKE);
       }
 
-      shooter.setRun(true);
+      shooter.setRun(di.getShootHighGoal()?shooterLaunchState.HIGH_GOAL:shooterLaunchState.LOW_GOAL);
+    
       in.setCmd(intakeCmdState.STOP); 
 
     } else {
@@ -328,8 +338,7 @@ public class Robot extends TimedRobot {
         in.setCmd(intakeCmdState.STOP);     
       }
 
-      // Allow preemptively spooling up the shooter
-      shooter.setRun(di.getRunShooter() || oi.getRunShooter());
+      shooter.setRun(shooterLaunchState.STOP);
 
     }
 

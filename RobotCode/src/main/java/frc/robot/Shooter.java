@@ -45,7 +45,7 @@ public class Shooter {
     @Signal (units = "RPM")
     double desiredSpeed;
     @Signal (units = "state")
-    boolean shooterRunCmd;
+    shooterLaunchState shooterRunCmd;
     @Signal (units = "state")
     shooterFeedCmdState feedCmdState;
 
@@ -56,7 +56,8 @@ public class Shooter {
     Calibration shooter_I;
     Calibration shooter_D;
     Calibration shooter_F;
-    Calibration shooter_Launch_Speed;
+    Calibration shooter_high_goal_Launch_Speed;
+    Calibration shooter_low_goal_Launch_Speed;
     Calibration allowed_Shooter_Error;
     Calibration feedSpeed;
     Calibration ejectSpeed;
@@ -89,7 +90,11 @@ public class Shooter {
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);
         shooter_F = new Calibration("shooter F","",0.021);
-        shooter_Launch_Speed = new Calibration("shooter launch speed","RPM",3500);
+        
+        shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3500);
+        shooter_low_goal_Launch_Speed = new Calibration("shooter low goal launch speed","RPM",1650);
+
+
         allowed_Shooter_Error = new Calibration("shooter allowed shooter error","RPM",200);
         feedSpeed = new Calibration("shooter feed speed","Cmd",0.75);
         ejectSpeed = new Calibration("shooter eject speed","Cmd",0.5);
@@ -98,7 +103,7 @@ public class Shooter {
         feedWheelEncoder = new Encoder(Constants.SHOOTER_FEED_ENC_A, Constants.SHOOTER_FEED_ENC_B);
         feedWheelEncoder.setDistancePerPulse(Constants.SHOOTER_FEED_ENC_REV_PER_PULSE);
 
-        shooterRunCmd = false;
+        shooterRunCmd = shooterLaunchState.STOP;
         feedCmdState = shooterFeedCmdState.STOP;
 
         calUpdate(true);
@@ -121,6 +126,22 @@ public class Shooter {
 
     }
 
+    public enum shooterLaunchState{
+        STOP(0),
+        LOW_GOAL(1),
+        HIGH_GOAL(2);
+
+        public final int value;
+        private shooterLaunchState(int value) {
+            this.value = value;
+        }
+
+        public int toInt() {
+            return this.value;
+        }
+
+    }
+
     
     // Call with true to cause the feed wheels to run and feed balls to the shooter. False should stop the feed motors.
     public void setFeed(shooterFeedCmdState ShooterFeedCmdState){
@@ -128,7 +149,7 @@ public class Shooter {
     }
 	
     // Call with true to cause the shooter to run, false to stop it.
-    public void setRun(boolean runCmd){
+    public void setRun(shooterLaunchState runCmd){
         shooterRunCmd = runCmd;
     }
 
@@ -137,13 +158,22 @@ public class Shooter {
         feedWheelSpeed = feedWheelEncoder.getRate() * 60.0; //rev per sec to rev per min conversion
         actualSpeed = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
 
-        if (shooterRunCmd){
-            desiredSpeed = shooter_Launch_Speed.get();
-            var desired_Shooter_Speed_RadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(desiredSpeed);
-            shooterMotor.setClosedLoopCmd(desired_Shooter_Speed_RadPerSec, shooter_F.get() * desired_Shooter_Speed_RadPerSec);
+
+        if (shooterRunCmd == shooterLaunchState.HIGH_GOAL){
+            desiredSpeed = shooter_high_goal_Launch_Speed.get();
+        } else if (shooterRunCmd == shooterLaunchState.LOW_GOAL){
+            desiredSpeed = shooter_low_goal_Launch_Speed.get();
         } else {
             desiredSpeed = 0;
+        }
+
+        if(desiredSpeed != 0){
+            var spd_radPerSec =  Units.rotationsPerMinuteToRadiansPerSecond(desiredSpeed);
+            shooterMotor.setClosedLoopCmd(spd_radPerSec, shooter_F.get() * spd_radPerSec);
+            isSpooledUp = spooledUpDebounce.calculate(Math.abs(actualSpeed - desiredSpeed) < allowed_Shooter_Error.get());
+        } else {
             shooterMotor.setVoltageCmd(0);
+            isSpooledUp = false;
         }
         
 
@@ -162,7 +192,6 @@ public class Shooter {
         feedMotor.set(ControlMode.PercentOutput, feedMotorCmd);
         shooterMotor.update();
 
-        isSpooledUp = spooledUpDebounce.calculate(Math.abs(actualSpeed - shooter_Launch_Speed.get()) < allowed_Shooter_Error.get());
     }
 
     // Returns whether the shooter is running at its setpoint speed or not.
@@ -180,7 +209,7 @@ public class Shooter {
            shooter_I.isChanged() ||
            shooter_D.isChanged() ||
            shooter_F.isChanged() ||
-           shooter_Launch_Speed.isChanged() ||
+           shooter_high_goal_Launch_Speed.isChanged() ||
            allowed_Shooter_Error.isChanged() ||
            feedSpeed.isChanged() ||
             force){
@@ -189,7 +218,7 @@ public class Shooter {
             shooter_I.acknowledgeValUpdate();
             shooter_D.acknowledgeValUpdate();
             shooter_F.acknowledgeValUpdate();
-            shooter_Launch_Speed.acknowledgeValUpdate();
+            shooter_high_goal_Launch_Speed.acknowledgeValUpdate();
             allowed_Shooter_Error.acknowledgeValUpdate();
             feedSpeed.acknowledgeValUpdate();
            

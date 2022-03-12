@@ -52,7 +52,7 @@ public class Dashboard {
         final double ROW3 = 55;
         final double ROW4 = 68;
 
-        d.addCamera("cam1", "http://10.17.36.10:1181/stream.mjpg", LEFT_COL, ROW2, 0.75);
+        d.addCamera("cam1", "http://10.17.36.2:1181/stream.mjpg", LEFT_COL, ROW2, 0.75);
         //d.addCamera("cam2", "http://10.17.36.10:1182/stream.mjpg", RIGHT_COL, ROW2, 0.75);
 
         d.addFieldPose("pose", "Field", LEFT_COL, ROW1, 0.75);
@@ -63,7 +63,7 @@ public class Dashboard {
         topicList[3] = new SwerveStateTopicSet("BR",3);
         d.addSwerveState(topicList, "SwerveState", RIGHT_COL+3.5, ROW1, 0.8);
 
-        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_shooterSpeed"), "Shooter", "RPM", 0, 5000, 1000, 3000, CENTER_COL-7, ROW1, 1.0);
+        d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_shooterSpeed"), "Shooter", "RPM", 0, 5000, 1500, 4000, CENTER_COL-7, ROW1, 1.0);
         d.addCircularGauge(SignalUtils.nameToNT4ValueTopic("db_pneumaticsPressure"), "Pressure", "psi", 0, 130, 80, 120, CENTER_COL+13, ROW1, 1.0);
 
         

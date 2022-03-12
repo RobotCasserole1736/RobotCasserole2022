@@ -47,9 +47,9 @@ public class DriverInput {
     @Signal (units="cmd")
     double sideToSideSlewCmd;
     @Signal(units="bool")
-    boolean runShooter;
+    boolean shootHighGoal;
     @Signal(units="bool")
-    boolean feedShooter;
+    boolean shootLowGoal;
     @Signal(units="bool")
     boolean climbExtend;
     @Signal(units="bool")
@@ -112,8 +112,8 @@ public class DriverInput {
         sideToSideSlewCmd = sideToSideSlewLimiter.calculate(curSideToSideCmd);
         
         robotRelative = driverController.getRightBumper();
-        runShooter = driverController.getLeftTriggerAxis()>0.5;
-        feedShooter = driverController.getLeftBumper();
+        shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
+        shootHighGoal = driverController.getLeftBumper();
         intakeLowerAndRun = driverController.getRightTriggerAxis()>0.5;
         eject = driverController.getXButtonPressed();
         compEnable = driverController.getStartButton();
@@ -180,12 +180,12 @@ public class DriverInput {
         return sideToSideSlewLimiter.calculate(curSideToSideCmd) * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
     }
 
-    public boolean getRunShooter(){
-        return runShooter;
+    public boolean getShootHighGoal(){
+        return shootHighGoal;
     }
 
-    public boolean getFeedShooter(){
-        return feedShooter;
+    public boolean getShootLowGoal(){
+        return shootLowGoal;
     }
 
     public boolean getClimbExtend(){

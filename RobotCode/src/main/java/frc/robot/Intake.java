@@ -75,7 +75,7 @@ public class Intake {
         vertIntakeSpeed = new Calibration("INT Vertical Intake Speed", "", -0.8);
         vertEjectSpeed = new Calibration("INT Vertical Eject Speed", "", 0.8);
 
-        horizStartDelay = new Calibration("INT Horizontal Intake Start Delay", "sec", 0.5);
+        horizStartDelay = new Calibration("INT Horizontal Intake Start Delay", "sec", 0.75);
 	}
 
     public enum intakeCmdState{
