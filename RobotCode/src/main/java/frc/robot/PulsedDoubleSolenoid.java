@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -34,6 +35,11 @@ public class PulsedDoubleSolenoid {
     public void update(){
 
         boolean needsSend = false;
+
+        if(DriverStation.isDisabled()){
+            //kind of a hack. Make sure command starts at off while disabled so it triggers right when we go enabled.
+            cmd_in = DoubleSolenoid.Value.kOff;
+        }
 
         if(cmd_in != cmd_in_prev){
             energizeEnd = Timer.getFPGATimestamp() + ENERGIZE_DURATION;

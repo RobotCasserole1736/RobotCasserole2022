@@ -310,7 +310,7 @@ public class Robot extends TimedRobot {
       } else {
         // Not at speed yet, hold off on feeding
         shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
-        elevator.setCmd(elevatorCmdState.INTAKE);
+        elevator.setCmd(elevatorCmdState.STOP);
       }
 
       shooter.setRun(di.getShootHighGoal()?shooterLaunchState.HIGH_GOAL:shooterLaunchState.LOW_GOAL);
