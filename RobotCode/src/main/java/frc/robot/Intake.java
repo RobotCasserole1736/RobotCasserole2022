@@ -70,8 +70,8 @@ public class Intake {
 
         intakeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM,Constants.INTAKE_SOLENOID);
 
-        horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.5);
-        horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.5);
+        horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.75);
+        horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.75);
         vertIntakeSpeed = new Calibration("INT Vertical Intake Speed", "", -0.8);
         vertEjectSpeed = new Calibration("INT Vertical Eject Speed", "", 0.8);
 

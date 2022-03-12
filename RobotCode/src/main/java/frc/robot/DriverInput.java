@@ -115,7 +115,7 @@ public class DriverInput {
         shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
         shootHighGoal = driverController.getLeftBumper();
         intakeLowerAndRun = driverController.getRightTriggerAxis()>0.5;
-        eject = driverController.getXButtonPressed();
+        eject = driverController.getXButton();
         compEnable = driverController.getStartButton();
         compDisable = driverController.getBackButton();
         if(driverController.getBButton()){

@@ -98,7 +98,7 @@ public class Shooter {
         allowed_Shooter_Error = new Calibration("shooter allowed shooter error","RPM",200);
         feedSpeed = new Calibration("shooter feed speed","Cmd",0.75);
         ejectSpeed = new Calibration("shooter eject speed","Cmd",0.5);
-        intakeSpeed = new Calibration("shooter intake speed","Cmd",0.5);
+        intakeSpeed = new Calibration("shooter intake speed","Cmd",0.75);
 
         feedWheelEncoder = new Encoder(Constants.SHOOTER_FEED_ENC_A, Constants.SHOOTER_FEED_ENC_B);
         feedWheelEncoder.setDistancePerPulse(Constants.SHOOTER_FEED_ENC_REV_PER_PULSE);

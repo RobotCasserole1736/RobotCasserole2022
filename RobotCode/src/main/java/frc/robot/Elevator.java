@@ -52,8 +52,8 @@ public class Elevator {
 	private Elevator() {
         lowerElevatorMotor = new VictorSPX(Constants.ELEVATOR_LOWER_CANID);
 		lowerElevatorMotor.setInverted(true);
-		advance = new Calibration("elevator advance speed", "cmd", 0.5);
-		eject = new Calibration("elevator eject speed", "cmd", 0.5);
+		advance = new Calibration("elevator advance speed", "cmd", 0.75);
+		eject = new Calibration("elevator eject speed", "cmd", 0.75);
 
 		lowerSensor = new DigitalInput(Constants.ELEVATOR_LOWER_BALL_SENSOR);
 		upperSensor = new DigitalInput(Constants.ELEVATOR_UPPER_BALL_SENSOR);
