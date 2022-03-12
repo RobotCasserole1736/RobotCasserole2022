@@ -43,9 +43,9 @@ public class Climber {
     // This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
     // The constructor should set an initial state for each solenoid - straightened for the tilt solenoid and retracted for the climb solenoid.
     private Climber() {
-        tilt = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.TILT_SOLENOID_EXTEND, Constants.TILT_SOLENOID_RETRACT);
-        climb1 = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID1_EXTEND,Constants.CLIMBER_SOLENOID1_RETRACT);
-        climb2 = new DoubleSolenoid (PneumaticsModuleType.REVPH, Constants.CLIMBER_SOLENOID2_EXTEND,Constants.CLIMBER_SOLENOID2_RETRACT);
+        tilt = new DoubleSolenoid (PneumaticsModuleType.CTREPCM, Constants.TILT_SOLENOID_EXTEND, Constants.TILT_SOLENOID_RETRACT);
+        climb1 = new DoubleSolenoid (PneumaticsModuleType.CTREPCM, Constants.CLIMBER_SOLENOID1_EXTEND,Constants.CLIMBER_SOLENOID1_RETRACT);
+        climb2 = new DoubleSolenoid (PneumaticsModuleType.CTREPCM, Constants.CLIMBER_SOLENOID2_EXTEND,Constants.CLIMBER_SOLENOID2_RETRACT);
         
         // Set defaults
         extendTiltClimber();

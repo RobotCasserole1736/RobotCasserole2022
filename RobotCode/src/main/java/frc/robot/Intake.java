@@ -68,7 +68,7 @@ public class Intake {
         vertIntakeMotor = new Spark( Constants.VERT_INTAKE_SPARK_MOTOR);
         vertIntakeMotor.setInverted(true);
 
-        intakeSolenoid = new Solenoid(PneumaticsModuleType.REVPH,Constants.INTAKE_SOLENOID);
+        intakeSolenoid = new Solenoid(PneumaticsModuleType.CTRE,Constants.INTAKE_SOLENOID);
 
         horizIntakeSpeed = new Calibration("INT Horizontal Intake Speed", "", 0.5);
         horizEjectSpeed = new Calibration("INT Horizontal Eject Speed", "", -0.5);

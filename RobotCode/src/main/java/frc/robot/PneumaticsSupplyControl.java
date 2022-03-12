@@ -26,8 +26,8 @@ public class PneumaticsSupplyControl {
 	}
     
     private PneumaticsSupplyControl () {
-        phCompressor = new Compressor(1, PneumaticsModuleType.REVPH);
-        phCompressor.enableAnalog(100, 120);
+        phCompressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
+        phCompressor.enableDigital();
 
 		// Kick off monitor in brand new thread.
 	    // Thanks to Team 254 for an example of how to do this!
@@ -57,12 +57,12 @@ public class PneumaticsSupplyControl {
     }
 
     private void update(){
-        storagePressure= phCompressor.getPressure(); //using the rev pressure sensor
+        //storagePressure= phCompressor.getPressure(); //TODO read from analog input?
         compressorCurrent = phCompressor.getCurrent();
 
         if(compressorEnableCmdPrev != compressorEnableCmd){
             if(compressorEnableCmd){
-                phCompressor.enableAnalog(100, 120);
+                phCompressor.enableDigital();
             } else {
                 phCompressor.disable();
             }
