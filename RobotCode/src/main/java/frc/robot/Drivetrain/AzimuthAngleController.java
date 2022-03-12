@@ -2,7 +2,6 @@ package frc.robot.Drivetrain;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import frc.UnitUtils;
 import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Util.MapLookup2D;
 
@@ -16,7 +15,6 @@ public class AzimuthAngleController{
 
     double desAng = 0;
 
-    @Signal(units = "deg")
     double actAng = 0;
     @Signal(units = "deg")
     double angSetpoint = 0;
@@ -24,19 +22,9 @@ public class AzimuthAngleController{
     @Signal(units = "deg")
     double desAngleRateLimit = 0;
 
-    @Signal(units = "deg")
-    double errNoInvert;
-
-    @Signal(units = "deg")
-    double errInvert;
-
-    @Signal(units = "count")
-    double actAngleHalfRotations;
+    double azmthMotorCmd = 0;
 
     double netSpeed = 0;
-
-    @Signal(units = "cmd")
-    double azmthMotorCmd;
 
     @Signal
     boolean invertWheelDirection = false;
@@ -68,27 +56,7 @@ public class AzimuthAngleController{
 
     public void update(){
 
-        
-        errNoInvert = UnitUtils.wrapAngleDeg(desAng - actAng);
-        errInvert   = UnitUtils.wrapAngleDeg(desAng - actAng + 180);
-
-        if(desAnglePrev != desAng){
-            if(Math.abs(errNoInvert) < Math.abs(errInvert)){
-                //don't invert the wheel direction
-                invertWheelDirection = false;
-            } else {
-                //Invert wheel direction
-                invertWheelDirection = true;
-            }
-        }
-
-        if(invertWheelDirection){
-            angSetpoint = actAng + errInvert;
-        } else {
-            angSetpoint = actAng + errNoInvert;
-        }
-
-        desAngleRateLimit = setpointRateLimiter.calculate(angSetpoint);
+        desAngleRateLimit = setpointRateLimiter.calculate(desAng);
 
         azmthMotorCmd = azmthPIDCtrl.calculate(actAng, desAngleRateLimit);
         azmthMotorCmd = limitMag(azmthMotorCmd, azmthCmdLimitTbl.lookupVal(netSpeed));
@@ -105,19 +73,15 @@ public class AzimuthAngleController{
         return azmthMotorCmd;
     }
 
-    public boolean getInvertWheelCmd(){
-        return invertWheelDirection;
-    }
-
     public double getErrMag_deg(){
-        return Math.abs(angSetpoint - actAng);
+        return Math.abs(desAng - actAng);
     }
 
     public double getSetpoint_deg(){
-        return angSetpoint;
+        return desAng;
     }
 
-    public double limitMag(double in, double magMax){
+    private double limitMag(double in, double magMax){
         if(Math.abs(in) > magMax){
             return Math.signum(in) * magMax;
         } else {

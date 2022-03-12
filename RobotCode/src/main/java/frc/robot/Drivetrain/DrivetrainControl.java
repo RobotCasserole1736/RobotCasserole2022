@@ -79,11 +79,6 @@ public class DrivetrainControl {
     // Autonmous-commanded desired pose
     Pose2d curDesPose = new Pose2d();
 
-    // Scratch variable to help keep track of the worst error observed from any particualr
-    // azimuth on the modules. We need to be careful about driving full force into our 
-    // wheel motors if one or more of the azimuth's is not aligned where we want it to be.
-    double worstError;
-
     // Test mode tools
     // These help us inject specific waveforms into swerve modules to calibrate and test them.
     FunctionGenerator azmthFG;
@@ -181,8 +176,6 @@ public class DrivetrainControl {
             desModState[3] = new SwerveModuleState(0, Rotation2d.fromDegrees(-45));
         }
 
-        worstError = getMaxErrorMag();
-
         updateCommon();
     }
 
@@ -196,8 +189,6 @@ public class DrivetrainControl {
         desModState[1] = new SwerveModuleState(wheelCmd, Rotation2d.fromDegrees(azmthCmd));
         desModState[2] = new SwerveModuleState(wheelCmd, Rotation2d.fromDegrees(azmthCmd));
         desModState[3] = new SwerveModuleState(wheelCmd, Rotation2d.fromDegrees(azmthCmd));
-
-        worstError = 0.0; // Keep this out of the way
 
         updateCommon();
     }
@@ -215,10 +206,10 @@ public class DrivetrainControl {
         moduleBR.setDesiredState(desModState[3]);
 
         var curActualSpeed_ftpersec = pe.getSpeedFtpSec();
-        moduleFL.update(curActualSpeed_ftpersec, worstError);
-        moduleFR.update(curActualSpeed_ftpersec, worstError);
-        moduleBL.update(curActualSpeed_ftpersec, worstError);
-        moduleBR.update(curActualSpeed_ftpersec, worstError);
+        moduleFL.update(curActualSpeed_ftpersec);
+        moduleFR.update(curActualSpeed_ftpersec);
+        moduleBL.update(curActualSpeed_ftpersec);
+        moduleBR.update(curActualSpeed_ftpersec);
 
 
         pe.update();
@@ -241,15 +232,6 @@ public class DrivetrainControl {
                                         moduleBL.getDesiredState(),
                                         moduleFR.getDesiredState()};
         return retArr;
-    }
-
-    public double getMaxErrorMag(){
-        double maxErr = 0;
-        maxErr = Math.max(maxErr, moduleFL.azmthCtrl.getErrMag_deg());
-        maxErr = Math.max(maxErr, moduleFR.azmthCtrl.getErrMag_deg());
-        maxErr = Math.max(maxErr, moduleBL.azmthCtrl.getErrMag_deg());
-        maxErr = Math.max(maxErr, moduleFR.azmthCtrl.getErrMag_deg());
-        return maxErr;
     }
 
     // Pass the current calibration values downard into child classes.

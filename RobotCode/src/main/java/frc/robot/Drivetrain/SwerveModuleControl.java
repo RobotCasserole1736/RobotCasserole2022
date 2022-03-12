@@ -22,6 +22,7 @@ class SwerveModuleControl {
     CasseroleSwerveAzmthEncoder azmth_enc;
 
     SwerveModuleState desState = new SwerveModuleState();
+    SwerveModuleState optState = new SwerveModuleState();
     SwerveModuleState actState = new SwerveModuleState();
 
     double motorDesSpd_radpersec;
@@ -65,24 +66,16 @@ class SwerveModuleControl {
         wheelMotorFF = new SimpleMotorFeedforward(0, // kS - minimum voltage to see any movement. AKA "overcome stiction"
                                                   0); // kV - Volts required to get one (radian per second) of velocity in steady state
 
-        wheelCmdLimitTbl = new MapLookup2D();
-        wheelCmdLimitTbl.insertNewPoint(0.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(5.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(7.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(15.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(30.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(45.0, 1.0);
-        wheelCmdLimitTbl.insertNewPoint(90.0, 1.0);
-                                          
-
     }
 
-    public void update(double curSpeedFtPerSec, double maxAzmthErr_deg){
+    public void update(double curSpeedFtPerSec){
 
         azmth_enc.update();
 
+        optState = SwerveModuleState.optimize(desState, new Rotation2d(azmth_enc.getAngle_rad()));
+
         // Update the azimuth PID controller
-        azmthCtrl.setInputs(desState.angle.getDegrees(), 
+        azmthCtrl.setInputs(optState.angle.getDegrees(), 
                             Units.radiansToDegrees(azmth_enc.getAngle_rad()), 
                             curSpeedFtPerSec);
         azmthCtrl.update();
@@ -90,15 +83,8 @@ class SwerveModuleControl {
         //Send the output of the controller to the motor, converting from "motor-cmd" to volts as we go
         azmthMotorCtrl.setVoltageCmd(azmthCtrl.getMotorCmd() * 12.0);
 
-        // Calculate the motor speed given the current wheel speed command and whether 
-        //  the azimuth is in an "inverting" state.
-        motorDesSpd_radpersec = UnitUtils.dtLinearSpeedToMotorSpeed_radpersec(desState.speedMetersPerSecond);
-        if(azmthCtrl.getInvertWheelCmd()){
-            motorDesSpd_radpersec *= -1.0;
-        }
-
-        // Apply a limit to the motor wheel speed based on large azimuth errors
-        motorDesSpd_radpersec *= wheelCmdLimitTbl.lookupVal(maxAzmthErr_deg);
+        // Calculate the motor speed given the current wheel speed command 
+        motorDesSpd_radpersec = UnitUtils.dtLinearSpeedToMotorSpeed_radpersec(optState.speedMetersPerSecond);
 
         // Send the speed command to the motor controller
         wheelMotorCtrl.setClosedLoopCmd(motorDesSpd_radpersec, wheelMotorFF.calculate(motorDesSpd_radpersec));
