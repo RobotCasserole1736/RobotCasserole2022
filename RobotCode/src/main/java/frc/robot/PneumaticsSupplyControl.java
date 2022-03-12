@@ -3,19 +3,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import frc.Constants;
 import frc.lib.Signal.Annotations.Signal;
 
 public class PneumaticsSupplyControl {
 
     AnalogInput pressureSensor;
-
-    double v_supplied = 5;
-    double p_min = 0;
-    double p_max = 150;
-
-    double curPressurePSI;
-
-    
 
     Compressor phCompressor;
     
@@ -39,6 +32,8 @@ public class PneumaticsSupplyControl {
     private PneumaticsSupplyControl () {
         phCompressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
         phCompressor.enableDigital();
+
+        pressureSensor = new AnalogInput(Constants.PRESSURE_SENSOR_ANALOG);
 
 		// Kick off monitor in brand new thread.
 	    // Thanks to Team 254 for an example of how to do this!
@@ -70,10 +65,10 @@ public class PneumaticsSupplyControl {
     private void update(){
        
         double voltage = pressureSensor.getVoltage();
-        if (v_supplied >= 0.001) {
-            curPressurePSI = (250 * (voltage / 4.62) - 25);
+        if (voltage >= 0.001) {
+            storagePressure = (250 * (voltage / 4.62) - 25);
         } else {
-            curPressurePSI = 0;// meh, should never happen physically
+            storagePressure = 0;// meh, should never happen physically
         compressorCurrent = phCompressor.getCurrent();
 
         if(compressorEnableCmdPrev != compressorEnableCmd){

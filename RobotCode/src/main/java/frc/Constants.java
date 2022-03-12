@@ -68,7 +68,7 @@ public class Constants {
     //static public final int UNUSED = 0;
     //static public final int UNUSED = 1;
     //static public final int UNUSED = 2;
-    //static public final int UNUSED = 3;
+    static public final int PRESSURE_SENSOR_ANALOG = 3;
 
     // CAN Bus Addresses - Motors
     //static public final int RESERVED_DO_NOT_USE = 0; // default for most stuff
