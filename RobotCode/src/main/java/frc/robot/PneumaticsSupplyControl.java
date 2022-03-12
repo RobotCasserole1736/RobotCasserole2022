@@ -1,10 +1,21 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.lib.Signal.Annotations.Signal;
 
 public class PneumaticsSupplyControl {
+
+    AnalogInput pressureSensor;
+
+    double v_supplied = 5;
+    double p_min = 0;
+    double p_max = 150;
+
+    double curPressurePSI;
+
+    
 
     Compressor phCompressor;
     
@@ -57,7 +68,12 @@ public class PneumaticsSupplyControl {
     }
 
     private void update(){
-        //storagePressure= phCompressor.getPressure(); //TODO read from analog input?
+       
+        double voltage = pressureSensor.getVoltage();
+        if (v_supplied >= 0.001) {
+            curPressurePSI = (250 * (voltage / 4.62) - 25);
+        } else {
+            curPressurePSI = 0;// meh, should never happen physically
         compressorCurrent = phCompressor.getCurrent();
 
         if(compressorEnableCmdPrev != compressorEnableCmd){
@@ -70,6 +86,7 @@ public class PneumaticsSupplyControl {
 
         compressorEnableCmdPrev = compressorEnableCmd;
     }
+}
 
     public double getStoragePressure(){
         return storagePressure;
