@@ -90,7 +90,7 @@ public class Shooter {
         shooter_D = new Calibration("shooter D","",0);
         shooter_F = new Calibration("shooter F","",0.021);
         
-        shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3200);
+        shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3500);
         shooter_low_goal_Launch_Speed = new Calibration("shooter low goal launch speed","RPM",1650);
 
 
