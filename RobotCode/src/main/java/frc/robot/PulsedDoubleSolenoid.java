@@ -8,8 +8,10 @@ public class PulsedDoubleSolenoid {
 
     DoubleSolenoid sol;
 
-    DoubleSolenoid.Value cmd = DoubleSolenoid.Value.kOff;
-    DoubleSolenoid.Value cmd_prev = DoubleSolenoid.Value.kOff;
+    DoubleSolenoid.Value cmd_in = DoubleSolenoid.Value.kOff;
+    DoubleSolenoid.Value cmd_in_prev = DoubleSolenoid.Value.kOff;
+
+    DoubleSolenoid.Value cmd_to_valve = DoubleSolenoid.Value.kOff;
 
     final double ENERGIZE_DURATION = 0.5;
 
@@ -22,25 +24,34 @@ public class PulsedDoubleSolenoid {
      * @param revChannel
      */
     public PulsedDoubleSolenoid(int fwdChannel, int revChannel){
-        sol = new DoubleSolenoid (PneumaticsModuleType.CTREPCM, fwdChannel, revChannel);
+        sol = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, fwdChannel, revChannel);
     }
 
     public void set(DoubleSolenoid.Value cmd_in){
-        cmd = cmd_in;
+        this.cmd_in = cmd_in;
     }
 
     public void update(){
 
-        if(cmd != cmd_prev){
+        boolean needsSend = false;
+
+        if(cmd_in != cmd_in_prev){
             energizeEnd = Timer.getFPGATimestamp() + ENERGIZE_DURATION;
-            sol.set(cmd);
+            cmd_to_valve = cmd_in;
+            needsSend = true;
         }
 
         if(Timer.getFPGATimestamp() > energizeEnd){
-            sol.set(DoubleSolenoid.Value.kOff);
-        }        
+            cmd_to_valve = DoubleSolenoid.Value.kOff;
+            needsSend = true;
 
-        cmd_prev = cmd;
+        }      
+        
+        if(needsSend){
+            sol.set(cmd_to_valve);
+        }
+
+        cmd_in_prev = cmd_in;
     }
     
 }
