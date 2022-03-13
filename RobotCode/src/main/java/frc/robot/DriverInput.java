@@ -125,8 +125,8 @@ public class DriverInput {
             climbStraighten = driverController.getPOV()==90;    
         } else {
             climbExtend = false;
-            climbRetract = true;
-            climbTilt = true;
+            climbRetract = false;
+            climbTilt = false;
             climbStraighten = false;  
         }
 

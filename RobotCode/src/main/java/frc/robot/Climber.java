@@ -29,10 +29,10 @@ public class Climber {
     PulsedDoubleSolenoid tilt;
     PulsedDoubleSolenoid climb1;
     PulsedDoubleSolenoid climb2;
-    @Signal (units="cmd")
-    boolean tiltExtendCmd;
-   @Signal (units="cmd")
-    boolean climbExtendCmd;
+
+    DoubleSolenoid.Value tiltCmd;
+    DoubleSolenoid.Value climbCmd;
+
 	public static synchronized Climber getInstance() {
 		if(climber == null)
 			climber = new Climber();
@@ -46,50 +46,36 @@ public class Climber {
         climb1 = new PulsedDoubleSolenoid(Constants.CLIMBER_SOLENOID1_EXTEND,Constants.CLIMBER_SOLENOID1_RETRACT);
         climb2 = new PulsedDoubleSolenoid(Constants.CLIMBER_SOLENOID2_EXTEND,Constants.CLIMBER_SOLENOID2_RETRACT);
         
-        // Set defaults
-        extendTiltClimber();
-        retractClimber();
+        setTiltCmd(DoubleSolenoid.Value.kOff);
+        setClimbCmd(DoubleSolenoid.Value.kOff);
 
 	}
-    public void extendTiltClimber() {
-        tiltExtendCmd = true;
-    }
-    public void retractTiltClimber() {
-        tiltExtendCmd = false;
-    }
-    public void extendClimber() {
-        climbExtendCmd = true;
-    }
-    public void retractClimber() {
-        climbExtendCmd = false;
-    }
-    public boolean getIsTilted() {
-        return (tiltExtendCmd == false);
 
+    public void setTiltCmd(DoubleSolenoid.Value cmd){
+        tiltCmd = cmd;
     }
-    public boolean getIsExtended() {
-        return (climbExtendCmd == true);
-        
+
+    public void setClimbCmd(DoubleSolenoid.Value cmd){
+        climbCmd = cmd;
     }
+
     public void update () {
-        if(climbExtendCmd){
-            climb1.set(DoubleSolenoid.Value.kForward);
-            climb2.set(DoubleSolenoid.Value.kForward);
-        } else {
-            climb1.set(DoubleSolenoid.Value.kReverse);
-            climb2.set(DoubleSolenoid.Value.kReverse);
-        }
+        climb1.set(climbCmd);
+        climb2.set(climbCmd);
 
-        if(tiltExtendCmd){
-            tilt.set(DoubleSolenoid.Value.kForward);
-        } else {
-            tilt.set(DoubleSolenoid.Value.kReverse);
-        }
+        tilt.set(tiltCmd);
 
         tilt.update();
         climb1.update();
         climb2.update();
-        
+    }
+
+    public boolean tiltIsExtended(){
+        return tilt.isExtended();
+    }
+
+    public boolean climbIsExtended(){
+        return climb1.isExtended();
     }
 	
 }

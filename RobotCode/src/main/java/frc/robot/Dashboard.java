@@ -85,8 +85,8 @@ public class Dashboard {
         shooterSpeed = Shooter.getInstance().getShooterSpeed();
         pnuemPressure = PneumaticsSupplyControl.getInstance().getStoragePressure();
         shooterSpoolup = Shooter.getInstance().getSpooledUp();
-        climberTilt = Climber.getInstance().getIsTilted();
-        climberExtend = Climber.getInstance().getIsExtended();
+        climberTilt = !Climber.getInstance().tiltIsExtended();
+        climberExtend = Climber.getInstance().climbIsExtended();
 
 
         //master caution handling

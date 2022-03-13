@@ -18,6 +18,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.Constants;
@@ -219,7 +220,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     SignalWrangler.getInstance().logger.startLoggingAuto();
 
-    climb.retractTiltClimber();
+    climb.setTiltCmd(DoubleSolenoid.Value.kReverse);
     
     //Reset sequencer
     auto.reset();
@@ -249,6 +250,9 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
    
     SignalWrangler.getInstance().logger.startLoggingTeleop();
+
+    climb.setTiltCmd(DoubleSolenoid.Value.kReverse);
+
   }
 
   @Override
@@ -345,19 +349,19 @@ public class Robot extends TimedRobot {
     ////////////////////////////////////////
     // Climber Control
     if(di.getClimbExtend() || oi.getClimbExtend()){
-      climb.extendClimber();
+      climb.setClimbCmd(DoubleSolenoid.Value.kForward);
     } else if (di.getClimbRetract() || oi.getClimbRetract()) {
-      climb.retractClimber();
+      climb.setClimbCmd(DoubleSolenoid.Value.kReverse);
     } else {
-      //maintain state
+      climb.setClimbCmd(DoubleSolenoid.Value.kOff);
     }
 
     if(di.getClimbTilt() || oi.getClimbTilt()){
-      climb.extendTiltClimber();
+      climb.setTiltCmd(DoubleSolenoid.Value.kReverse);
     } else if (di.getClimbStraighten() || oi.getClimbStraighten()) {
-      climb.retractTiltClimber();
+      climb.setTiltCmd(DoubleSolenoid.Value.kForward);
     } else {
-      //maintain state
+      climb.setTiltCmd(DoubleSolenoid.Value.kOff);
     }
 
     psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
