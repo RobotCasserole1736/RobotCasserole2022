@@ -55,10 +55,6 @@ public class DriverInput {
     @Signal(units="bool")
     boolean climbRetract;
     @Signal(units="bool")
-    boolean climbTilt;
-    @Signal(units="bool")
-    boolean climbStraighten;
-    @Signal(units="bool")
     boolean intakeLowerAndRun;
     @Signal(units="bool")
     boolean intakeRaise;
@@ -112,22 +108,23 @@ public class DriverInput {
         sideToSideSlewCmd = sideToSideSlewLimiter.calculate(curSideToSideCmd);
         
         robotRelative = driverController.getRightBumper();
-        shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
-        shootHighGoal = driverController.getLeftBumper();
         intakeLowerAndRun = driverController.getRightTriggerAxis()>0.5;
+
         eject = driverController.getXButton();
         compEnable = driverController.getStartButton();
         compDisable = driverController.getBackButton();
+
+        //B button shifts between shooting and climbing mode
         if(driverController.getBButton()){
+            shootLowGoal = false;
+            shootHighGoal = false;
             climbExtend = driverController.getPOV()==0;
             climbRetract = driverController.getPOV()==180;
-            climbTilt = driverController.getPOV()==270;
-            climbStraighten = driverController.getPOV()==90;    
         } else {
+            shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
+            shootHighGoal = driverController.getLeftBumper();
             climbExtend = false;
-            climbRetract = true;
-            climbTilt = true;
-            climbStraighten = false;  
+            climbRetract = false;
         }
 
         resetOdometry = resetOdoDbnc.calculate(driverController.getYButton());
@@ -194,14 +191,6 @@ public class DriverInput {
 
     public boolean getClimbRetract(){
         return climbRetract;
-    }
-
-    public boolean getClimbTilt(){
-        return climbTilt;
-    }
-
-    public boolean getClimbStraighten(){
-        return climbStraighten;
     }
 
     public boolean getIntakeLowerAndRun(){

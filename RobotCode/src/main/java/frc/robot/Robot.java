@@ -29,6 +29,7 @@ import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
+import frc.robot.Climber.climbState;
 import frc.robot.Drivetrain.DrivetrainControl;
 import frc.robot.Elevator.elevatorCmdState;
 import frc.robot.Intake.intakeCmdState;
@@ -218,9 +219,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     SignalWrangler.getInstance().logger.startLoggingAuto();
-
-    climb.retractTiltClimber();
-    
     //Reset sequencer
     auto.reset();
     auto.startSequencer();
@@ -345,19 +343,11 @@ public class Robot extends TimedRobot {
     ////////////////////////////////////////
     // Climber Control
     if(di.getClimbExtend() || oi.getClimbExtend()){
-      climb.extendClimber();
+      climb.setClimbCmd(climbState.EXTEND);
     } else if (di.getClimbRetract() || oi.getClimbRetract()) {
-      climb.retractClimber();
+      climb.setClimbCmd(climbState.RETRACT);
     } else {
-      //maintain state
-    }
-
-    if(di.getClimbTilt() || oi.getClimbTilt()){
-      climb.extendTiltClimber();
-    } else if (di.getClimbStraighten() || oi.getClimbStraighten()) {
-      climb.retractTiltClimber();
-    } else {
-      //maintain state
+      climb.setClimbCmd(climbState.STOP);
     }
 
     psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
