@@ -17,13 +17,13 @@ public class twoBallAuto extends AutoMode {
 
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
-        seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));
+        seq.addEvent(new AutoEventShoot(Constants.SINGLE_BALL_SHOT_TIME));
         driveEvent = new AutoEventDriveForwardTime(2.0);
         driveEvent.addChildEvent(new AutoEventIntake(3));
         seq.addEvent(driveEvent); 
         driveEvent2 = new AutoEventDriveBackwardTime(2.0);
         seq.addEvent(driveEvent2); 
-        seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));
+        seq.addEvent(new AutoEventShoot(Constants.SINGLE_BALL_SHOT_TIME));
     }
 
     @Override
