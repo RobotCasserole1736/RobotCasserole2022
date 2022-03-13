@@ -80,11 +80,11 @@ public class Autonomous extends LocalClient  {
         delayModeList.add(new Wait(6.0));
         delayModeList.add(new Wait(9.0));
 
+        mainModeList.add(new twoBallAuto());
         mainModeList.add(new BallPickup());
         mainModeList.add(new DriveFwd());
         mainModeList.add(new DoNothing());
         mainModeList.add(new many_Pickup());
-        mainModeList.add(new twoBallAuto());
 
         // Create and subscribe to NT4 topics
         curDelayModeTopic = NT4Server.getInstance().publishTopic(delayModeList.getCurModeTopicName(), NT4TypeStr.INT, this);
