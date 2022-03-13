@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.filter.Debouncer;
@@ -69,7 +70,7 @@ public class Shooter {
 
     @Signal
     boolean isSpooledUp = false;
-    Debouncer spooledUpDebounce = new Debouncer(0.25, DebounceType.kRising);
+    Debouncer spooledUpDebounce = new Debouncer(0.5, DebounceType.kRising);
 
 	public static synchronized Shooter getInstance() {
 		if(shooter == null)
@@ -82,6 +83,7 @@ public class Shooter {
 
         shooterMotor = new CasseroleCANMotorCtrl("shooter", Constants.SHOOTER_MOTOR_CANID, CANMotorCtrlType.SPARK_MAX);
         feedMotor = new VictorSPX(Constants.SHOOTER_FEED_MOTOR_CANID);
+        feedMotor.setNeutralMode(NeutralMode.Brake);
 
         shooterMotor.setInverted(true);
 
