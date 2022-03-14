@@ -203,6 +203,7 @@ public class Robot extends TimedRobot {
     SignalWrangler.getInstance().registerSignals(this);
     stt.mark("Signal Registration");
 
+    NT4Server.getInstance().startServer();
     webserver.startServer();
     stt.mark("Webserver Startup");
 
@@ -421,7 +422,10 @@ public class Robot extends TimedRobot {
     telemetryUpdate();
     stt.mark("Telemetry");
 
+
     stt.end();
+
+
   }
 
   private void telemetryUpdate(){

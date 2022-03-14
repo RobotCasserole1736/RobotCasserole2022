@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -24,7 +25,6 @@ public class NT4Server {
     public static synchronized NT4Server getInstance() {
         if (instance == null) {
             instance = new NT4Server();
-            instance.startServer();
         }
         return instance;
     }
@@ -39,8 +39,11 @@ public class NT4Server {
     }
 
     //Lists of all available topics for rapid access
-    Hashtable<String, Topic> topicsByName = new Hashtable<String, Topic>();
-    Hashtable<Integer, Topic> topicsByID = new Hashtable<Integer, Topic>();
+    private Hashtable<String, Topic> topicsByName = new Hashtable<String, Topic>();
+    private Hashtable<Integer, Topic> topicsByID = new Hashtable<Integer, Topic>();
+
+    //To prevent concurent modification issues, lock controls the topic lists
+    private ReentrantLock topicLock = new ReentrantLock();
 
 
     /**
@@ -60,8 +63,14 @@ public class NT4Server {
 
         //Automatically create and include the time topic
         TimeTopic tt = new TimeTopic();
-        topicsByName.put(tt.name, tt);
-        topicsByID.put(tt.id, tt);
+
+        topicLock.lock();
+        try {
+            topicsByName.put(tt.name, tt);
+            topicsByID.put(tt.id, tt);
+        } finally {
+            topicLock.unlock();
+        }
 
         // Kick off server in brand new thread.
         Thread serverThread = new Thread(new Runnable() {
@@ -102,7 +111,12 @@ public class NT4Server {
     }
 
     public synchronized void unPublishTopic(String deadTopicName, BaseClient client){
-        this.unPublishTopic(this.topicsByName.get(deadTopicName), client);
+        topicLock.lock();
+        try{
+            this.unPublishTopic(this.topicsByName.get(deadTopicName), client);
+        } finally {
+            topicLock.unlock();
+        }
     }
 
     public synchronized void unPublishTopic(Topic deadTopic, BaseClient client){
@@ -122,8 +136,14 @@ public class NT4Server {
                 }
             }
     
-            topicsByName.remove(deadTopic.name);
-            topicsByID.remove(deadTopic.id);
+            topicLock.lock();
+            try{
+                topicsByName.remove(deadTopic.name);
+                topicsByID.remove(deadTopic.id);
+            } finally {
+                topicLock.unlock();
+            }
+
         }
 
     }
@@ -132,47 +152,55 @@ public class NT4Server {
 
         Topic retTopic;
 
-        if(topicsByName.containsKey(name)){
-            //Topic already published by someone else - just add this client to the list of publishers
-            retTopic = topicsByName.get(name);
-        } else {
-            //New Topic. Do the factory thing.
+        topicLock.lock();
+            try{
 
-            switch(type){
-                case NT4TypeStr.FLOAT_64:
-                case NT4TypeStr.FLOAT_32:
-                    retTopic = new DoubleTopic(name, 0);
-                    break;
-                case NT4TypeStr.INT:
-                    retTopic =  new IntegerTopic(name, 0);
-                    break;
-                case NT4TypeStr.BOOL:
-                    retTopic =  new BooleanTopic(name, false);
-                    break;
-                case  NT4TypeStr.STR:
-                case  NT4TypeStr.JSON:
-                    retTopic =  new StringTopic(name, "");
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported topic type " + type);
-            }
-    
-            topicsByName.put(retTopic.name, retTopic);
-            topicsByID.put(retTopic.id, retTopic);
-    
-            synchronized(clients){
-                for(BaseClient c : clients){
-                    c.onAnnounce(retTopic);
-                    synchronized(c.subscriptions){
-                        for(Subscription s : c.subscriptions.values()){
-                            s.updateTopicSet();
+            if(topicsByName.containsKey(name)){
+                //Topic already published by someone else - just add this client to the list of publishers
+                retTopic = topicsByName.get(name);
+            } else {
+                //New Topic. Do the factory thing.
+
+                switch(type){
+                    case NT4TypeStr.FLOAT_64:
+                    case NT4TypeStr.FLOAT_32:
+                        retTopic = new DoubleTopic(name, 0);
+                        break;
+                    case NT4TypeStr.INT:
+                        retTopic =  new IntegerTopic(name, 0);
+                        break;
+                    case NT4TypeStr.BOOL:
+                        retTopic =  new BooleanTopic(name, false);
+                        break;
+                    case  NT4TypeStr.STR:
+                    case  NT4TypeStr.JSON:
+                        retTopic =  new StringTopic(name, "");
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported topic type " + type);
+                }
+        
+                topicsByName.put(retTopic.name, retTopic);
+                topicsByID.put(retTopic.id, retTopic);
+        
+                synchronized(clients){
+                    for(BaseClient c : clients){
+                        c.onAnnounce(retTopic);
+                        synchronized(c.subscriptions){
+                            for(Subscription s : c.subscriptions.values()){
+                                s.updateTopicSet();
+                            }
                         }
                     }
                 }
             }
+
+            retTopic.addPublisherRef(client);
+        
+        } finally {
+            topicLock.unlock();
         }
 
-        retTopic.addPublisherRef(client);
         return retTopic;
     }
 
@@ -181,7 +209,16 @@ public class NT4Server {
      * @return list of all available topics on the server
      */
     public Set<Topic> getAllTopics(){
-        return new HashSet<Topic>(topicsByName.values());
+        Set<Topic> retVal = null;
+
+        topicLock.lock();
+        try{
+            retVal = new HashSet<Topic>(topicsByName.values());
+        } finally {
+            topicLock.unlock();
+        }
+
+        return retVal;
     }
 
     /**
@@ -189,7 +226,17 @@ public class NT4Server {
      * @return topic with the given ID, or none if nothing found.
      */
     public Topic getTopic(int id){
-        return topicsByID.get(id);
+
+        Topic retVal = null;
+
+        topicLock.lock();
+        try{
+            retVal = topicsByID.get(id);
+        } finally {
+            topicLock.unlock();
+        }
+
+        return retVal;
     }
 
     /**
@@ -211,30 +258,38 @@ public class NT4Server {
     public Set<Topic> getTopics(Set<String> prefixes){
         HashSet<Topic> retTopics = new HashSet<Topic>();
 
-        for(Topic topic : topicsByName.values()){
-            //For all topics...
-            for(String prefix : prefixes){
-                if(topic.name.startsWith(prefix)){ //TODo - make prefixes into globs?
-                    //On the first match, add it to the ret list, and move on to the next topic (skipping remaining topics).
-                    retTopics.add(topic);
-                    break;
+        topicLock.lock();
+
+        try{
+            for(Topic topic : topicsByName.values()){
+                //For all topics...
+                for(String prefix : prefixes){
+                    if(topic.name.startsWith(prefix)){ //TODo - make prefixes into globs?
+                        //On the first match, add it to the ret list, and move on to the next topic (skipping remaining topics).
+                        retTopics.add(topic);
+                        break;
+                    }
                 }
             }
+        } finally {
+            topicLock.unlock();
         }
 
         return retTopics;
     }
 
     int topicUIDCounter = 0;
-    public int getUniqueTopicID(){
+    public synchronized int getUniqueTopicID(){
         return topicUIDCounter++;
     }
 
     public void printCurrentClients(){
         System.out.println("========================");
         System.out.println("== Current Clients:");
-        for(BaseClient client : clients){
-            System.out.println(client.friendlyName);
+        synchronized(clients){
+            for(BaseClient client : clients){
+                System.out.println(client.friendlyName);
+            }
         }
         System.out.println("========================\n\n");
     }
@@ -242,10 +297,14 @@ public class NT4Server {
     public void printCurrentSubscriptions(){
         System.out.println("========================");
         System.out.println("== Current Subscriptions:");
-        for(BaseClient client : clients){
-            System.out.println("> " + client.friendlyName);
-            for(Subscription sub : client.subscriptions.values()){
-                System.out.println(">>  " + sub.toString());
+        synchronized(clients){
+            for(BaseClient client : clients){
+                System.out.println("> " + client.friendlyName);
+                synchronized(client.subscriptions){
+                    for(Subscription sub : client.subscriptions.values()){
+                        System.out.println(">>  " + sub.toString());
+                    }
+                }
             }
         }
         System.out.println("========================\n\n");
