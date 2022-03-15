@@ -302,7 +302,7 @@ public class Robot extends CasseroleTimedRobot {
 
     ////////////////////////////////////////
     // Shooter & Superstructure control
-    if(di.getShootHighGoal() || di.getShootLowGoal()){
+    if(di.getShootHighGoal() || di.getShootLowGoal() || di.getYeetCargoCmd()){
       // Attempting to Shoot
       if(shooter.getSpooledUp()){
         //At up to speed, allow feed
@@ -314,8 +314,15 @@ public class Robot extends CasseroleTimedRobot {
         elevator.setCmd(elevatorCmdState.STOP);
       }
 
-      shooter.setRun(di.getShootHighGoal()?shooterLaunchState.HIGH_GOAL:shooterLaunchState.LOW_GOAL);
-    
+      if (di.getShootHighGoal()){
+        shooter.setRun(shooterLaunchState.HIGH_GOAL);
+      }
+      else if(di.getYeetCargoCmd()){
+        shooter.setRun(shooterLaunchState.YEET_CARGO);
+        }
+        else {
+          shooter.setRun(shooterLaunchState.LOW_GOAL);
+        }
       in.setCmd(intakeCmdState.STOP); 
 
     } else {

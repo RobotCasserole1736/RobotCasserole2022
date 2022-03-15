@@ -70,6 +70,8 @@ public class DriverInput {
     boolean resetOdometry;
     @Signal(units="bool")
     boolean isConnected;
+    @Signal(units="bool")
+    boolean yeetCargo;
 
     Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
@@ -127,7 +129,7 @@ public class DriverInput {
             climbRetract = false;
         }
 
-        resetOdometry = resetOdoDbnc.calculate(driverController.getYButton());
+        resetOdometry = resetOdoDbnc.calculate(driverController.getAButton());
 
         if(fwdRevSlewRate.isChanged() ||
            rotSlewRate.isChanged() ||
@@ -149,7 +151,15 @@ public class DriverInput {
             //Maintain old command
         }
         
-        photonAlign = driverController.getAButton();
+        //photonAlign = driverController.getAButton();
+        if(driverController.getYButton()){
+            yeetCargo = true;
+        } 
+        else {
+            yeetCargo = false;
+        }
+           
+        
     }
 
     /**
@@ -227,5 +237,8 @@ public class DriverInput {
 
     public boolean getOdoResetCmd(){
         return resetOdometry;
+    }
+    public boolean getYeetCargoCmd(){
+        return yeetCargo;
     }
 }

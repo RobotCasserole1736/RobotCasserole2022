@@ -62,6 +62,7 @@ public class Shooter {
     Calibration feedSpeed;
     Calibration ejectSpeed;
     Calibration intakeSpeed;
+    Calibration yeetCargo;
 
     Encoder feedWheelEncoder;
 
@@ -94,6 +95,7 @@ public class Shooter {
         
         shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3500);
         shooter_low_goal_Launch_Speed = new Calibration("shooter low goal launch speed","RPM",1650);
+        yeetCargo = new Calibration("Yeet Cargo", "RPM", 5200);
 
 
         allowed_Shooter_Error = new Calibration("shooter allowed shooter error","RPM",200);
@@ -130,7 +132,8 @@ public class Shooter {
     public enum shooterLaunchState{
         STOP(0),
         LOW_GOAL(1),
-        HIGH_GOAL(2);
+        HIGH_GOAL(2),
+        YEET_CARGO(3);
 
         public final int value;
         private shooterLaunchState(int value) {
@@ -164,7 +167,9 @@ public class Shooter {
             desiredSpeed = shooter_high_goal_Launch_Speed.get();
         } else if (shooterRunCmd == shooterLaunchState.LOW_GOAL){
             desiredSpeed = shooter_low_goal_Launch_Speed.get();
-        } else {
+        } else if(shooterRunCmd == shooterLaunchState.YEET_CARGO){
+            desiredSpeed = yeetCargo.get();
+        }else {
             desiredSpeed = 0;
         }
 
