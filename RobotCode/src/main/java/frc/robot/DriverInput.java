@@ -18,13 +18,6 @@ public class DriverInput {
     SlewRateLimiter rotSlewLimiter;
     SlewRateLimiter sideToSideSlewLimiter;
 
-
-    private static DriverInput di = null;
-    public static synchronized DriverInput getInstance() {
-        if(di == null)
-            di = new DriverInput();
-        return di;
-    }
     Calibration stickDeadband;
     Calibration fwdRevSlewRate;
     Calibration rotSlewRate;
@@ -76,9 +69,9 @@ public class DriverInput {
     Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
 
-    private DriverInput(){
+    public DriverInput(int controllerIdx){
 
-        driverController = new XboxController(0);
+        driverController = new XboxController(controllerIdx);
 
         stickDeadband = new Calibration("StickDeadBand", "", 0.1);
 
@@ -211,6 +204,10 @@ public class DriverInput {
     }
     public double getSideToSideCmd_mps(){
         return sideToSideSlewLimiter.calculate(curSideToSideCmd) * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
+    }
+
+    public boolean getShootDesired(){
+        return shootHighGoal || shootLowGoal || yeetCargo;
     }
 
     public boolean getShootHighGoal(){

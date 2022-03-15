@@ -55,11 +55,11 @@ public class Robot extends CasseroleTimedRobot {
   BatteryMonitor batMan;
   //Ballcolordetector bcd;
 
-  // DriverInput
+  // Main Driver
   DriverInput di;
 
-  //OperatorInput
-  OperatorInput oi;
+  // Operator/Secondary
+  DriverInput oi;
 
   // Intake
   Intake in;
@@ -156,8 +156,9 @@ public class Robot extends CasseroleTimedRobot {
     //bcd = new Ballcolordetector();
     stt.mark("Ball Color Detector");
 
-    di = DriverInput.getInstance();
-    oi = OperatorInput.getInstance();
+    di = new DriverInput(0);
+    oi = new DriverInput(1);
+
     stt.mark("Driver IO");
 
     dt = DrivetrainControl.getInstance();
@@ -206,7 +207,7 @@ public class Robot extends CasseroleTimedRobot {
     stt.end();
 
     PhotonCamera.setVersionCheckEnabled(false);
-    
+
   }
 
 
@@ -296,7 +297,7 @@ public class Robot extends CasseroleTimedRobot {
 
     ////////////////////////////////////////
     // Shooter & Superstructure control
-    if(di.getShootHighGoal() || di.getShootLowGoal() || di.getYeetCargoCmd()){
+    if(di.getShootDesired() || oi.getShootDesired()){
       // Attempting to Shoot
       if(shooter.getSpooledUp()){
         //At up to speed, allow feed
@@ -308,15 +309,15 @@ public class Robot extends CasseroleTimedRobot {
         elevator.setCmd(elevatorCmdState.STOP);
       }
 
-      if (di.getShootHighGoal()){
+      if (di.getShootHighGoal() || oi.getShootHighGoal()){
         shooter.setRun(shooterLaunchState.HIGH_GOAL);
       }
-      else if(di.getYeetCargoCmd()){
+      else if(di.getYeetCargoCmd()|| oi.getYeetCargoCmd()){
         shooter.setRun(shooterLaunchState.YEET_CARGO);
-        }
-        else {
-          shooter.setRun(shooterLaunchState.LOW_GOAL);
-        }
+      } else {
+        shooter.setRun(shooterLaunchState.LOW_GOAL);
+      }
+
       in.setCmd(intakeCmdState.STOP); 
 
     } else {
@@ -346,6 +347,9 @@ public class Robot extends CasseroleTimedRobot {
     
     ////////////////////////////////////////
     // Climber Control
+
+    climb.setTiltCmd( (di.getClimbEnabled() || oi.getClimbEnabled()) ? CylCmd.EXTEND : CylCmd.RETRACT);
+
     if(di.getClimbExtend() || oi.getClimbExtend()){
       climb.setLiftCmd(CylCmd.EXTEND);
     } else if (di.getClimbRetract() || oi.getClimbRetract()) {
@@ -354,9 +358,7 @@ public class Robot extends CasseroleTimedRobot {
       climb.setLiftCmd(CylCmd.NONE);
     }
 
-    climb.setTiltCmd(di.getClimbEnabled() ? CylCmd.EXTEND : CylCmd.RETRACT);
-
-    psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
+    psc.setCompressorEnabledCmd( (di.getCompressorEnabledCmd() || oi.getCompressorEnabledCmd()) );
 
     stt.mark("Human Input Mapping");
 
