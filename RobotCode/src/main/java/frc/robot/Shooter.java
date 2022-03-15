@@ -93,12 +93,12 @@ public class Shooter {
         shooter_D = new Calibration("shooter D","",0);
         shooter_F = new Calibration("shooter F","",0.021);
         
-        shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3500);
+        shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3400);
         shooter_low_goal_Launch_Speed = new Calibration("shooter low goal launch speed","RPM",1650);
         yeetCargo = new Calibration("Yeet Cargo", "RPM", 5200);
 
 
-        allowed_Shooter_Error = new Calibration("shooter allowed shooter error","RPM",200);
+        allowed_Shooter_Error = new Calibration("shooter allowed shooter error","RPM",75.0);
         feedSpeed = new Calibration("shooter feed speed","Cmd",1.0);
         ejectSpeed = new Calibration("shooter eject speed","Cmd",0.5);
         intakeSpeed = new Calibration("shooter intake speed","Cmd",0.75);
