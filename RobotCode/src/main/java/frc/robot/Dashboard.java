@@ -76,7 +76,7 @@ public class Dashboard {
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_hopperFull"),"Hopper Full", "#00FF00", "icons/intake.svg", CENTER_COL+12, ROW4, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberExtend"),"Climber Extend", "#FFFF00", "icons/climb.svg", CENTER_COL+6, ROW4, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_shooterSpoolup"),"Shooter Spoolup", "#FFFF00", "icons/speed.svg", CENTER_COL-12, ROW4, 1.0);
-
+        d.addSound("db_hopperFull", "YEET", "YEET.mp3", false);
 
       }
     
