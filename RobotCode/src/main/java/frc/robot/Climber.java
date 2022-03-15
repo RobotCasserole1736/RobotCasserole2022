@@ -29,8 +29,10 @@ import frc.lib.Signal.Annotations.Signal;
 
 public class Climber {
 	private static Climber climber = null;
-    DoubleSolenoid climb1;
-    DoubleSolenoid climb2;
+    DoubleSolenoid liftCyl1;
+    DoubleSolenoid liftCyl2;
+
+    DoubleSolenoid tiltCyl;
 
     @Signal
     boolean isExtended;
@@ -38,7 +40,10 @@ public class Climber {
     Debouncer extendDbnc = new Debouncer(0.75);
 
     @Signal
-    climbState climbCmd = climbState.STOP;
+    CylCmd liftCmd = CylCmd.NONE;
+    
+    @Signal
+    CylCmd tiltCmd = CylCmd.NONE;
 
 	public static synchronized Climber getInstance() {
 		if(climber == null)
@@ -47,13 +52,13 @@ public class Climber {
 	}
 
 
-    public enum climbState{
-        STOP(0),
+    public enum CylCmd{
+        NONE(0),
         EXTEND(1),
         RETRACT(-1);
 
         public final int value;
-        private climbState(int value) {
+        private CylCmd(int value) {
             this.value = value;
         }
 
@@ -66,13 +71,18 @@ public class Climber {
     // This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
     // The constructor should set an initial state for each solenoid - straightened for the tilt solenoid and retracted for the climb solenoid.
     private Climber() {
-        climb1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.CLIMBER_SOLENOID1_EXTEND,Constants.CLIMBER_SOLENOID1_RETRACT);
-        climb2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,Constants.CLIMBER_SOLENOID2_EXTEND,Constants.CLIMBER_SOLENOID2_RETRACT);
+        liftCyl1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.CLIMBER_LIFT_SOL_1_EXTEND,Constants.CLIMBER_LIFT_SOL_1_RETRACT);
+        liftCyl2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,Constants.CLIMBER_LIFT_SOL_2_EXTEND,Constants.CLIMBER_LIFT_SOL_2_RETRACT);
+        tiltCyl = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,Constants.CLIMBER_TILT_SOL_EXTEND,Constants.CLIMBER_TILT_SOL_RETRACT);
         isExtended = false;
 	}
 
-    public void setClimbCmd(climbState input){
-        climbCmd = input;
+    public void setLiftCmd(CylCmd input){
+        liftCmd = input;
+    }
+
+    public void setTiltCmd(CylCmd input){
+        tiltCmd = input;
     }
 
     public boolean getIsExtended() {
@@ -80,20 +90,29 @@ public class Climber {
     }
 
     public void update () {
-        if(climbCmd == climbState.EXTEND){
-            climb1.set(Value.kForward);
-            climb2.set(Value.kForward);
+        if(liftCmd == CylCmd.EXTEND){
+            liftCyl1.set(Value.kForward);
+            liftCyl2.set(Value.kForward);
             isExtendedRaw = true;
-        } else if (climbCmd == climbState.RETRACT){
-            climb1.set(Value.kReverse);
-            climb2.set(Value.kReverse); 
+        } else if (liftCmd == CylCmd.RETRACT){
+            liftCyl1.set(Value.kReverse);
+            liftCyl2.set(Value.kReverse); 
             isExtendedRaw = false;
         } else {
-            climb1.set(Value.kOff);
-            climb2.set(Value.kOff);     
+            liftCyl1.set(Value.kOff);
+            liftCyl2.set(Value.kOff);     
         }
 
         isExtended = extendDbnc.calculate(isExtendedRaw);
+
+        if(tiltCmd == CylCmd.EXTEND){
+            tiltCyl.set(Value.kForward);
+        }else if (tiltCmd == CylCmd.RETRACT){
+            tiltCyl.set(Value.kReverse);
+        } else {
+            tiltCyl.set(Value.kOff);
+        }
+
         
     }
 	

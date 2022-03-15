@@ -72,6 +72,8 @@ public class DriverInput {
     boolean isConnected;
     @Signal(units="bool")
     boolean yeetCargo;
+    @Signal(units="bool")
+    boolean climbEnabled;
 
     Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
@@ -122,11 +124,13 @@ public class DriverInput {
             shootHighGoal = false;
             climbExtend = driverController.getPOV()==0;
             climbRetract = driverController.getPOV()==180;
+            climbEnabled = true;
         } else {
             shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
             shootHighGoal = driverController.getLeftBumper();
             climbExtend = false;
             climbRetract = false;
+            climbEnabled = false;
         }
 
         resetOdometry = resetOdoDbnc.calculate(driverController.getAButton());
@@ -240,5 +244,9 @@ public class DriverInput {
     }
     public boolean getYeetCargoCmd(){
         return yeetCargo;
+    }
+
+    public boolean getClimbEnabled(){
+        return climbEnabled;
     }
 }
