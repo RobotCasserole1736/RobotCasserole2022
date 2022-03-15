@@ -12,7 +12,7 @@ import frc.lib.Signal.Annotations.Signal;
 public class DriverInput {
     
     XboxController driverController;
-    boolean compressorEnabled = true;
+
 
     SlewRateLimiter fwdRevSlewLimiter;
     SlewRateLimiter rotSlewLimiter;
@@ -61,10 +61,6 @@ public class DriverInput {
     @Signal(units="bool")
     boolean eject;
     @Signal(units="bool")
-    boolean compEnable;
-    @Signal(units="bool")
-    boolean compDisable;
-    @Signal(units="bool")
     boolean photonAlign;
     @Signal(units="bool")
     boolean resetOdometry;
@@ -74,6 +70,8 @@ public class DriverInput {
     boolean yeetCargo;
     @Signal(units="bool")
     boolean climbEnabled;
+    @Signal(units = "bool")
+    boolean compressorEnabled = true;
 
     Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
@@ -97,44 +95,84 @@ public class DriverInput {
     public void update(){
 
         isConnected = driverController.isConnected();
+
+        if(isConnected){
+
+            
+            curFwdRevCmd = -1.0 * driverController.getLeftY();
+            curRotCmd = -1.0 * driverController.getRightX();
+            curSideToSideCmd = -1.0 * driverController.getLeftX();
+
+            curFwdRevCmd = MathUtil.applyDeadband( curFwdRevCmd,stickDeadband.get()); 
+            fwdRevSlewCmd = fwdRevSlewLimiter.calculate(curFwdRevCmd);
+
+            curRotCmd = MathUtil.applyDeadband( curRotCmd,stickDeadband.get());
+            rotSlewCmd = rotSlewLimiter.calculate(curRotCmd);
         
-        curFwdRevCmd = -1.0 * driverController.getLeftY();
-        curRotCmd = -1.0 * driverController.getRightX();
-        curSideToSideCmd = -1.0 * driverController.getLeftX();
+            curSideToSideCmd = MathUtil.applyDeadband( curSideToSideCmd,stickDeadband.get());
+            sideToSideSlewCmd = sideToSideSlewLimiter.calculate(curSideToSideCmd);
+            
+            robotRelative = driverController.getRightBumper();
+            intakeLowerAndRun = driverController.getRightTriggerAxis()>0.5;
 
-        curFwdRevCmd = MathUtil.applyDeadband( curFwdRevCmd,stickDeadband.get()); 
-        fwdRevSlewCmd = fwdRevSlewLimiter.calculate(curFwdRevCmd);
+            eject = driverController.getXButton();
 
-        curRotCmd = MathUtil.applyDeadband( curRotCmd,stickDeadband.get());
-        rotSlewCmd = rotSlewLimiter.calculate(curRotCmd);
-      
-        curSideToSideCmd = MathUtil.applyDeadband( curSideToSideCmd,stickDeadband.get());
-        sideToSideSlewCmd = sideToSideSlewLimiter.calculate(curSideToSideCmd);
-        
-        robotRelative = driverController.getRightBumper();
-        intakeLowerAndRun = driverController.getRightTriggerAxis()>0.5;
+            //B button shifts between shooting and climbing mode
+            if(driverController.getBButton()){
+                shootHighGoal = false;
+                shootLowGoal = false;
+                climbExtend = driverController.getLeftBumper();
+                climbRetract = driverController.getLeftTriggerAxis()>0.5;
+                climbEnabled = true;
+            } else {
+                shootHighGoal = driverController.getLeftBumper();
+                shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
+                climbExtend = false;
+                climbRetract = false;
+                climbEnabled = false;
+            }
 
-        eject = driverController.getXButton();
-        compEnable = driverController.getStartButton();
-        compDisable = driverController.getBackButton();
+            resetOdometry = resetOdoDbnc.calculate(driverController.getAButton());
+ 
+            
+            if(driverController.getStartButton()) {
+                compressorEnabled = true;
+            } else if(driverController.getBackButton()) {
+                compressorEnabled = false;
+            } else {
+                //Maintain old command
+            }
+            
+            //photonAlign = driverController.getAButton(); 
+            photonAlign = false; //TODO
 
-        //B button shifts between shooting and climbing mode
-        if(driverController.getBButton()){
+            if(driverController.getYButton()){
+                yeetCargo = true;
+            } else {
+                yeetCargo = false;
+            }
+
+        } else {
+            //Controller Unplugged Defaults
+            curFwdRevCmd = 0.0;
+            curRotCmd = 0.0; 
+            curSideToSideCmd = 0.0; 
+            yeetCargo = false;
+            compressorEnabled = false;
             shootHighGoal = false;
             shootLowGoal = false;
-            climbExtend = driverController.getLeftBumper();
-            climbRetract = driverController.getLeftTriggerAxis()>0.5;
-            climbEnabled = true;
-        } else {
-            shootHighGoal = driverController.getLeftBumper();
-            shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
             climbExtend = false;
             climbRetract = false;
             climbEnabled = false;
+            robotRelative = false;
+            intakeLowerAndRun = false;
+            resetOdometry = false;
+            intakeLowerAndRun = false;
+            eject = false;
+            photonAlign = false;
         }
 
-        resetOdometry = resetOdoDbnc.calculate(driverController.getAButton());
-
+        
         if(fwdRevSlewRate.isChanged() ||
            rotSlewRate.isChanged() ||
            sideToSideSlewRate.isChanged()) {
@@ -144,24 +182,8 @@ public class DriverInput {
                 fwdRevSlewLimiter = new SlewRateLimiter(fwdRevSlewRate.get());
                 rotSlewLimiter = new SlewRateLimiter(rotSlewRate.get());
                 sideToSideSlewLimiter = new SlewRateLimiter(sideToSideSlewRate.get());
-           }
-                
-        
-        if(driverController.getStartButton()) {
-            compressorEnabled = true;
-        } else if(driverController.getBackButton()) {
-            compressorEnabled = false;
-        } else {
-            //Maintain old command
         }
-        
-        //photonAlign = driverController.getAButton();
-        if(driverController.getYButton()){
-            yeetCargo = true;
-        } 
-        else {
-            yeetCargo = false;
-        }
+               
            
         
     }
@@ -219,14 +241,6 @@ public class DriverInput {
         return eject;
     }
 
-    public boolean getCompEnable(){
-        return compEnable;
-    }
-
-    public boolean getCompDisable(){
-        return compDisable;
-    }
-
     public boolean getRobotRelative(){
         return robotRelative;
     }
@@ -242,6 +256,7 @@ public class DriverInput {
     public boolean getOdoResetCmd(){
         return resetOdometry;
     }
+
     public boolean getYeetCargoCmd(){
         return yeetCargo;
     }

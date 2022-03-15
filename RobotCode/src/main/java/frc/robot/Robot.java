@@ -206,13 +206,7 @@ public class Robot extends CasseroleTimedRobot {
     stt.end();
 
     PhotonCamera.setVersionCheckEnabled(false);
-
-    try {
-      Thread.sleep(20000);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    
   }
 
 
