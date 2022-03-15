@@ -6,14 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.photonvision.PhotonCamera;
 
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode;
-import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,6 +24,7 @@ import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
+import frc.robot.Climber.climbState;
 import frc.robot.Drivetrain.DrivetrainControl;
 import frc.robot.Elevator.elevatorCmdState;
 import frc.robot.Intake.intakeCmdState;
@@ -42,7 +38,7 @@ import frc.sim.RobotModel;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends CasseroleTimedRobot {
 
   public static double loopStartTime;
 
@@ -202,6 +198,7 @@ public class Robot extends TimedRobot {
     SignalWrangler.getInstance().registerSignals(this);
     stt.mark("Signal Registration");
 
+    NT4Server.getInstance().startServer();
     webserver.startServer();
     stt.mark("Webserver Startup");
 
@@ -209,6 +206,13 @@ public class Robot extends TimedRobot {
     stt.end();
 
     PhotonCamera.setVersionCheckEnabled(false);
+
+    try {
+      Thread.sleep(20000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
 
@@ -218,9 +222,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     SignalWrangler.getInstance().logger.startLoggingAuto();
-
-    climb.retractTiltClimber();
-    
     //Reset sequencer
     auto.reset();
     auto.startSequencer();
@@ -301,7 +302,7 @@ public class Robot extends TimedRobot {
 
     ////////////////////////////////////////
     // Shooter & Superstructure control
-    if(di.getShootHighGoal() || di.getShootLowGoal()){
+    if(di.getShootHighGoal() || di.getShootLowGoal() || di.getYeetCargoCmd()){
       // Attempting to Shoot
       if(shooter.getSpooledUp()){
         //At up to speed, allow feed
@@ -313,8 +314,15 @@ public class Robot extends TimedRobot {
         elevator.setCmd(elevatorCmdState.STOP);
       }
 
-      shooter.setRun(di.getShootHighGoal()?shooterLaunchState.HIGH_GOAL:shooterLaunchState.LOW_GOAL);
-    
+      if (di.getShootHighGoal()){
+        shooter.setRun(shooterLaunchState.HIGH_GOAL);
+      }
+      else if(di.getYeetCargoCmd()){
+        shooter.setRun(shooterLaunchState.YEET_CARGO);
+        }
+        else {
+          shooter.setRun(shooterLaunchState.LOW_GOAL);
+        }
       in.setCmd(intakeCmdState.STOP); 
 
     } else {
@@ -345,19 +353,11 @@ public class Robot extends TimedRobot {
     ////////////////////////////////////////
     // Climber Control
     if(di.getClimbExtend() || oi.getClimbExtend()){
-      climb.extendClimber();
+      climb.setClimbCmd(climbState.EXTEND);
     } else if (di.getClimbRetract() || oi.getClimbRetract()) {
-      climb.retractClimber();
+      climb.setClimbCmd(climbState.RETRACT);
     } else {
-      //maintain state
-    }
-
-    if(di.getClimbTilt() || oi.getClimbTilt()){
-      climb.extendTiltClimber();
-    } else if (di.getClimbStraighten() || oi.getClimbStraighten()) {
-      climb.retractTiltClimber();
-    } else {
-      //maintain state
+      climb.setClimbCmd(climbState.STOP);
     }
 
     psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
@@ -431,7 +431,17 @@ public class Robot extends TimedRobot {
     telemetryUpdate();
     stt.mark("Telemetry");
 
+
+    try {
+      Thread.sleep(10);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     stt.end();
+
+
   }
 
   private void telemetryUpdate(){

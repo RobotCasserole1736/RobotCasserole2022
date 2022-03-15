@@ -148,10 +148,17 @@ public class SignalWrangler extends LocalClient{
      * @param rootContainer Object to start the traversal on. Usually just "this" for when called in Robot.java. 
      */
     public void registerSignals(Object rootContainer) {
+
+        System.out.println("======================================");
+        System.out.println("== Registering Signals...");
+
         autoSig = new HashSet<>();
         checkedObjects = new HashSet<>();
         findAllAnnotatedSignals(rootContainer, "");
         System.out.println("[Data Server]: Registered " + Integer.toString(autoSig.size()) + " signals from annotations");
+
+        System.out.println("== ... Done!");
+        System.out.println("======================================");
     }
 
     /**

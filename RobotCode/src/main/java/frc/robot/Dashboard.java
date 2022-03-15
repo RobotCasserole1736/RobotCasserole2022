@@ -30,8 +30,8 @@ public class Dashboard {
     @Signal(name="db_shooterSpoolup")
     boolean shooterSpoolup;
 
-    @Signal(name="db_clmberTilt")
-    boolean climberTilt;
+    @Signal(name="db_hopperFull")
+    boolean hopperFull;
 
     @Signal(name="db_clmberExtend")
     boolean climberExtend;
@@ -73,7 +73,7 @@ public class Dashboard {
 
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_masterCaution"),"Master Caution", "#FF0000", "icons/alert.svg", CENTER_COL-6, ROW4, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_visionTargetVisible"),"Vision Target Visible", "#00FF00", "icons/vision.svg", CENTER_COL, ROW4, 1.0);
-        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberTilt"),"Climber Tilt", "#FFFF00", "icons/climb.svg", CENTER_COL+12, ROW4, 1.0);
+        d.addIcon(SignalUtils.nameToNT4ValueTopic("db_hopperFull"),"Hopper Full", "#00FF00", "icons/intake.svg", CENTER_COL+12, ROW4, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberExtend"),"Climber Extend", "#FFFF00", "icons/climb.svg", CENTER_COL+6, ROW4, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_shooterSpoolup"),"Shooter Spoolup", "#FFFF00", "icons/speed.svg", CENTER_COL-12, ROW4, 1.0);
 
@@ -85,7 +85,7 @@ public class Dashboard {
         shooterSpeed = Shooter.getInstance().getShooterSpeed();
         pnuemPressure = PneumaticsSupplyControl.getInstance().getStoragePressure();
         shooterSpoolup = Shooter.getInstance().getSpooledUp();
-        climberTilt = Climber.getInstance().getIsTilted();
+        hopperFull = Elevator.getInstance().isFull();
         climberExtend = Climber.getInstance().getIsExtended();
 
 
