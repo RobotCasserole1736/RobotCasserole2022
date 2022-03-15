@@ -120,14 +120,14 @@ public class DriverInput {
 
         //B button shifts between shooting and climbing mode
         if(driverController.getBButton()){
-            shootLowGoal = false;
             shootHighGoal = false;
-            climbExtend = driverController.getPOV()==0;
-            climbRetract = driverController.getPOV()==180;
+            shootLowGoal = false;
+            climbExtend = driverController.getLeftBumper();
+            climbRetract = driverController.getLeftTriggerAxis()>0.5;
             climbEnabled = true;
         } else {
-            shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
             shootHighGoal = driverController.getLeftBumper();
+            shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
             climbExtend = false;
             climbRetract = false;
             climbEnabled = false;
