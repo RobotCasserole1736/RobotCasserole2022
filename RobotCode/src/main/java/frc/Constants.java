@@ -95,8 +95,8 @@ public class Constants {
     static public final int CLIMBER_LIFT_SOL_2_RETRACT = 1;
     static public final int CLIMBER_LIFT_SOL_1_EXTEND = 2;
     static public final int CLIMBER_LIFT_SOL_2_EXTEND = 3;
-    static public final int CLIMBER_TILT_SOL_EXTEND = 4;
-    static public final int CLIMBER_TILT_SOL_RETRACT = 5;
+    static public final int CLIMBER_TILT_SOL_EXTEND = 5;
+    static public final int CLIMBER_TILT_SOL_RETRACT = 6;
     //static public final int UNUSED = 6;
     static public final int INTAKE_SOLENOID = 7; 
     //static public final int UNUSED = 8;
