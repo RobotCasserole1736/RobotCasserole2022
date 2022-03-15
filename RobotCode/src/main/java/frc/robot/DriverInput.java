@@ -70,6 +70,8 @@ public class DriverInput {
     boolean resetOdometry;
     @Signal(units="bool")
     boolean isConnected;
+    @Signal(units="bool")
+    boolean climbEnabled;
 
     Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
@@ -120,11 +122,13 @@ public class DriverInput {
             shootHighGoal = false;
             climbExtend = driverController.getPOV()==0;
             climbRetract = driverController.getPOV()==180;
+            climbEnabled = true;
         } else {
             shootLowGoal = driverController.getLeftTriggerAxis()>0.5;
             shootHighGoal = driverController.getLeftBumper();
             climbExtend = false;
             climbRetract = false;
+            climbEnabled = false;
         }
 
         resetOdometry = resetOdoDbnc.calculate(driverController.getYButton());
@@ -227,5 +231,9 @@ public class DriverInput {
 
     public boolean getOdoResetCmd(){
         return resetOdometry;
+    }
+
+    public boolean getClimbEnabled(){
+        return climbEnabled;
     }
 }

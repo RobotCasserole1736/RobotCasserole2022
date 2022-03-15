@@ -29,7 +29,7 @@ import frc.lib.Signal.Annotations.Signal;
 import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
-import frc.robot.Climber.climbState;
+import frc.robot.Climber.CylCmd;
 import frc.robot.Drivetrain.DrivetrainControl;
 import frc.robot.Elevator.elevatorCmdState;
 import frc.robot.Intake.intakeCmdState;
@@ -343,12 +343,14 @@ public class Robot extends TimedRobot {
     ////////////////////////////////////////
     // Climber Control
     if(di.getClimbExtend() || oi.getClimbExtend()){
-      climb.setClimbCmd(climbState.EXTEND);
+      climb.setLiftCmd(CylCmd.EXTEND);
     } else if (di.getClimbRetract() || oi.getClimbRetract()) {
-      climb.setClimbCmd(climbState.RETRACT);
+      climb.setLiftCmd(CylCmd.RETRACT);
     } else {
-      climb.setClimbCmd(climbState.STOP);
+      climb.setLiftCmd(CylCmd.NONE);
     }
+
+    climb.setTiltCmd(di.getClimbEnabled() ? CylCmd.EXTEND : CylCmd.RETRACT);
 
     psc.setCompressorEnabledCmd(di.getCompressorEnabledCmd());
 
