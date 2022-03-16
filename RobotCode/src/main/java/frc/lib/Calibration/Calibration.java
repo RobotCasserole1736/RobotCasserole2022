@@ -208,10 +208,6 @@ public class Calibration {
 
         CalWrangler.getInstance().register(this);
 
-        var subs = new HashSet<String>(1);
-        subs.add(calValueTopic.name);
-        CalWrangler.getInstance().subscribe(subs).start();
-
     }
 
     private double limitRange(double in) {

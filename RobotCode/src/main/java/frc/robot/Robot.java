@@ -199,14 +199,21 @@ public class Robot extends CasseroleTimedRobot {
     SignalWrangler.getInstance().registerSignals(this);
     stt.mark("Signal Registration");
 
+    CalWrangler.getInstance().subscribeAll();
+    stt.mark("Cal Wrangler Subscription");
+
     NT4Server.getInstance().startServer();
     webserver.startServer();
     stt.mark("Webserver Startup");
 
+    PhotonCamera.setVersionCheckEnabled(false);
+    stt.mark("Photonvision Config");
+
+    System.gc();
+    stt.mark("Post Init GC");
+
     System.out.println("Init Stats:");
     stt.end();
-
-    PhotonCamera.setVersionCheckEnabled(false);
 
   }
 
