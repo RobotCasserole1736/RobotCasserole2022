@@ -119,7 +119,7 @@ class DashboardServlet extends HttpServlet {
 
         //Remove the trailing comma and close out the line
         subscribeLine.substring(0, subscribeLine.length() -1);
-        subscribeLine += "], 0.1);"; //100ms sample rate
+        subscribeLine += "], 0.05);"; //100ms sample rate
         subscribeLine += "\n";
 
         String filledOut = fileContent;
