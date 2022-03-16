@@ -2,10 +2,13 @@ package frc.lib.Webserver2.DashboardConfig;
 
 public abstract class WidgetConfig {
 
-    String name = "";
+    public String name = "";
     public int idx = 0;
+    public String nt4TopicCurVal = "";
 
-    String nt4TopicCurVal = "";
+    public String getTopicSubscriptionStrings(){
+        return "\"" + this.nt4TopicCurVal + "\",";
+    }
 
     public String getHTML(){
         return "";

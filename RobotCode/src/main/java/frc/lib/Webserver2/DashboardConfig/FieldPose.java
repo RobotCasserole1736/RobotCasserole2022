@@ -33,9 +33,15 @@ public class FieldPose extends VisibleWidgetConfig {
     public String getJSDeclaration(){
         String retStr = "";
         retStr += String.format("var widget%d = new FieldPose('widget%d', '%s');\n", idx, idx, name);
-        retStr += desTopics.getSubscriptionJS();
-        retStr += actTopics.getSubscriptionJS();
-        retStr += expTopics.getSubscriptionJS();
+        return retStr;
+    }
+    
+    @Override
+    public String getTopicSubscriptionStrings(){
+        String retStr = "";
+        retStr += desTopics.getSubscriptionStrings();
+        retStr += actTopics.getSubscriptionStrings();
+        retStr += expTopics.getSubscriptionStrings();
         return retStr;
     }
 

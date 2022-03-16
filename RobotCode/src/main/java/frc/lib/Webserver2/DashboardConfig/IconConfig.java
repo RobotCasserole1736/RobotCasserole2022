@@ -20,7 +20,6 @@ public class IconConfig extends VisibleWidgetConfig {
     @Override
     public String getJSDeclaration(){
         String retStr = String.format("var widget%d = new Icon('widget%d', '%s', '%s', '%s');\n", idx, idx, name, colorOn, symbolPath);
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"],0.05);", nt4TopicCurVal);
         return retStr;
     }
 

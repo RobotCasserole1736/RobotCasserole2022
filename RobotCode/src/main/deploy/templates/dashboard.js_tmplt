@@ -24,8 +24,11 @@ var nt4Client = new NT4_Client(window.location.hostname,
 //Start NT4 connection
 nt4Client.ws_connect();
 
-// Instantiate all widgets and subscribe
+// Instantiate all widgets
 ${WIDGETS_INSTANTIATE}
+
+//Create a subscription for all widgets
+${WIDGETS_NT4_SUBSCRIBE}
 
 // Start up rendering (never returns)
 mainRenderLoop();

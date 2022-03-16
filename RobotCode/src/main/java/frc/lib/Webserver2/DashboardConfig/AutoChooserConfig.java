@@ -31,7 +31,6 @@ public class AutoChooserConfig extends VisibleWidgetConfig {
     public String getJSDeclaration() {
         String retStr = String.format("var widget%d = new AutoChooser('widget%d', '%s', %s, onWidget%dValUpdated);\n", idx, idx,
                 name, getJsModeNameListString(), idx);
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.5);\n", nt4TopicCurVal);
         retStr += String.format("nt4Client.publishNewTopic(\"%s\", \"int\");", nt4TopicDesVal);
         return retStr;
     }
