@@ -33,18 +33,20 @@ import edu.wpi.first.math.util.Units;
  * path-planner functionality into the AutoEvent abstract class.
  */
 
-public class AutoEventDriveBackwardTime extends AutoEvent {
+public class AutoEventDriveTime extends AutoEvent {
 
     boolean done = false;
     double duration = 0;
+    double speed_mps = 0;
 
-    private final double REV_SPEED_MPS = Units.feetToMeters(-3.0);
+    double initTime = 0.25;
 
     DrivetrainControl dt_inst;
 
-    public AutoEventDriveBackwardTime(double duration_in) {
+    public AutoEventDriveTime(double duration_in, double speed_mps) {
 
         duration = duration_in;
+        this.speed_mps = speed_mps;
         dt_inst = DrivetrainControl.getInstance();    
     }
 
@@ -62,8 +64,13 @@ public class AutoEventDriveBackwardTime extends AutoEvent {
             done = true;
             dt_inst.stop();
             return;
+        } else if(curTime <= initTime) {
+            //Give modules time to align
+            dt_inst.setCmdRobotRelative(Math.signum(speed_mps) * 0.1, 0.0, 0.0);
+
         } else {
-            dt_inst.setCmdRobotRelative(REV_SPEED_MPS, 0.0, 0.0);
+            //normal drive
+            dt_inst.setCmdRobotRelative(speed_mps, 0.0, 0.0);
             //Populate desired pose from drivetrain - meh
             PoseTelemetry.getInstance().setDesiredPose(dt_inst.getCurEstPose());
         }

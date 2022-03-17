@@ -127,8 +127,8 @@ public class Constants {
     //////////////////////////////////////////////////////////////////
     // Shooter Constants
     //////////////////////////////////////////////////////////////////
-    public static final double SINGLE_BALL_SHOT_TIME = 1.5;
-    public static final double DOUBLE_BALL_SHOT_TIME = 2.0;
+    public static final double SINGLE_BALL_SHOT_TIME = 2.5;
+    public static final double DOUBLE_BALL_SHOT_TIME = 4.0;
     public static final double SHOOTER_FEED_ENC_REV_PER_PULSE = 1.0/2048.0; // see https://www.revrobotics.com/rev-11-1271/
 
     //////////////////////////////////////////////////////////////////

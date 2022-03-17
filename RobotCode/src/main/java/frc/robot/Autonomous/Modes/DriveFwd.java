@@ -5,15 +5,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.lib.AutoSequencer.AutoSequencer;
 import frc.lib.Autonomous.AutoMode;
-import frc.robot.Autonomous.Events.AutoEventDriveForwardTime;
+import frc.robot.Autonomous.Events.AutoEventDriveTime;
 
 public class DriveFwd extends AutoMode {
 
-    AutoEventDriveForwardTime driveEvent = null;
+    AutoEventDriveTime driveEvent = null;
 
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
-        driveEvent = new AutoEventDriveForwardTime(3.0);
+        driveEvent = new AutoEventDriveTime(3.0, 1.0);
         seq.addEvent(driveEvent); 
     }
 
