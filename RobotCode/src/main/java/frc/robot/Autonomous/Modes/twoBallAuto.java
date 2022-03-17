@@ -15,7 +15,7 @@ public class twoBallAuto extends AutoMode {
     AutoEventDriveTime driveRev = null;
 
     final double DRIVE_TIME_S = 2.0;
-    final double DRIVE_SPEED_MPS = 1.0;
+    final double DRIVE_SPEED_MPS = 1.5;
 
 
     @Override
@@ -31,7 +31,7 @@ public class twoBallAuto extends AutoMode {
 
     @Override
     public Pose2d getInitialPose(){
-        return new Pose2d(7.261, 4.741, Rotation2d.fromDegrees(165));
+        return new Pose2d(7.261, 4.741, Rotation2d.fromDegrees(155));
     }
     
 }
