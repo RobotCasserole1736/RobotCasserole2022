@@ -9,10 +9,10 @@ import frc.robot.Autonomous.Events.AutoEventDriveTime;
 import frc.robot.Autonomous.Events.AutoEventIntake;
 import frc.robot.Autonomous.Events.AutoEventShoot;
 
-public class TwoBallAuto extends AutoMode {
+public class ShootAndTaxi extends AutoMode {
 
     AutoEventDriveTime driveFwd = null;
-    AutoEventDriveTime driveRev = null;
+
 
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
@@ -20,9 +20,6 @@ public class TwoBallAuto extends AutoMode {
         driveFwd = new AutoEventDriveTime(Constants.TAXI_DRIVE_TIME_S, Constants.TAXI_DRIVE_SPEED_MPS);
         driveFwd.addChildEvent(new AutoEventIntake(2.5));
         seq.addEvent(driveFwd); 
-        driveRev = new AutoEventDriveTime(Constants.TAXI_DRIVE_TIME_S, -1.0 * Constants.TAXI_DRIVE_SPEED_MPS);
-        seq.addEvent(driveRev); 
-        seq.addEvent(new AutoEventShoot(Constants.SINGLE_BALL_SHOT_TIME));
     }
 
     @Override

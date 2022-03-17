@@ -132,6 +132,12 @@ public class Constants {
     public static final double SHOOTER_FEED_ENC_REV_PER_PULSE = 1.0/2048.0; // see https://www.revrobotics.com/rev-11-1271/
 
     //////////////////////////////////////////////////////////////////
+    // Time-based autonomous Constants
+    //////////////////////////////////////////////////////////////////
+    public static final double TAXI_DRIVE_TIME_S = 2.0;
+    public static final double TAXI_DRIVE_SPEED_MPS = 1.5;
+
+    //////////////////////////////////////////////////////////////////
     // Nominal Sample Times
     //////////////////////////////////////////////////////////////////
     public static final double Ts = 0.02;
