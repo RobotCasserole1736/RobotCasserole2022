@@ -19,9 +19,9 @@ public class twoBallAuto extends AutoMode {
     public void addStepsToSequencer(AutoSequencer seq) {
         seq.addEvent(new AutoEventShoot(Constants.SINGLE_BALL_SHOT_TIME));
         driveEvent = new AutoEventDriveForwardTime(2.0);
-        driveEvent.addChildEvent(new AutoEventIntake(3));
+        driveEvent.addChildEvent(new AutoEventIntake(2.5));
         seq.addEvent(driveEvent); 
-        driveEvent2 = new AutoEventDriveBackwardTime(2.0);
+        driveEvent2 = new AutoEventDriveBackwardTime(3.0);
         seq.addEvent(driveEvent2); 
         seq.addEvent(new AutoEventShoot(Constants.SINGLE_BALL_SHOT_TIME));
     }

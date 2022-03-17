@@ -37,7 +37,7 @@ public class AutoEventDriveForwardTime extends AutoEvent {
     boolean done = false;
     double duration = 0;
 
-    private final double FWD_SPEED_MPS = Units.feetToMeters(3.0);
+    private final double FWD_SPEED_MPS = Units.feetToMeters(4.0);
 
     DrivetrainControl dt_inst;
 
@@ -62,7 +62,7 @@ public class AutoEventDriveForwardTime extends AutoEvent {
             dt_inst.stop();
             return;
         } else {
-            dt_inst.setCmdRobotRelative(FWD_SPEED_MPS, 0.0, 0.0);
+            dt_inst.setCmdFieldRelative(FWD_SPEED_MPS, 0, 0);
             //Populate desired pose from drivetrain - meh
             PoseTelemetry.getInstance().setDesiredPose(dt_inst.getCurEstPose());
         }
