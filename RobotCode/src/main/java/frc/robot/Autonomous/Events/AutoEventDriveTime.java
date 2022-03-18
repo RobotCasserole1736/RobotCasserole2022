@@ -25,6 +25,7 @@ import frc.robot.PoseTelemetry;
 import frc.robot.Drivetrain.DrivetrainControl;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 
@@ -39,15 +40,28 @@ public class AutoEventDriveTime extends AutoEvent {
     double duration = 0;
     double speed_mps = 0;
 
-    double initTime = 0.25;
+    final double HEADING_P_GAIN = -0.5;
+    final double RAMP_TIME = 0.75;
+    final double INIT_TIME = 0.35;
+
+
+    SlewRateLimiter spdRateLimit;
+
+    double speedCmdRaw = 0;
+    double speedCmdRateLimit = 0;
+
+
+    double targetAngleRad;
 
     DrivetrainControl dt_inst;
 
-    public AutoEventDriveTime(double duration_in, double speed_mps) {
+    public AutoEventDriveTime(double duration_in, double speed_mps, double targetAngleRad) {
 
-        duration = duration_in;
+        duration = duration_in + INIT_TIME;
         this.speed_mps = speed_mps;
+        this.targetAngleRad = targetAngleRad;
         dt_inst = DrivetrainControl.getInstance();    
+        spdRateLimit = new SlewRateLimiter(Math.abs(speed_mps)/RAMP_TIME);
     }
 
     /**
@@ -64,13 +78,27 @@ public class AutoEventDriveTime extends AutoEvent {
             done = true;
             dt_inst.stop();
             return;
-        } else if(curTime <= initTime) {
+        } else if(curTime <= INIT_TIME) {
             //Give modules time to align
-            dt_inst.setCmdRobotRelative(Math.signum(speed_mps) * 0.1, 0.0, 0.0);
-
+            dt_inst.setCmdRobotRelative(Math.signum(speed_mps) * 0.05, 0.0, 0.0);
+            speedCmdRateLimit = spdRateLimit.calculate(0);
         } else {
             //normal drive
-            dt_inst.setCmdRobotRelative(speed_mps, 0.0, 0.0);
+
+            if(curTime < (duration - RAMP_TIME)){
+                speedCmdRaw = this.speed_mps;
+            } else {
+                speedCmdRaw = 0;
+            }
+
+            speedCmdRateLimit = spdRateLimit.calculate(speedCmdRaw);
+            
+            double headingError = dt_inst.getCurEstPose().getRotation().getRadians() - targetAngleRad;
+            double rotationCmd_radpersec = headingError * HEADING_P_GAIN; //Simple hacked together P controller to try to maintain heading
+            
+            dt_inst.setCmdRobotRelative(speedCmdRateLimit, 0.0, rotationCmd_radpersec);
+
+
             //Populate desired pose from drivetrain - meh
             PoseTelemetry.getInstance().setDesiredPose(dt_inst.getCurEstPose());
         }

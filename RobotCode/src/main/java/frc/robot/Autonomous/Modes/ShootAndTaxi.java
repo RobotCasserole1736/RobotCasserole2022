@@ -17,7 +17,7 @@ public class ShootAndTaxi extends AutoMode {
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
         seq.addEvent(new AutoEventShoot(Constants.SINGLE_BALL_SHOT_TIME));
-        driveFwd = new AutoEventDriveTime(Constants.TAXI_DRIVE_TIME_S, Constants.TAXI_DRIVE_SPEED_MPS);
+        driveFwd = new AutoEventDriveTime(Constants.TAXI_DRIVE_TIME_S, Constants.TAXI_DRIVE_SPEED_MPS, this.getInitialPose().getRotation().getRadians());
         driveFwd.addChildEvent(new AutoEventIntake(2.5));
         seq.addEvent(driveFwd); 
     }

@@ -16,6 +16,10 @@ public class AutoEventShoot extends AutoEvent {
 	double endTime;
 	final double MIN_SPOOLUP_TIME = 0.25;
 	double spoolupEnd;
+		
+	public AutoEventShoot(double duration_s_in, boolean lowerIntake) {
+		duration_s = duration_s_in;
+	}
 	
 	public AutoEventShoot(double duration_s_in) {
 		duration_s = duration_s_in;
@@ -27,7 +31,7 @@ public class AutoEventShoot extends AutoEvent {
 		spoolupEnd = Timer.getFPGATimestamp() + MIN_SPOOLUP_TIME;
         Shooter.getInstance().setRun(shooterLaunchState.HIGH_GOAL);
 		Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
-		Elevator.getInstance().setCmd(elevatorCmdState.SHOOT);
+		Elevator.getInstance().setCmd(elevatorCmdState.INTAKE);
 	}
 
 	@Override
@@ -36,6 +40,7 @@ public class AutoEventShoot extends AutoEvent {
 		var curTime =Timer.getFPGATimestamp();
 
 		Shooter.getInstance().setRun(shooterLaunchState.HIGH_GOAL);
+		Elevator.getInstance().setCmd(elevatorCmdState.INTAKE);
 
 		if(curTime > spoolupEnd  && Shooter.getInstance().getSpooledUp()){
 			Shooter.getInstance().setFeed(shooterFeedCmdState.FEED);

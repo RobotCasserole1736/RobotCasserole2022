@@ -12,7 +12,7 @@ public class DriveFwd extends AutoMode {
 
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
-        driveEvent = new AutoEventDriveTime(1.8, 1.0); //about a robot length and a half
+        driveEvent = new AutoEventDriveTime(1.8, 1.0, this.getInitialPose().getRotation().getRadians()); //about a robot length and a half
         seq.addEvent(driveEvent); 
     }
 

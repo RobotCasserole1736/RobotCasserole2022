@@ -335,7 +335,7 @@ public class Robot extends CasseroleTimedRobot {
         elevator.setCmd(elevatorCmdState.EJECT);
         shooter.setFeed(Shooter.shooterFeedCmdState.EJECT);
         in.setCmd(intakeCmdState.EJECT);
-      } else if( (di.getIntakeLowerAndRun() || oi.getIntakeLowerAndRun()) && !elevator.isFull()){
+      } else if( (di.getIntakeLowerAndRun() || oi.getIntakeLowerAndRun())){
         // Intake
         elevator.setCmd(elevatorCmdState.INTAKE);
         shooter.setFeed(Shooter.shooterFeedCmdState.INTAKE);

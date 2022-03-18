@@ -22,12 +22,14 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
 
 public class Elevator {
     VictorSPX lowerElevatorMotor;
+	Spark vertIntakeMotor;
 
 	DigitalInput lowerSensor;
 	DigitalInput upperSensor;
@@ -41,6 +43,17 @@ public class Elevator {
 	@Signal ( units = "cmd")
 	double lowerElevatorMotorCmd;
 
+	@Signal(units="cmd")
+	double vertIntakeMotorCmd;
+
+	Calibration advance;
+    Calibration eject;
+	Calibration vertIntakeSpeed;
+    Calibration vertEjectSpeed;
+	@Signal(units = "cmd")
+	elevatorCmdState cmdState = elevatorCmdState.STOP;
+
+
 	private static Elevator elevator = null;
 	public static synchronized Elevator getInstance() {
 		if(elevator == null)
@@ -52,18 +65,20 @@ public class Elevator {
 	private Elevator() {
         lowerElevatorMotor = new VictorSPX(Constants.ELEVATOR_LOWER_CANID);
 		lowerElevatorMotor.setInverted(true);
+
+        vertIntakeMotor = new Spark( Constants.VERT_INTAKE_SPARK_MOTOR);
+        vertIntakeMotor.setInverted(true);
+
 		advance = new Calibration("elevator advance speed", "cmd", 0.75);
 		eject = new Calibration("elevator eject speed", "cmd", 0.75);
+		vertIntakeSpeed = new Calibration("elevator Vertical Intake Speed", "", -0.8);
+        vertEjectSpeed = new Calibration("elevator Vertical Eject Speed", "", 0.8);
 
 		lowerSensor = new DigitalInput(Constants.ELEVATOR_LOWER_BALL_SENSOR);
 		upperSensor = new DigitalInput(Constants.ELEVATOR_UPPER_BALL_SENSOR);
 
 	}
 
-	Calibration advance;
-    Calibration eject;
-	@Signal(units = "cmd")
-	elevatorCmdState cmdState = elevatorCmdState.STOP;
 
 		
 	// Possible states we could want the elevator to be running in
@@ -98,17 +113,24 @@ public class Elevator {
 		
 		if(cmdState == elevatorCmdState.STOP) {
 			lowerElevatorMotorCmd = 0;
-		} else if(cmdState == elevatorCmdState.INTAKE) {
+			vertIntakeMotorCmd = 0;
+		} else if(cmdState == elevatorCmdState.INTAKE && !isFull()) {
 			lowerElevatorMotorCmd = advance.get();
+			vertIntakeMotorCmd = vertIntakeSpeed.get();
 		} else if(cmdState == elevatorCmdState.SHOOT) {
 			lowerElevatorMotorCmd = advance.get();
+			vertIntakeMotorCmd = vertIntakeSpeed.get();
 		} else if(cmdState == elevatorCmdState.EJECT) {
 			lowerElevatorMotorCmd = -1.0 * eject.get();
+			vertIntakeMotorCmd = vertEjectSpeed.get();
 		} else {
 			lowerElevatorMotorCmd = 0;
+			vertIntakeMotorCmd = 0;
 		}
 
 		lowerElevatorMotor.set(ControlMode.PercentOutput,lowerElevatorMotorCmd);
+		vertIntakeMotor.set(vertIntakeMotorCmd);
+
 
 
 	}
