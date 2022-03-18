@@ -134,8 +134,8 @@ public class Constants {
     //////////////////////////////////////////////////////////////////
     // Time-based autonomous Constants
     //////////////////////////////////////////////////////////////////
-    public static final double TAXI_DRIVE_TIME_S = 2.0;
-    public static final double TAXI_DRIVE_SPEED_MPS = 1.5;
+    public static final double TAXI_DRIVE_TIME_S = 2.2;
+    public static final double TAXI_DRIVE_SPEED_MPS = 1.75;
 
     //////////////////////////////////////////////////////////////////
     // Nominal Sample Times
