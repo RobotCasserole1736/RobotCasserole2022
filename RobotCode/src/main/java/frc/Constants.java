@@ -31,10 +31,10 @@ public class Constants {
     static public final double WHEEL_RADIUS_IN = 4.0/2.0; //four inch diameter wheels - https://www.swervedrivespecialties.com/collections/mk4i-parts/products/billet-wheel-4d-x-1-5w-bearing-bore
 
 
-    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = 2.048;
-    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = 4.6685;
-    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = 4.1085;
-    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = 5.471;
+    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = -2.157;
+    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = -1.575;
+    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = -2.180;
+    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = -0.803;
 
     //////////////////////////////////////////////////////////////////
     // Electrical
