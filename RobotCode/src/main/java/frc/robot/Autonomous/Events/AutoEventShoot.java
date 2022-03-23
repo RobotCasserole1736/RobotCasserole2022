@@ -7,8 +7,8 @@ import frc.robot.Intake;
 import frc.robot.Shooter;
 import frc.robot.Elevator.elevatorCmdState;
 import frc.robot.Intake.intakeCmdState;
-import frc.robot.Shooter.shooterFeedCmdState;
-import frc.robot.Shooter.shooterLaunchState;
+import frc.robot.Shooter.ShooterFeedCmd;
+import frc.robot.Shooter.ShooterLaunchCmd;
 
 public class AutoEventShoot extends AutoEvent {
 	
@@ -29,8 +29,8 @@ public class AutoEventShoot extends AutoEvent {
 	public void userStart() {
 		endTime = Timer.getFPGATimestamp() + duration_s;
 		spoolupEnd = Timer.getFPGATimestamp() + MIN_SPOOLUP_TIME;
-        Shooter.getInstance().setRun(shooterLaunchState.HIGH_GOAL);
-		Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
+        Shooter.getInstance().setRun(ShooterLaunchCmd.HIGH_GOAL);
+		Shooter.getInstance().setFeed(ShooterFeedCmd.STOP);
 		Elevator.getInstance().setCmd(elevatorCmdState.INTAKE);
 	}
 
@@ -39,27 +39,27 @@ public class AutoEventShoot extends AutoEvent {
 
 		var curTime =Timer.getFPGATimestamp();
 
-		Shooter.getInstance().setRun(shooterLaunchState.HIGH_GOAL);
+		Shooter.getInstance().setRun(ShooterLaunchCmd.HIGH_GOAL);
 		Elevator.getInstance().setCmd(elevatorCmdState.INTAKE);
 
 		if(curTime > spoolupEnd  && Shooter.getInstance().getSpooledUp()){
-			Shooter.getInstance().setFeed(shooterFeedCmdState.FEED);
+			Shooter.getInstance().setFeed(ShooterFeedCmd.FEED);
 		} else {
-			Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
+			Shooter.getInstance().setFeed(ShooterFeedCmd.STOP);
 		}
 
 		completed = (curTime > endTime);
 		if (completed){
-			Shooter.getInstance().setRun(shooterLaunchState.STOP);
-			Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
+			Shooter.getInstance().setRun(ShooterLaunchCmd.STOP);
+			Shooter.getInstance().setFeed(ShooterFeedCmd.STOP);
 			Elevator.getInstance().setCmd(elevatorCmdState.STOP);
 		}
 	}
 
 	@Override
 	public void userForceStop() {
-        Shooter.getInstance().setRun(shooterLaunchState.STOP);
-		Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
+        Shooter.getInstance().setRun(ShooterLaunchCmd.STOP);
+		Shooter.getInstance().setFeed(ShooterFeedCmd.STOP);
 		Elevator.getInstance().setCmd(elevatorCmdState.STOP);
 
 	}

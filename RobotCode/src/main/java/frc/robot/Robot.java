@@ -28,7 +28,7 @@ import frc.robot.Climber.CylCmd;
 import frc.robot.Drivetrain.DrivetrainControl;
 import frc.robot.Elevator.elevatorCmdState;
 import frc.robot.Intake.intakeCmdState;
-import frc.robot.Shooter.shooterLaunchState;
+import frc.robot.Shooter.ShooterLaunchCmd;
 import frc.sim.RobotModel;
 
 
@@ -308,21 +308,21 @@ public class Robot extends CasseroleTimedRobot {
       // Attempting to Shoot
       if(shooter.getSpooledUp()){
         //At up to speed, allow feed
-        shooter.setFeed(Shooter.shooterFeedCmdState.FEED);
+        shooter.setFeed(Shooter.ShooterFeedCmd.FEED);
         elevator.setCmd(elevatorCmdState.SHOOT);
       } else {
         // Not at speed yet, hold off on feeding
-        shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
+        shooter.setFeed(Shooter.ShooterFeedCmd.STOP);
         elevator.setCmd(elevatorCmdState.STOP);
       }
 
       if (di.getShootHighGoal() || oi.getShootHighGoal()){
-        shooter.setRun(shooterLaunchState.HIGH_GOAL);
+        shooter.setRun(ShooterLaunchCmd.HIGH_GOAL);
       }
       else if(di.getYeetCargoCmd()|| oi.getYeetCargoCmd()){
-        shooter.setRun(shooterLaunchState.YEET_CARGO);
+        shooter.setRun(ShooterLaunchCmd.YEET_CARGO);
       } else {
-        shooter.setRun(shooterLaunchState.LOW_GOAL);
+        shooter.setRun(ShooterLaunchCmd.LOW_GOAL);
       }
 
       in.setCmd(intakeCmdState.STOP); 
@@ -333,21 +333,21 @@ public class Robot extends CasseroleTimedRobot {
       if(di.getEject() || oi.getEject()){
         // eject everything
         elevator.setCmd(elevatorCmdState.EJECT);
-        shooter.setFeed(Shooter.shooterFeedCmdState.EJECT);
+        shooter.setFeed(Shooter.ShooterFeedCmd.EJECT);
         in.setCmd(intakeCmdState.EJECT);
       } else if( (di.getIntakeLowerAndRun() || oi.getIntakeLowerAndRun())){
         // Intake
         elevator.setCmd(elevatorCmdState.INTAKE);
-        shooter.setFeed(Shooter.shooterFeedCmdState.INTAKE);
+        shooter.setFeed(Shooter.ShooterFeedCmd.INTAKE);
         in.setCmd(intakeCmdState.INTAKE);
       } else {
         // Stop
         elevator.setCmd(elevatorCmdState.STOP);
-        shooter.setFeed(Shooter.shooterFeedCmdState.STOP);
+        shooter.setFeed(Shooter.ShooterFeedCmd.STOP);
         in.setCmd(intakeCmdState.STOP);     
       }
 
-      shooter.setRun(shooterLaunchState.STOP);
+      shooter.setRun(ShooterLaunchCmd.STOP);
 
     }
 
