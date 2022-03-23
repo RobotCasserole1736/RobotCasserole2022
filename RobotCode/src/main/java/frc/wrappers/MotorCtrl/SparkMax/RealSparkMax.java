@@ -59,6 +59,9 @@ public class RealSparkMax extends AbstractSimmableMotorController {
     @Override
     public void setClosedLoopGains(double p, double i, double d) {
 
+        // I don't know why we need to do this, but it makes sim line up with real life.
+        p /= 1000;
+
         //Convert to Rev units of RPM
         p = Units.radiansPerSecondToRotationsPerMinute(p);
         i = Units.radiansPerSecondToRotationsPerMinute(i);
