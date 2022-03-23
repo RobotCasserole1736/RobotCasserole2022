@@ -7,7 +7,7 @@ import frc.robot.Autonomous.Events.AutoEventIntake;
 import frc.robot.Autonomous.Events.AutoEventJSONTrajectory;
 import frc.robot.Autonomous.Events.AutoEventShoot;
 
-public class many_Pickup extends AutoMode {
+public class Steak extends AutoMode {
 
     AutoEventJSONTrajectory driveEvent1 = null;
     AutoEventJSONTrajectory driveEvent2 = null;

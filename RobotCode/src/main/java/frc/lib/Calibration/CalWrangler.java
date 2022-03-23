@@ -21,6 +21,7 @@ package frc.lib.Calibration;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.miniNT4.LocalClient;
@@ -110,6 +111,18 @@ public class CalWrangler extends LocalClient {
             }
         }
         return null;
+    }
+
+    public void subscribeAll(){
+        var subs = new HashSet<String>(1);
+
+        synchronized(registeredCals){
+            for (Calibration cal : registeredCals) {
+                subs.add(cal.getValueTopic());
+            }
+        }
+
+        this.subscribe(subs).start();
     }
 
     @Override

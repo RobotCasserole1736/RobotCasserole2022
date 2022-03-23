@@ -199,14 +199,21 @@ public class Robot extends CasseroleTimedRobot {
     SignalWrangler.getInstance().registerSignals(this);
     stt.mark("Signal Registration");
 
+    CalWrangler.getInstance().subscribeAll();
+    stt.mark("Cal Wrangler Subscription");
+
     NT4Server.getInstance().startServer();
     webserver.startServer();
     stt.mark("Webserver Startup");
 
+    PhotonCamera.setVersionCheckEnabled(false);
+    stt.mark("Photonvision Config");
+
+    System.gc();
+    stt.mark("Post Init GC");
+
     System.out.println("Init Stats:");
     stt.end();
-
-    PhotonCamera.setVersionCheckEnabled(false);
 
   }
 
@@ -328,7 +335,7 @@ public class Robot extends CasseroleTimedRobot {
         elevator.setCmd(elevatorCmdState.EJECT);
         shooter.setFeed(Shooter.shooterFeedCmdState.EJECT);
         in.setCmd(intakeCmdState.EJECT);
-      } else if( (di.getIntakeLowerAndRun() || oi.getIntakeLowerAndRun()) && !elevator.isFull()){
+      } else if( (di.getIntakeLowerAndRun() || oi.getIntakeLowerAndRun())){
         // Intake
         elevator.setCmd(elevatorCmdState.INTAKE);
         shooter.setFeed(Shooter.shooterFeedCmdState.INTAKE);

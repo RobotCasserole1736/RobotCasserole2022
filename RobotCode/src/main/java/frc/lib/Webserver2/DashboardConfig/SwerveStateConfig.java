@@ -17,10 +17,16 @@ public class SwerveStateConfig extends VisibleWidgetConfig {
     public String getJSDeclaration(){
         String retStr = "";
         retStr += String.format("var widget%d = new SwerveState('widget%d', '%s');\n", idx, idx, name);
-        retStr += FLTopics.getSubscriptionJS();
-        retStr += FRTopics.getSubscriptionJS();
-        retStr += BLTopics.getSubscriptionJS();
-        retStr += BRTopics.getSubscriptionJS();
+        return retStr;
+    }
+
+    @Override
+    public String getTopicSubscriptionStrings(){
+        String retStr = "";
+        retStr += FLTopics.getSubscriptionStrings();
+        retStr += FRTopics.getSubscriptionStrings();
+        retStr += BLTopics.getSubscriptionStrings();
+        retStr += BRTopics.getSubscriptionStrings();
         return retStr;
     }
 

@@ -25,12 +25,12 @@ public class SwerveStateTopicSet {
         modIdx = modIdx_in;
     }
 
-    String getSubscriptionJS(){
+    String getSubscriptionStrings(){
         String retStr = "";
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.05);\n", azmthDesTopic);
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.05);\n", azmthActTopic);
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.05);\n", speedDesTopic);
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.05);\n", speedActTopic);
+        retStr += "\"" + azmthDesTopic + "\",";
+        retStr += "\"" + azmthActTopic + "\",";
+        retStr += "\"" + speedDesTopic + "\",";
+        retStr += "\"" + speedActTopic + "\",";
         return retStr;
     }
 

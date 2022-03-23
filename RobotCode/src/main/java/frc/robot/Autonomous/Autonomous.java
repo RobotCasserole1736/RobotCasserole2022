@@ -16,9 +16,11 @@ import frc.lib.miniNT4.topics.Topic;
 import frc.robot.Autonomous.Modes.BallPickup;
 import frc.robot.Autonomous.Modes.DoNothing;
 import frc.robot.Autonomous.Modes.DriveFwd;
+import frc.robot.Autonomous.Modes.JustShoot;
+import frc.robot.Autonomous.Modes.ShootAndTaxi;
 import frc.robot.Autonomous.Modes.Wait;
-import frc.robot.Autonomous.Modes.many_Pickup;
-import frc.robot.Autonomous.Modes.twoBallAuto;
+import frc.robot.Autonomous.Modes.Steak;
+import frc.robot.Autonomous.Modes.TwoBallAuto;
 import frc.robot.Drivetrain.DrivetrainControl;
 
 
@@ -80,11 +82,13 @@ public class Autonomous extends LocalClient  {
         delayModeList.add(new Wait(6.0));
         delayModeList.add(new Wait(9.0));
 
-        mainModeList.add(new twoBallAuto());
+        mainModeList.add(new TwoBallAuto());
         mainModeList.add(new BallPickup());
+        mainModeList.add(new ShootAndTaxi());
+        mainModeList.add(new JustShoot());
         mainModeList.add(new DriveFwd());
         mainModeList.add(new DoNothing());
-        mainModeList.add(new many_Pickup());
+        mainModeList.add(new Steak());
 
         // Create and subscribe to NT4 topics
         curDelayModeTopic = NT4Server.getInstance().publishTopic(delayModeList.getCurModeTopicName(), NT4TypeStr.INT, this);

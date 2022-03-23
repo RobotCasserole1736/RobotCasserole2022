@@ -17,7 +17,6 @@ public class CircularGaugeConfig extends VisibleWidgetConfig {
     public String getJSDeclaration(){
         String retStr = "";
         retStr += String.format("var widget%d = new CircularGauge('widget%d', '%s', %f,%f,%f,%f);\n", idx, idx, name, minRange, maxRange, minAcceptable, maxAcceptable);
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.05);", nt4TopicCurVal);
         return retStr;
     }
 

@@ -31,10 +31,10 @@ public class Constants {
     static public final double WHEEL_RADIUS_IN = 4.0/2.0; //four inch diameter wheels - https://www.swervedrivespecialties.com/collections/mk4i-parts/products/billet-wheel-4d-x-1-5w-bearing-bore
 
 
-    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = 2.048;
-    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = 4.6685;
-    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = 4.1085;
-    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = 5.471;
+    static public final double FL_ENCODER_MOUNT_OFFSET_RAD = -2.157;
+    static public final double FR_ENCODER_MOUNT_OFFSET_RAD = -1.575;
+    static public final double BL_ENCODER_MOUNT_OFFSET_RAD = -2.180;
+    static public final double BR_ENCODER_MOUNT_OFFSET_RAD = -0.803;
 
     //////////////////////////////////////////////////////////////////
     // Electrical
@@ -127,9 +127,15 @@ public class Constants {
     //////////////////////////////////////////////////////////////////
     // Shooter Constants
     //////////////////////////////////////////////////////////////////
-    public static final double SINGLE_BALL_SHOT_TIME = 1.5;
-    public static final double DOUBLE_BALL_SHOT_TIME = 2.0;
+    public static final double SINGLE_BALL_SHOT_TIME = 2.5;
+    public static final double DOUBLE_BALL_SHOT_TIME = 4.0;
     public static final double SHOOTER_FEED_ENC_REV_PER_PULSE = 1.0/2048.0; // see https://www.revrobotics.com/rev-11-1271/
+
+    //////////////////////////////////////////////////////////////////
+    // Time-based autonomous Constants
+    //////////////////////////////////////////////////////////////////
+    public static final double TAXI_DRIVE_TIME_S = 2.2;
+    public static final double TAXI_DRIVE_SPEED_MPS = 1.75;
 
     //////////////////////////////////////////////////////////////////
     // Nominal Sample Times

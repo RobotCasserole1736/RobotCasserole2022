@@ -17,13 +17,14 @@ public class FieldPoseTopicSet {
         this.type = type;
     }
 
-    String getSubscriptionJS(){
+    String getSubscriptionStrings(){
         String retStr = "";
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.05);\n", poseXTopic);
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.05);\n", poseYTopic);
-        retStr += String.format("nt4Client.subscribePeriodic([\"%s\"], 0.05);\n", poseRotTopic);
+        retStr += "\"" + poseXTopic + "\",";
+        retStr += "\"" + poseYTopic + "\",";
+        retStr += "\"" + poseRotTopic + "\",";
         return retStr;
     }
+
 
     String getJSSetData(int widgetIdx){
         String retStr = "";

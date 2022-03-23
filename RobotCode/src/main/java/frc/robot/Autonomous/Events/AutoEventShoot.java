@@ -2,7 +2,11 @@ package frc.robot.Autonomous.Events;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.AutoSequencer.AutoEvent;
+import frc.robot.Elevator;
+import frc.robot.Intake;
 import frc.robot.Shooter;
+import frc.robot.Elevator.elevatorCmdState;
+import frc.robot.Intake.intakeCmdState;
 import frc.robot.Shooter.shooterFeedCmdState;
 import frc.robot.Shooter.shooterLaunchState;
 
@@ -10,6 +14,12 @@ public class AutoEventShoot extends AutoEvent {
 	
 	double duration_s;
 	double endTime;
+	final double MIN_SPOOLUP_TIME = 0.25;
+	double spoolupEnd;
+		
+	public AutoEventShoot(double duration_s_in, boolean lowerIntake) {
+		duration_s = duration_s_in;
+	}
 	
 	public AutoEventShoot(double duration_s_in) {
 		duration_s = duration_s_in;
@@ -18,23 +28,40 @@ public class AutoEventShoot extends AutoEvent {
 	@Override
 	public void userStart() {
 		endTime = Timer.getFPGATimestamp() + duration_s;
+		spoolupEnd = Timer.getFPGATimestamp() + MIN_SPOOLUP_TIME;
         Shooter.getInstance().setRun(shooterLaunchState.HIGH_GOAL);
-		Shooter.getInstance().setFeed(shooterFeedCmdState.FEED);
+		Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
+		Elevator.getInstance().setCmd(elevatorCmdState.INTAKE);
 	}
 
 	@Override
 	public void userUpdate() {
-		completed = (Timer.getFPGATimestamp() > endTime);
+
+		var curTime =Timer.getFPGATimestamp();
+
+		Shooter.getInstance().setRun(shooterLaunchState.HIGH_GOAL);
+		Elevator.getInstance().setCmd(elevatorCmdState.INTAKE);
+
+		if(curTime > spoolupEnd  && Shooter.getInstance().getSpooledUp()){
+			Shooter.getInstance().setFeed(shooterFeedCmdState.FEED);
+		} else {
+			Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
+		}
+
+		completed = (curTime > endTime);
 		if (completed){
 			Shooter.getInstance().setRun(shooterLaunchState.STOP);
 			Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
-			}
+			Elevator.getInstance().setCmd(elevatorCmdState.STOP);
+		}
 	}
 
 	@Override
 	public void userForceStop() {
         Shooter.getInstance().setRun(shooterLaunchState.STOP);
 		Shooter.getInstance().setFeed(shooterFeedCmdState.STOP);
+		Elevator.getInstance().setCmd(elevatorCmdState.STOP);
+
 	}
 
 	@Override

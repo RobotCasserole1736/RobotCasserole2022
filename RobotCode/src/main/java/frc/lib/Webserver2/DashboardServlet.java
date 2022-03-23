@@ -112,8 +112,19 @@ class DashboardServlet extends HttpServlet {
             jsCallback += "\n";   
         }
 
+        String subscribeLine = "nt4Client.subscribePeriodic([";
+        for(WidgetConfig w : dCfg.widgetList){
+            subscribeLine +=  w.getTopicSubscriptionStrings();
+        }
+
+        //Remove the trailing comma and close out the line
+        subscribeLine.substring(0, subscribeLine.length() -1);
+        subscribeLine += "], 0.05);"; //100ms sample rate
+        subscribeLine += "\n";
+
         String filledOut = fileContent;
         filledOut = filledOut.replace("${WIDGETS_INSTANTIATE}", jsInstantiate);
+        filledOut = filledOut.replace("${WIDGETS_NT4_SUBSCRIBE}", subscribeLine);
         filledOut = filledOut.replace("${WIDGETS_UPDATE}", jsUpdate);
         filledOut = filledOut.replace("${WIDGETS_SET_VALUE}", jsSetData);
         filledOut = filledOut.replace("${WIDGETS_SET_NO_DATA}", jsSetNoData);
