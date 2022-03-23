@@ -204,6 +204,10 @@ public class Shooter {
     public boolean getSpooledUp(){
         return isSpooledUp;
     }
+    public boolean isyeeting(){
+        return (shooterRunCmd == shooterLaunchState.YEET_CARGO);
+    }
+    
 
     public void calUpdate(boolean force){
 

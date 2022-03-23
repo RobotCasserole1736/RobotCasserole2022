@@ -33,6 +33,9 @@ public class Dashboard {
     @Signal(name="db_hopperFull")
     boolean hopperFull;
 
+    @Signal(name="db_Yeet")
+    boolean Yeet;
+
     @Signal(name="db_clmberExtend")
     boolean climberExtend;
 
@@ -76,7 +79,8 @@ public class Dashboard {
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_hopperFull"),"Hopper Full", "#00FF00", "icons/intake.svg", CENTER_COL+12, ROW4, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_clmberExtend"),"Climber Extend", "#FFFF00", "icons/climb.svg", CENTER_COL+6, ROW4, 1.0);
         d.addIcon(SignalUtils.nameToNT4ValueTopic("db_shooterSpoolup"),"Shooter Spoolup", "#FFFF00", "icons/speed.svg", CENTER_COL-12, ROW4, 1.0);
-
+        d.addSound( SignalUtils.nameToNT4ValueTopic("db_Yeet"), "YEET", "sfx/YEET.mp3", false);
+       
 
       }
     
@@ -87,6 +91,7 @@ public class Dashboard {
         shooterSpoolup = Shooter.getInstance().getSpooledUp();
         hopperFull = Elevator.getInstance().isFull();
         climberExtend = Climber.getInstance().getIsExtended();
+        Yeet = Shooter.getInstance().isyeeting();
 
 
         //master caution handling
