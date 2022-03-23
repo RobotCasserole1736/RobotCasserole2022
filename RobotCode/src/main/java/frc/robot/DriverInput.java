@@ -97,12 +97,18 @@ public class DriverInput {
             curSideToSideCmd = -1.0 * driverController.getLeftX();
 
             curFwdRevCmd = MathUtil.applyDeadband( curFwdRevCmd,stickDeadband.get()); 
-            fwdRevSlewCmd = fwdRevSlewLimiter.calculate(curFwdRevCmd);
-
             curRotCmd = MathUtil.applyDeadband( curRotCmd,stickDeadband.get());
-            rotSlewCmd = rotSlewLimiter.calculate(curRotCmd);
-        
             curSideToSideCmd = MathUtil.applyDeadband( curSideToSideCmd,stickDeadband.get());
+
+            if(driverController.getLeftStickButton()){
+                curFwdRevCmd = curFwdRevCmd / 2.0;
+                curSideToSideCmd = curSideToSideCmd / 2.0;
+            } else if(driverController.getRightStickButton()) {
+                curRotCmd = curRotCmd / 2.0;
+            }
+            
+            fwdRevSlewCmd = fwdRevSlewLimiter.calculate(curFwdRevCmd);
+            rotSlewCmd = rotSlewLimiter.calculate(curRotCmd);
             sideToSideSlewCmd = sideToSideSlewLimiter.calculate(curSideToSideCmd);
             
             robotRelative = driverController.getRightBumper();
@@ -144,6 +150,8 @@ public class DriverInput {
             } else {
                 yeetCargo = false;
             }
+
+           
 
         } else {
             //Controller Unplugged Defaults
@@ -189,7 +197,7 @@ public class DriverInput {
      * @return 
      */
     public double getFwdRevCmd_mps(){
-        return fwdRevSlewLimiter.calculate(curFwdRevCmd) * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
+        return fwdRevSlewCmd * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
     }
 
     /**
@@ -200,10 +208,10 @@ public class DriverInput {
      * @return 
      */
     public double getRotateCmd_rps(){
-        return rotSlewLimiter.calculate(curRotCmd) * Constants.MAX_FWD_REV_SPEED_MPS;
+        return rotSlewCmd * Constants.MAX_FWD_REV_SPEED_MPS;
     }
     public double getSideToSideCmd_mps(){
-        return sideToSideSlewLimiter.calculate(curSideToSideCmd) * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
+        return sideToSideSlewCmd * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
     }
 
     public boolean getShootDesired(){
