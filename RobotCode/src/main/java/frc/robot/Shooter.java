@@ -41,8 +41,6 @@ public class Shooter {
     private CasseroleCANMotorCtrl shooterMotor;
     private VictorSPX feedMotor; // AKA Upper Elevator Motor
 
-    double actualSpeedPrev;
-
     LinearFilter shooterAccelFilter = LinearFilter.movingAverage(10);
 
     @Signal (units = "RPM")
@@ -98,19 +96,19 @@ public class Shooter {
 
         shooterMotor.setInverted(true);
 
-        shooter_P = new Calibration("shooter P","",0.015);
+        shooter_P = new Calibration("shooter P","",0.005);
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);
         shooter_F = new Calibration("shooter F","",0.021);
         
-        shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3400);
+        shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3600);
         shooter_low_goal_Launch_Speed = new Calibration("shooter low goal launch speed","RPM",1650);
         yeetCargo = new Calibration("Yeet Cargo", "RPM", 5200);
 
 
-        shooterStableError = new Calibration("shooter stable error","RPM", 50.0);
-        shooterAccelerateError = new Calibration("shooter accelerate error","RPM", 250.0);
-        feedSpeed = new Calibration("shooter feed speed","Cmd",1.0);
+        shooterStableError = new Calibration("shooter stable error","RPM", 300.0);
+        shooterAccelerateError = new Calibration("shooter accelerate error","RPM", 1500.0);
+        feedSpeed = new Calibration("shooter feed speed","Cmd",0.75);
         ejectSpeed = new Calibration("shooter eject speed","Cmd",0.5);
         intakeSpeed = new Calibration("shooter intake speed","Cmd",0.75);
 
@@ -191,9 +189,7 @@ public class Shooter {
         /////////////////////////////////////////////////
         // Read sensor inputs
         feedWheelSpeed = feedWheelEncoder.getRate() * 60.0; //rev per sec to rev per min conversion
-        actualSpeedPrev = actualSpeed;
         actualSpeed = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
-        actualAccel = shooterAccelFilter.calculate( (actualSpeed - actualSpeedPrev) / Constants.Ts);
         var speedErr =  desiredSpeed - actualSpeed; //Positive for too-slow, negative for too-fast
 
         /////////////////////////////////////////////////
@@ -231,11 +227,9 @@ public class Shooter {
                     }
                 break;
                 case HOLD:
-                    if( speedErr >= shooterAccelerateError.get()){
+                    if( speedErr >= shooterStableError.get()){
                         nextState = ShooterState.ACCELERATE; //shooter speed way too slow, go right to full battery
-                    } else if(speedErr >= shooterStableError.get() && actualAccel > 0){
-                        nextState = ShooterState.ACCELERATE; //We believe we just had a ball leave the intake, go back to accelerating.
-                    }
+                    } 
                 break;
                 case STOP:
                     nextState = ShooterState.ACCELERATE;
