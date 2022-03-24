@@ -1,5 +1,6 @@
 package frc.wrappers.ADXRS453;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.SPI.Port;
 
@@ -29,12 +30,12 @@ public class RealADXRS453 extends AbstractADXRS453 {
 
     @Override
     public double getRate() {
-        return realGyro.getRate();
+        return Units.degreesToRadians(realGyro.getRate());
     }
 
     @Override
     public double getRawAngle() {
-        return realGyro.getAngle();
+        return Units.degreesToRadians(realGyro.getAngle());
     }
 
     @Override
