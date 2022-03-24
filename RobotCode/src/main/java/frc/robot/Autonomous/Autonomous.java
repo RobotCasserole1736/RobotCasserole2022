@@ -20,6 +20,9 @@ import frc.robot.Autonomous.Modes.JustShoot;
 import frc.robot.Autonomous.Modes.ShootAndTaxi;
 import frc.robot.Autonomous.Modes.Wait;
 import frc.robot.Autonomous.Modes.Steak;
+import frc.robot.Autonomous.Modes.SwTest1;
+import frc.robot.Autonomous.Modes.SwTest2;
+import frc.robot.Autonomous.Modes.SwTest3;
 import frc.robot.Autonomous.Modes.TwoBallAuto;
 import frc.robot.Drivetrain.DrivetrainControl;
 
@@ -82,6 +85,9 @@ public class Autonomous extends LocalClient  {
         delayModeList.add(new Wait(6.0));
         delayModeList.add(new Wait(9.0));
 
+        mainModeList.add(new SwTest3());
+        mainModeList.add(new SwTest2());
+        mainModeList.add(new SwTest1());
         mainModeList.add(new TwoBallAuto());
         mainModeList.add(new BallPickup());
         mainModeList.add(new ShootAndTaxi());

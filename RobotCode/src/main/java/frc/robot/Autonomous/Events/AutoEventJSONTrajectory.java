@@ -41,6 +41,11 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class AutoEventJSONTrajectory extends AutoEvent {
 
+    final double MODULE_ANGLE_INIT_TIME_SEC = 0.25;
+
+    double trajStartTime = 0;
+    double trajEndTime = 0;
+
     boolean done = false;
 
     PathPlannerTrajectory path;
@@ -51,7 +56,12 @@ public class AutoEventJSONTrajectory extends AutoEvent {
 
         dt_inst = DrivetrainControl.getInstance();
 
-        path = PathPlanner.loadPath(jsonFileName, Constants.MAX_FWD_REV_SPEED_MPS * speedScalar, Constants.MAX_TRANSLATE_ACCEL_MPS2 * speedScalar);        
+        path = PathPlanner.loadPath(jsonFileName, 
+                                    Constants.MAX_FWD_REV_SPEED_MPS * speedScalar, 
+                                    Constants.MAX_TRANSLATE_ACCEL_MPS2 * speedScalar * speedScalar);       
+                                    
+        trajStartTime = MODULE_ANGLE_INIT_TIME_SEC;
+        trajEndTime = MODULE_ANGLE_INIT_TIME_SEC + path.getTotalTimeSeconds();
     }
 
     /**
@@ -63,21 +73,38 @@ public class AutoEventJSONTrajectory extends AutoEvent {
     public void userUpdate() {
         double curTime = (Timer.getFPGATimestamp()-startTime);
 
-        //Check for finish
-        if(curTime >= path.getTotalTimeSeconds()) {
+        if(curTime >= trajEndTime) {
+            //Trajectory finished, stop, we're done.
             done = true;
             dt_inst.stop();
-            return;
+
+        } else if( curTime >= trajStartTime){
+            // Normal  trajectory
+
+            // Extract current step
+            PathPlannerState curState = (PathPlannerState)  path.sample(curTime - trajStartTime);
+            Rotation2d curHeading = curState.holonomicRotation;
+
+            dt_inst.setCmdTrajectory(curState, curHeading, false);
+
+            //Populate desired pose from path plan.
+            PoseTelemetry.getInstance().setDesiredPose(curState.poseMeters);
+
+        } else {
+            //Trajectory Init - just servo the swerve modules to the right positions without driving them.
+
+            // Extract current step
+            PathPlannerState curState = (PathPlannerState)  path.sample(0.0);
+            Rotation2d curHeading = curState.holonomicRotation;
+
+            dt_inst.setCmdTrajectory(curState, curHeading, true);
+
+            //Populate desired pose from path plan.
+            PoseTelemetry.getInstance().setDesiredPose(curState.poseMeters);
+
         }
 
-        // Extract current and previous steps
-        PathPlannerState curState = (PathPlannerState)  path.sample(curTime);
-        Rotation2d curHeading = curState.holonomicRotation;
 
-        dt_inst.setCmdTrajectory(curState, curHeading);
-
-        //Populate desired pose from path plan.
-        PoseTelemetry.getInstance().setDesiredPose(curState.poseMeters);
     }
 
     /**
