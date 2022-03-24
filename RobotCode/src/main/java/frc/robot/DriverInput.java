@@ -197,7 +197,7 @@ public class DriverInput {
      * @return 
      */
     public double getFwdRevCmd_mps(){
-        return fwdRevSlewCmd * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
+        return fwdRevSlewCmd * Constants.MAX_FWD_REV_SPEED_MPS;
     }
 
     /**
@@ -208,10 +208,10 @@ public class DriverInput {
      * @return 
      */
     public double getRotateCmd_rps(){
-        return rotSlewCmd * Constants.MAX_FWD_REV_SPEED_MPS;
+        return rotSlewCmd * Constants.MAX_ROTATE_SPEED_RAD_PER_SEC;
     }
     public double getSideToSideCmd_mps(){
-        return sideToSideSlewCmd * Constants.MAX_FWD_REV_SPEED_MPS * 0.5;
+        return sideToSideSlewCmd * Constants.MAX_FWD_REV_SPEED_MPS;
     }
 
     public boolean getShootDesired(){

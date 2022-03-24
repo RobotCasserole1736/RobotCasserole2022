@@ -291,8 +291,9 @@ public class Shooter {
     public boolean getSpooledUp(){
         return curState == ShooterState.HOLD;
     }
+
     public boolean isyeeting(){
-        return (shooterRunCmd == shooterLaunchState.YEET_CARGO);
+        return (launchCmd == ShooterLaunchCmd.YEET_CARGO && feedCmd == ShooterFeedCmd.FEED);
     }
     
 
