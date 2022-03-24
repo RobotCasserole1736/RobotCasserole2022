@@ -299,7 +299,6 @@ public class Robot extends CasseroleTimedRobot {
       Pose2d newPose = new Pose2d(dt.getCurEstPose().getTranslation(), new Rotation2d(0.0));
       dt.setKnownPose(newPose);
     }
-    
 
     ////////////////////////////////////////
     // Shooter & Superstructure control
@@ -346,7 +345,11 @@ public class Robot extends CasseroleTimedRobot {
         in.setCmd(intakeCmdState.STOP);     
       }
 
-      shooter.setRun(ShooterLaunchCmd.STOP);
+      if(elevator.isFull()) {
+        shooter.setRun(ShooterLaunchCmd.HIGH_GOAL);
+      } else {
+        shooter.setRun(ShooterLaunchCmd.STOP);
+      }
 
     }
 
