@@ -88,9 +88,9 @@ public class Dashboard {
 
         shooterSpeed = Shooter.getInstance().getShooterSpeed();
         pnuemPressure = PneumaticsSupplyControl.getInstance().getStoragePressure();
-        shooterSpoolup = Shooter.getInstance().getSpooledUp();
+        shooterSpoolup = Shooter.getInstance().isSpoolingUp();
         hopperFull = Elevator.getInstance().isFull();
-        climberExtend = Climber.getInstance().getIsExtended();
+        climberExtend = Climber.getInstance().isClimbing();
         Yeet = Shooter.getInstance().isyeeting();
 
 

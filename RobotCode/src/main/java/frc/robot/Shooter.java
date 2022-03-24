@@ -292,6 +292,11 @@ public class Shooter {
         return curState == ShooterState.HOLD;
     }
 
+    // Returns whether the shooter is running at its setpoint speed or not.
+    public boolean isSpoolingUp(){
+        return (curState == ShooterState.ACCELERATE || curState == ShooterState.STABILIZE);
+    }
+
     public boolean isyeeting(){
         return (launchCmd == ShooterLaunchCmd.YEET_CARGO && feedCmd == ShooterFeedCmd.FEED);
     }

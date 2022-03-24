@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -33,11 +32,6 @@ public class Climber {
     DoubleSolenoid liftCyl2;
 
     DoubleSolenoid tiltCyl;
-
-    @Signal
-    boolean isExtended;
-    boolean isExtendedRaw;
-    Debouncer extendDbnc = new Debouncer(0.75);
 
     @Signal
     CylCmd liftCmd = CylCmd.NONE;
@@ -74,7 +68,6 @@ public class Climber {
         liftCyl1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.CLIMBER_LIFT_SOL_1_EXTEND,Constants.CLIMBER_LIFT_SOL_1_RETRACT);
         liftCyl2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,Constants.CLIMBER_LIFT_SOL_2_EXTEND,Constants.CLIMBER_LIFT_SOL_2_RETRACT);
         tiltCyl = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,Constants.CLIMBER_TILT_SOL_EXTEND,Constants.CLIMBER_TILT_SOL_RETRACT);
-        isExtended = false;
 	}
 
     public void setLiftCmd(CylCmd input){
@@ -85,25 +78,21 @@ public class Climber {
         tiltCmd = input;
     }
 
-    public boolean getIsExtended() {
-        return isExtended;
+    public boolean isClimbing(){
+        return tiltCmd == CylCmd.EXTEND;
     }
 
     public void update () {
         if(liftCmd == CylCmd.EXTEND){
             liftCyl1.set(Value.kForward);
             liftCyl2.set(Value.kForward);
-            isExtendedRaw = true;
         } else if (liftCmd == CylCmd.RETRACT){
             liftCyl1.set(Value.kReverse);
             liftCyl2.set(Value.kReverse); 
-            isExtendedRaw = false;
         } else {
             liftCyl1.set(Value.kOff);
             liftCyl2.set(Value.kOff);     
         }
-
-        isExtended = extendDbnc.calculate(isExtendedRaw);
 
         if(tiltCmd == CylCmd.EXTEND){
             tiltCyl.set(Value.kForward);
