@@ -58,6 +58,9 @@ public class DrivetrainControl {
     Calibration hdc_rotation_kI;
     Calibration hdc_rotation_kD;
 
+    //Gets set to true when we're attempting to servo the module angles prior to actually moving.
+    boolean initAngleOnly;
+
     // Pose Estimator Class
     // This class is designed to combine encoder measurments and gyro readings
     // and maybe vision processing (in the future), and produce a best-guess
@@ -108,6 +111,7 @@ public class DrivetrainControl {
         hdc_rotate = new ProfiledPIDController(hdc_rotation_kP.get(), hdc_rotation_kI.get(), hdc_rotation_kD.get(),
                     new TrapezoidProfile.Constraints(Constants.MAX_ROTATE_SPEED_RAD_PER_SEC * 0.8, 
                                                     Constants.MAX_ROTATE_ACCEL_RAD_PER_SEC_2 * 0.8));
+        hdc_rotate.enableContinuousInput(-1.0 * Math.PI, Math.PI);
 
         hdc = new HolonomicDriveController(hdc_fwdrev, hdc_leftright, hdc_rotate);
 
@@ -135,6 +139,7 @@ public class DrivetrainControl {
     public void setCmdFieldRelative(double fwdRevCmd, double strafeCmd, double rotateCmd){
         desChSpd = ChassisSpeeds.fromFieldRelativeSpeeds(fwdRevCmd, strafeCmd, rotateCmd, pe.getGyroHeading());
         curDesPose = pe.getEstPose();
+        initAngleOnly = false;
     }
 
     // Commands the robot to travel at a certain speed relative to itself.
@@ -144,6 +149,7 @@ public class DrivetrainControl {
     public void setCmdRobotRelative(double fwdRevCmd, double strafeCmd, double rotateCmd){
         desChSpd = new ChassisSpeeds(fwdRevCmd, strafeCmd, rotateCmd);
         curDesPose = pe.getEstPose();
+        initAngleOnly = false;
     }
 
     // Autonomous-centric way to command the drivetrain via a Trajectory.
@@ -151,9 +157,19 @@ public class DrivetrainControl {
     // At before each drivetrain update() call, auto should call this with the current 
     // state along the trajectory.
     public void setCmdTrajectory(Trajectory.State desTrajState, Rotation2d desAngle){
+        setCmdTrajectory(desTrajState, desAngle, false);
+    }
+
+    // Autonomous-centric way to command the drivetrain via a Trajectory.
+    // The autonomous routine must still step through the trajectory over time.
+    // At before each drivetrain update() call, auto should call this with the current 
+    // state along the trajectory.
+    public void setCmdTrajectory(Trajectory.State desTrajState, Rotation2d desAngle, boolean initAngleOnly){
         desChSpd = hdc.calculate(pe.getEstPose(), desTrajState, desAngle);
         curDesPose = new Pose2d(desTrajState.poseMeters.getTranslation(), desAngle);
+        this.initAngleOnly = initAngleOnly;
     }
+
 
     // Helper function to command the drivetrain to stop in place. Azimuths will still servo to the "stopped" cross position
     // Helpful especially for auto routines or disabled to ensure the drivetrain is commanded to stop.
@@ -164,7 +180,9 @@ public class DrivetrainControl {
     // Main periodic step function for Teleop, Autonomous, and Disabled
     public void update(){
 
-        if(Math.abs(desChSpd.vxMetersPerSecond) > 0.01 | Math.abs(desChSpd.vyMetersPerSecond) > 0.01 | Math.abs(desChSpd.omegaRadiansPerSecond) > 0.01){
+        boolean motionCommanded = Math.abs(desChSpd.vxMetersPerSecond) > 0.01 | Math.abs(desChSpd.vyMetersPerSecond) > 0.01 | Math.abs(desChSpd.omegaRadiansPerSecond) > 0.01;
+
+        if(motionCommanded | initAngleOnly){
             //In motion
             desModState = Constants.m_kinematics.toSwerveModuleStates(desChSpd);
         } else {
@@ -174,6 +192,14 @@ public class DrivetrainControl {
             desModState[1] = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
             desModState[2] = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
             desModState[3] = new SwerveModuleState(0, Rotation2d.fromDegrees(-45));
+        }
+
+        if(initAngleOnly){
+            //Force module speeds to zero
+            desModState[0].speedMetersPerSecond = 0;
+            desModState[1].speedMetersPerSecond = 0;
+            desModState[2].speedMetersPerSecond = 0;
+            desModState[3].speedMetersPerSecond = 0;
         }
 
         updateCommon();
