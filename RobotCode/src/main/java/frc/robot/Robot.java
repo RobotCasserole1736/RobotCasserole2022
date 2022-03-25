@@ -388,7 +388,7 @@ public class Robot extends CasseroleTimedRobot {
     stt.start();
     loopStartTime = Timer.getFPGATimestamp();
 
-
+    
     dt.calUpdate(false);
     shooter.calUpdate(false);
     stt.mark("Cal Updates");

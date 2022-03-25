@@ -3,6 +3,7 @@ package frc.robot.Autonomous;
 import java.util.Set;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.AutoSequencer.AutoSequencer;
 import frc.lib.Autonomous.AutoMode;
 import frc.lib.Autonomous.AutoModeList;
@@ -118,6 +119,10 @@ public class Autonomous extends LocalClient  {
             prevDelayMode = curDelayMode;
             prevMainMode = curMainMode;
         }
+
+        if(RobotController.getUserButton()) {
+            DrivetrainControl.getInstance().setKnownPose(getStartPose());
+        }
     }
 
 
@@ -150,6 +155,7 @@ public class Autonomous extends LocalClient  {
     /* This should be called periodically, always */
     public void update(){
         seq.update();
+
     }
 
     /* Should be called when returning to disabled to stop and reset everything */
