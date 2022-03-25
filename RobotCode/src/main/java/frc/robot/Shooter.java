@@ -203,7 +203,7 @@ public class Shooter {
         // Read sensor inputs
         var curSampleTime = Timer.getFPGATimestamp();
         feedWheelSpeed = feedWheelEncoder.getRate() * 60.0; //rev per sec to rev per min conversion
-        actualSpeed = launchWheelEncoder.getRate() * 60.0; //rev per sec to rev per min conversion
+        actualSpeed = -1.0 * launchWheelEncoder.getRate() * 60.0 * Constants.SHOOTER_GEAR_RATIO; //rev per sec to rev per min conversion, back to the motor speed
         actualAccel = shooterAccelFilter.calculate( (actualSpeed - actualSpeedPrev) / (curSampleTime - prevSampleTime) );
         var speedErr =  desiredSpeed - actualSpeed; //Positive for too-slow, negative for too-fast
 

@@ -131,6 +131,7 @@ public class Constants {
     public static final double DOUBLE_BALL_SHOT_TIME = 4.0;
     public static final double SHOOTER_FEED_ENC_REV_PER_PULSE = 1.0/2048.0; // see https://www.revrobotics.com/rev-11-1271/
     public static final double SHOOTER_LAUNCH_ENC_REV_PER_PULSE = 1.0/2048.0; // see https://www.revrobotics.com/rev-11-1271/
+    public static final double SHOOTER_GEAR_RATIO = 3.0/2.0;
 
     //////////////////////////////////////////////////////////////////
     // Time-based autonomous Constants
