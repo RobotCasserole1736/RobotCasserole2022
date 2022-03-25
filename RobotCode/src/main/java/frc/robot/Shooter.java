@@ -4,11 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
 import frc.Constants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
@@ -43,8 +45,13 @@ public class Shooter {
 
     LinearFilter shooterAccelFilter = LinearFilter.movingAverage(10);
 
+    PIDController shooterPID;
+
+    double prevSampleTime = 0;
+
     @Signal (units = "RPM")
     double actualSpeed;
+    double actualSpeedPrev;
     @Signal (units = "RPMperSec")
     double actualAccel;
     @Signal (units = "RPM")
@@ -73,6 +80,7 @@ public class Shooter {
     Calibration yeetCargo;
 
     Encoder feedWheelEncoder;
+    Encoder launchWheelEncoder;
 
     @Signal(units = "RPM")
     double feedWheelSpeed;
@@ -96,10 +104,12 @@ public class Shooter {
 
         shooterMotor.setInverted(true);
 
-        shooter_P = new Calibration("shooter P","",0.005);
+        shooter_P = new Calibration("shooter P","",0.000);
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);
         shooter_F = new Calibration("shooter F","",0.021);
+
+        shooterPID = new PIDController(shooter_P.get(), shooter_I.get(), shooter_D.get());
         
         shooter_high_goal_Launch_Speed = new Calibration("shooter high goal launch speed","RPM",3600);
         shooter_low_goal_Launch_Speed = new Calibration("shooter low goal launch speed","RPM",1650);
@@ -114,6 +124,9 @@ public class Shooter {
 
         feedWheelEncoder = new Encoder(Constants.SHOOTER_FEED_ENC_A, Constants.SHOOTER_FEED_ENC_B);
         feedWheelEncoder.setDistancePerPulse(Constants.SHOOTER_FEED_ENC_REV_PER_PULSE);
+
+        launchWheelEncoder = new Encoder(Constants.SHOOTER_LAUNCH_ENC_A, Constants.SHOOTER_LAUNCH_ENC_B);
+        launchWheelEncoder.setDistancePerPulse(Constants.SHOOTER_FEED_ENC_REV_PER_PULSE);
 
         launchCmd = ShooterLaunchCmd.STOP;
         feedCmd = ShooterFeedCmd.STOP;
@@ -188,9 +201,15 @@ public class Shooter {
 
         /////////////////////////////////////////////////
         // Read sensor inputs
+        var curSampleTime = Timer.getFPGATimestamp();
         feedWheelSpeed = feedWheelEncoder.getRate() * 60.0; //rev per sec to rev per min conversion
-        actualSpeed = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
+        actualSpeed = -1.0 * launchWheelEncoder.getRate() * 60.0 * Constants.SHOOTER_GEAR_RATIO; //rev per sec to rev per min conversion, back to the motor speed
+        actualAccel = shooterAccelFilter.calculate( (actualSpeed - actualSpeedPrev) / (curSampleTime - prevSampleTime) );
         var speedErr =  desiredSpeed - actualSpeed; //Positive for too-slow, negative for too-fast
+
+        prevSampleTime = curSampleTime;
+        actualSpeedPrev = actualSpeed;
+
 
         /////////////////////////////////////////////////
         // Translate launch command to desired RPM
@@ -227,9 +246,11 @@ public class Shooter {
                     }
                 break;
                 case HOLD:
-                    if( speedErr >= shooterStableError.get()){
+                    if( speedErr >= shooterAccelerateError.get()){
                         nextState = ShooterState.ACCELERATE; //shooter speed way too slow, go right to full battery
-                    } 
+                    } else if(speedErr >= shooterStableError.get() && actualAccel > 0){
+                        nextState = ShooterState.ACCELERATE; //shooter speed slower that setpoint and we have started to turn around (ball has left)
+                    }
                 break;
                 case STOP:
                     nextState = ShooterState.ACCELERATE;
@@ -255,8 +276,10 @@ public class Shooter {
             break;
             case STABILIZE:
             case HOLD:
+                shooterPID.setSetpoint(desiredSpeed);
+                var closedLoopVoltage = shooterPID.calculate(actualSpeed);
                 var spd_radPerSec =  Units.rotationsPerMinuteToRadiansPerSecond(desiredSpeed);
-                shooterMotor.setClosedLoopCmd(spd_radPerSec, shooter_F.get() * spd_radPerSec);
+                shooterMotor.setVoltageCmd(shooter_F.get() * spd_radPerSec + closedLoopVoltage);
                 isStable = stableDebounce.calculate(Math.abs(speedErr) < shooterStableError.get());
             break;
         }
@@ -310,7 +333,7 @@ public class Shooter {
            shooterStableError.isChanged() ||
            feedSpeed.isChanged() ||
             force){
-            shooterMotor.setClosedLoopGains(shooter_P.get(), shooter_I.get(), shooter_D.get());
+            shooterPID.setPID(shooter_P.get(), shooter_I.get(), shooter_D.get());
             shooter_P.acknowledgeValUpdate();
             shooter_I.acknowledgeValUpdate();
             shooter_D.acknowledgeValUpdate();

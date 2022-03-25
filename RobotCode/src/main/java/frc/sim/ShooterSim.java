@@ -14,7 +14,6 @@ public class ShooterSim {
 
     SimSmartMotor shooterMotor;
 
-    private final double SHOOTER_GEAR_RATIO = 3.0/2.0;
     //One Fairlane
     private final double SHOOTER_WHEEL_BOTTOM_MASS_kg = Units.lbsToKilograms(1.56);
     private final double SHOOTER_WHEEL_BOTTOM_RADIUS_m = Units.inchesToMeters(4.0/2);
@@ -24,6 +23,8 @@ public class ShooterSim {
     //MOI fudge factor cuz friction and wheels and shafts and whatnot
     private final double MOI_FUDGE = 1.8;
 
+    SimQuadratureEncoder shooterEncoder = new SimQuadratureEncoder(Constants.SHOOTER_LAUNCH_ENC_A, Constants.SHOOTER_LAUNCH_ENC_B, 2048, Constants.SHOOTER_LAUNCH_ENC_REV_PER_PULSE);
+    private double shooterEncoderShaftPosRev = 0;
 
     DCMotor drivingMotor = DCMotor.getNEO(1);
 
@@ -38,7 +39,7 @@ public class ShooterSim {
         double moi_top = MOI_FUDGE * 0.5 * SHOOTER_WHEEL_TOP_MASS_kg * SHOOTER_WHEEL_TOP_RADIUS_m * SHOOTER_WHEEL_TOP_RADIUS_m;
         double moi_bottom = MOI_FUDGE * 0.5 * SHOOTER_WHEEL_BOTTOM_MASS_kg * SHOOTER_WHEEL_BOTTOM_RADIUS_m * SHOOTER_WHEEL_BOTTOM_RADIUS_m;
 
-        motorWithRotatingMass = new FlywheelSim(drivingMotor, SHOOTER_GEAR_RATIO, moi_top + moi_bottom);
+        motorWithRotatingMass = new FlywheelSim(drivingMotor, Constants.SHOOTER_GEAR_RATIO, moi_top + moi_bottom);
         shooterMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.SHOOTER_MOTOR_CANID);
     }
 
@@ -56,8 +57,11 @@ public class ShooterSim {
         motorWithRotatingMass.update(Constants.SIM_SAMPLE_RATE_SEC);
 
         speed = motorWithRotatingMass.getAngularVelocityRadPerSec();
-        shooterMotor.sim_setActualVelocity(speed * SHOOTER_GEAR_RATIO);
+        shooterMotor.sim_setActualVelocity(speed / Constants.SHOOTER_GEAR_RATIO);
         shooterMotor.sim_setCurrent(motorWithRotatingMass.getCurrentDrawAmps());
+
+        shooterEncoderShaftPosRev += Units.radiansToRotations(speed * Constants.SIM_SAMPLE_RATE_SEC);
+        shooterEncoder.setShaftPositionRev(shooterEncoderShaftPosRev);
     }
 
     public double getCurrentDraw_A(){
