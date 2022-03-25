@@ -29,8 +29,8 @@ public class RealSparkMax extends AbstractSimmableMotorController {
         while(!success){    
             var err0 = m_motor.restoreFactoryDefaults();
             var err1 = m_motor.setIdleMode(IdleMode.kCoast);
-            var err2 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);// Status 0 = Motor output and Faults
-            var err3 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 15);// Status 1 = Motor velocity & electrical data
+            var err2 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 19);// Status 0 = Motor output and Faults
+            var err3 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 57);// Status 1 = Motor velocity & electrical data
             var err4 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 65500);// Status 2 = Motor Position
             var err5 = m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65500);// Status 3 = Analog Sensor Input
             success = (err0 == REVLibError.kOk &&

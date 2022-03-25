@@ -39,7 +39,7 @@ public class ShooterSim {
         double moi_top = MOI_FUDGE * 0.5 * SHOOTER_WHEEL_TOP_MASS_kg * SHOOTER_WHEEL_TOP_RADIUS_m * SHOOTER_WHEEL_TOP_RADIUS_m;
         double moi_bottom = MOI_FUDGE * 0.5 * SHOOTER_WHEEL_BOTTOM_MASS_kg * SHOOTER_WHEEL_BOTTOM_RADIUS_m * SHOOTER_WHEEL_BOTTOM_RADIUS_m;
 
-        motorWithRotatingMass = new FlywheelSim(drivingMotor, Constants.SHOOTER_GEAR_RATIO, moi_top + moi_bottom);
+        motorWithRotatingMass = new FlywheelSim(drivingMotor, Constants.SHOOTER_TO_ENC_RATIO, moi_top + moi_bottom);
         shooterMotor = (SimSmartMotor) SimDeviceBanks.getCANDevice(Constants.SHOOTER_MOTOR_CANID);
     }
 
@@ -57,7 +57,7 @@ public class ShooterSim {
         motorWithRotatingMass.update(Constants.SIM_SAMPLE_RATE_SEC);
 
         speed = motorWithRotatingMass.getAngularVelocityRadPerSec();
-        shooterMotor.sim_setActualVelocity(speed / Constants.SHOOTER_GEAR_RATIO);
+        shooterMotor.sim_setActualVelocity(speed / Constants.SHOOTER_TO_ENC_RATIO);
         shooterMotor.sim_setCurrent(motorWithRotatingMass.getCurrentDrawAmps());
 
         shooterEncoderShaftPosRev += Units.radiansToRotations(speed * Constants.SIM_SAMPLE_RATE_SEC);

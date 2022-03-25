@@ -43,7 +43,7 @@ public class Shooter {
     private CasseroleCANMotorCtrl shooterMotor;
     private VictorSPX feedMotor; // AKA Upper Elevator Motor
 
-    LinearFilter shooterAccelFilter = LinearFilter.movingAverage(10);
+    LinearFilter shooterAccelFilter = LinearFilter.movingAverage(15);
 
     PIDController shooterPID;
 
@@ -52,6 +52,8 @@ public class Shooter {
     @Signal (units = "RPM")
     double actualSpeed;
     double actualSpeedPrev;
+    @Signal (units="RPM")
+    double motorActualSpeed;
     @Signal (units = "RPMperSec")
     double actualAccel;
     @Signal (units = "RPM")
@@ -104,10 +106,10 @@ public class Shooter {
 
         shooterMotor.setInverted(true);
 
-        shooter_P = new Calibration("shooter P","",0.000);
+        shooter_P = new Calibration("shooter P","",0.0015);
         shooter_I = new Calibration("shooter I","",0);
         shooter_D = new Calibration("shooter D","",0);
-        shooter_F = new Calibration("shooter F","",0.021);
+        shooter_F = new Calibration("shooter F","",0.0021);
 
         shooterPID = new PIDController(shooter_P.get(), shooter_I.get(), shooter_D.get());
         
@@ -116,8 +118,8 @@ public class Shooter {
         yeetCargo = new Calibration("Yeet Cargo", "RPM", 5200);
 
 
-        shooterStableError = new Calibration("shooter stable error","RPM", 300.0);
-        shooterAccelerateError = new Calibration("shooter accelerate error","RPM", 1500.0);
+        shooterStableError = new Calibration("shooter stable error","RPM", 500.0);
+        shooterAccelerateError = new Calibration("shooter accelerate error","RPM", 800.0);
         feedSpeed = new Calibration("shooter feed speed","Cmd",0.75);
         ejectSpeed = new Calibration("shooter eject speed","Cmd",0.5);
         intakeSpeed = new Calibration("shooter intake speed","Cmd",0.75);
@@ -203,8 +205,9 @@ public class Shooter {
         // Read sensor inputs
         var curSampleTime = Timer.getFPGATimestamp();
         feedWheelSpeed = feedWheelEncoder.getRate() * 60.0; //rev per sec to rev per min conversion
-        actualSpeed = -1.0 * launchWheelEncoder.getRate() * 60.0 * Constants.SHOOTER_GEAR_RATIO; //rev per sec to rev per min conversion, back to the motor speed
+        actualSpeed = launchWheelEncoder.getRate() * 60.0 * Constants.SHOOTER_TO_ENC_RATIO; //rev per sec to rev per min conversion, back to the motor speed
         actualAccel = shooterAccelFilter.calculate( (actualSpeed - actualSpeedPrev) / (curSampleTime - prevSampleTime) );
+        motorActualSpeed = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
         var speedErr =  desiredSpeed - actualSpeed; //Positive for too-slow, negative for too-fast
 
         prevSampleTime = curSampleTime;
@@ -278,8 +281,7 @@ public class Shooter {
             case HOLD:
                 shooterPID.setSetpoint(desiredSpeed);
                 var closedLoopVoltage = shooterPID.calculate(actualSpeed);
-                var spd_radPerSec =  Units.rotationsPerMinuteToRadiansPerSecond(desiredSpeed);
-                shooterMotor.setVoltageCmd(shooter_F.get() * spd_radPerSec + closedLoopVoltage);
+                shooterMotor.setVoltageCmd(shooter_F.get() * desiredSpeed + closedLoopVoltage);
                 isStable = stableDebounce.calculate(Math.abs(speedErr) < shooterStableError.get());
             break;
         }
