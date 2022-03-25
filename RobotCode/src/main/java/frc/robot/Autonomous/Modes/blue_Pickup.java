@@ -15,7 +15,7 @@ public class blue_Pickup extends AutoMode {
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
         seq.addEvent(new AutoEventShoot(Constants.SINGLE_BALL_SHOT_TIME));
-        driveEvent = new AutoEventJSONTrajectory("blue_Pickup", 0.80);
+        driveEvent = new AutoEventJSONTrajectory("blue_Pickup", 0.25);
         driveEvent.addChildEvent(new AutoEventIntake(5));
         seq.addEvent(driveEvent); 
         seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));

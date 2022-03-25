@@ -60,7 +60,7 @@ public class ShooterSim {
         shooterMotor.sim_setActualVelocity(speed / Constants.SHOOTER_TO_ENC_RATIO);
         shooterMotor.sim_setCurrent(motorWithRotatingMass.getCurrentDrawAmps());
 
-        shooterEncoderShaftPosRev += Units.radiansToRotations(speed * Constants.SIM_SAMPLE_RATE_SEC);
+        shooterEncoderShaftPosRev += Units.radiansToRotations(speed * Constants.SIM_SAMPLE_RATE_SEC) * -1.0;
         shooterEncoder.setShaftPositionRev(shooterEncoderShaftPosRev);
     }
 

@@ -28,7 +28,8 @@ public class Constants {
     // See https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=39598777172081
     static public final double WHEEL_GEAR_RATIO = 6.75;
     static public final double AZMTH_GEAR_RATIO = 12.8;
-    static public final double WHEEL_RADIUS_IN = 4.0/2.0; //four inch diameter wheels - https://www.swervedrivespecialties.com/collections/mk4i-parts/products/billet-wheel-4d-x-1-5w-bearing-bore
+    static public final double WHEEL_FUDGE_FACTOR = 1.1; // carpet roughtop scrub factor
+    static public final double WHEEL_RADIUS_IN = 4.0/2.0 * WHEEL_FUDGE_FACTOR; //four inch diameter wheels - https://www.swervedrivespecialties.com/collections/mk4i-parts/products/billet-wheel-4d-x-1-5w-bearing-bore
 
 
     static public final double FL_ENCODER_MOUNT_OFFSET_RAD = -2.157;
