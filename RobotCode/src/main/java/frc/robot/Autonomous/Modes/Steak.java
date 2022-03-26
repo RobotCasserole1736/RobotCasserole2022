@@ -18,7 +18,7 @@ public class Steak extends AutoMode {
         driveEvent1.addChildEvent(new AutoEventIntake(4));
         seq.addEvent(driveEvent1);
         seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));
-        driveEvent2 = new AutoEventJSONTrajectory("many_Pickup2", 0.4);
+        driveEvent2 = new AutoEventJSONTrajectory("many_Pickup2", 0.38);
         driveEvent2.addChildEvent(new AutoEventIntake(9.0));
         seq.addEvent(driveEvent2);
         seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));
