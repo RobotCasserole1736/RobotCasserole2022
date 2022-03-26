@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import frc.lib.Signal.Annotations.Signal;
 
 /**
  * This holonomic drive controller can be used to follow trajectories using a holonomic drivetrain
@@ -75,6 +76,12 @@ public class CasseroleHolonomicDriveController {
     m_poseTolerance = tolerance;
   }
 
+  @Signal(units="mps")
+  double linRefFF = 0;
+
+  @Signal(units="radpersec")
+  double curvatureFF = 0;
+
   /**
    * Returns the next output of the holonomic drive controller.
    *
@@ -86,7 +93,7 @@ public class CasseroleHolonomicDriveController {
    */
   @SuppressWarnings("LocalVariableName")
   public ChassisSpeeds calculate(
-      Pose2d currentPose, Pose2d poseRef, double linearVelocityRefMeters, double curvatureRefRadPerMeter, Rotation2d angleRef) {
+      Pose2d currentPose, Pose2d poseRef, double linearVelocityRefMeters, double curvatureRefRadPerMeter, Rotation2d angleRef, Rotation2d angleVelRef) {
     // If this is the first run, then we need to reset the theta controller to the current pose's
     // heading.
     if (m_firstRun) {
@@ -97,7 +104,10 @@ public class CasseroleHolonomicDriveController {
     // Calculate feedforward velocities (field-relative).
     double xFF = linearVelocityRefMeters * poseRef.getRotation().getCos();
     double yFF = linearVelocityRefMeters * poseRef.getRotation().getSin();
-    double thetaFF = linearVelocityRefMeters * Math.abs(curvatureRefRadPerMeter);
+    double thetaFF = angleVelRef.getRadians();
+
+    linRefFF = linearVelocityRefMeters;
+    curvatureFF = curvatureRefRadPerMeter;
 
     m_poseError = poseRef.relativeTo(currentPose);
     m_rotationError = angleRef.minus(currentPose.getRotation());
@@ -126,9 +136,9 @@ public class CasseroleHolonomicDriveController {
    * @return The next output of the holonomic drive controller.
    */
   public ChassisSpeeds calculate(
-      Pose2d currentPose, Trajectory.State desiredState, Rotation2d angleRef) {
+      Pose2d currentPose, Trajectory.State desiredState, Rotation2d angleRef, Rotation2d angleVelRef) {
     return calculate(
-        currentPose, desiredState.poseMeters, desiredState.velocityMetersPerSecond, desiredState.curvatureRadPerMeter, angleRef);
+        currentPose, desiredState.poseMeters, desiredState.velocityMetersPerSecond, desiredState.curvatureRadPerMeter, angleRef, angleVelRef);
   }
 
   /**

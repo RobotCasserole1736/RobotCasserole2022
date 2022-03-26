@@ -52,6 +52,9 @@ public class AutoEventJSONTrajectory extends AutoEvent {
 
     DrivetrainControl dt_inst;
 
+    Rotation2d prevHeading = new Rotation2d();
+    double prevTime;
+
     public AutoEventJSONTrajectory(String jsonFileName, double speedScalar) {
 
         dt_inst = DrivetrainControl.getInstance();
@@ -84,11 +87,14 @@ public class AutoEventJSONTrajectory extends AutoEvent {
             // Extract current step
             PathPlannerState curState = (PathPlannerState)  path.sample(curTime - trajStartTime);
             Rotation2d curHeading = curState.holonomicRotation;
+            Rotation2d curHeadingVel = curHeading.minus(prevHeading).times(1.0 / (curTime - prevTime));
 
-            dt_inst.setCmdTrajectory(curState, curHeading, false);
+            dt_inst.setCmdTrajectory(curState, curHeading, curHeadingVel, false);
 
             //Populate desired pose from path plan.
             PoseTelemetry.getInstance().setDesiredPose(curState.poseMeters);
+
+            prevHeading = curHeading;
 
         } else {
             //Trajectory Init - just servo the swerve modules to the right positions without driving them.
@@ -97,13 +103,17 @@ public class AutoEventJSONTrajectory extends AutoEvent {
             PathPlannerState curState = (PathPlannerState)  path.sample(0.0);
             Rotation2d curHeading = curState.holonomicRotation;
 
-            dt_inst.setCmdTrajectory(curState, curHeading, true);
+            dt_inst.setCmdTrajectory(curState, curHeading, new Rotation2d(), true);
 
             //Populate desired pose from path plan.
             PoseTelemetry.getInstance().setDesiredPose(curState.poseMeters);
 
+            prevHeading = new Rotation2d();
+
         }
 
+        prevTime = curTime;
+        
 
     }
 

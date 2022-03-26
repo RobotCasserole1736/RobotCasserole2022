@@ -14,12 +14,12 @@ public class Steak extends AutoMode {
 
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
-        driveEvent1 = new AutoEventJSONTrajectory("many_Pickup1", 0.35);
-        driveEvent1.addChildEvent(new AutoEventIntake(4));
+        driveEvent1 = new AutoEventJSONTrajectory("many_Pickup1", 0.4);
+        driveEvent1.addChildEvent(new AutoEventIntake(3));
         seq.addEvent(driveEvent1);
         seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));
-        driveEvent2 = new AutoEventJSONTrajectory("many_Pickup2", 0.5);
-        driveEvent2.addChildEvent(new AutoEventIntake(9.0));
+        driveEvent2 = new AutoEventJSONTrajectory("many_Pickup2", 0.6);
+        driveEvent2.addChildEvent(new AutoEventIntake(6.0));
         seq.addEvent(driveEvent2);
         seq.addEvent(new AutoEventShoot(Constants.DOUBLE_BALL_SHOT_TIME));
        

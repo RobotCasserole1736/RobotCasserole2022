@@ -98,10 +98,10 @@ public class DrivetrainControl {
         moduleAzmth_kI = new Calibration("Drivetrain Module Azmth kI", "", 0.0);
         moduleAzmth_kD = new Calibration("Drivetrain Module Azmth kD", "", 0.00001);
 
-        hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 0.0); //5.0
+        hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 2.0); //5.0
         hdc_translate_kI = new Calibration("Drivetrain HDC Translation kI", "", 0.0); //0.1
         hdc_translate_kD = new Calibration("Drivetrain HDC Translation kD", "", 0.0);
-        hdc_rotation_kP  = new Calibration("Drivetrain HDC Rotation kP", "", 0.0); //7.0
+        hdc_rotation_kP  = new Calibration("Drivetrain HDC Rotation kP", "", 2.0); //7.0
         hdc_rotation_kI  = new Calibration("Drivetrain HDC Rotation kI", "", 0.0); //0.5
         hdc_rotation_kD  = new Calibration("Drivetrain HDC Rotation kD", "", 0.0);
 
@@ -156,16 +156,16 @@ public class DrivetrainControl {
     // The autonomous routine must still step through the trajectory over time.
     // At before each drivetrain update() call, auto should call this with the current 
     // state along the trajectory.
-    public void setCmdTrajectory(Trajectory.State desTrajState, Rotation2d desAngle){
-        setCmdTrajectory(desTrajState, desAngle, false);
+    public void setCmdTrajectory(Trajectory.State desTrajState, Rotation2d desAngle,  Rotation2d desAngVel){
+        setCmdTrajectory(desTrajState, desAngle, desAngVel, false);
     }
 
     // Autonomous-centric way to command the drivetrain via a Trajectory.
     // The autonomous routine must still step through the trajectory over time.
     // At before each drivetrain update() call, auto should call this with the current 
     // state along the trajectory.
-    public void setCmdTrajectory(Trajectory.State desTrajState, Rotation2d desAngle, boolean initAngleOnly){
-        desChSpd = hdc.calculate(pe.getEstPose(), desTrajState, desAngle);
+    public void setCmdTrajectory(Trajectory.State desTrajState, Rotation2d desAngle, Rotation2d desAngVel, boolean initAngleOnly){
+        desChSpd = hdc.calculate(pe.getEstPose(), desTrajState, desAngle, desAngVel);
         curDesPose = new Pose2d(desTrajState.poseMeters.getTranslation(), desAngle);
         this.initAngleOnly = initAngleOnly;
     }
