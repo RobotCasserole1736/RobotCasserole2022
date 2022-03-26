@@ -94,7 +94,7 @@ public class LEDController {
         double matchTime = DriverStation.getMatchTime();
         LEDPatterns curPattern = LEDPatterns.DisabledPattern;
 
-        if (matchTime <= 30 && matchTime >= 0) {
+        if (matchTime <= 30 && matchTime >= 5) {
             curPattern = LEDPatterns.YellowColorSparkle;
         } else {
             if(Elevator.getInstance().isFull()){
