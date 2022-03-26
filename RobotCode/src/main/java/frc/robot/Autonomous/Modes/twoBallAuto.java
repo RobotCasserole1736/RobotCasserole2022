@@ -9,7 +9,7 @@ import frc.robot.Autonomous.Events.AutoEventDriveTime;
 import frc.robot.Autonomous.Events.AutoEventIntake;
 import frc.robot.Autonomous.Events.AutoEventShoot;
 
-public class TwoBallAuto extends AutoMode {
+public class twoBallAuto extends AutoMode {
 
     AutoEventDriveTime driveFwd = null;
     AutoEventDriveTime driveRev = null;
