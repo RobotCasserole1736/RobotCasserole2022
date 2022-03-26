@@ -11,6 +11,7 @@ public class AutoEventIntake extends AutoEvent {
 	
 	double duration_s;
 	double endTime;
+	double startTime;
     boolean completed = false;
 	
 	public AutoEventIntake(double duration_s_in) {

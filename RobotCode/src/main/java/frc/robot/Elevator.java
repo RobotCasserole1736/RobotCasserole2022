@@ -139,7 +139,7 @@ public class Elevator {
 		lowerElevatorMotor.set(ControlMode.PercentOutput,lowerElevatorMotorCmd);
 		vertIntakeMotor.set(vertIntakeMotorCmd);
 
-		isEmpty = emptyDebounce.calculate(upperBallPresent == false && lowerBallPresent == false && cmdState == elevatorCmdState.SHOOT);
+		isEmpty = emptyDebounce.calculate(upperBallPresent == false && lowerBallPresent == false);
 
 
 	}
