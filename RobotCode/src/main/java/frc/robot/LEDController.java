@@ -39,21 +39,27 @@ public class LEDController {
     }
 
     public enum LEDPatterns {
-        Pattern0(0), // Red Color Sparkle
-        Pattern1(1), // Blue Color Sparkle
-        Pattern4(4), // Blue Fade
-        Pattern5(5), // Red Fade
-        Pattern6(6), // Rainbow Fade Chase
-        PatternDisabled(-1); // CasseroleColorStripeChase
+        RedColorSparkle(0, 1.0), // Red Color Sparkle
+        YellowColorSparkle(1, 1.3), // Yellow Color Sparkle
+        GreenAlert(4, 1.5), // Green Alert
+        RedFade(5, 1.7), // Red Fade
+        CasseroleStripes(6, 2.0), // Rainbow Fade Chase
+        DisabledPattern(-1, 0.0); // Fire or something like that, we can't control it
 
         public final int value;
+        public final double period_ms;
 
-        private LEDPatterns(int value) {
+        private LEDPatterns(int value, double period_ms) {
             this.value = value;
+            this.period_ms = period_ms;
         }
 
         public int toInt() {
             return this.value;
+        }
+
+        public double getPeriod(){
+            return this.period_ms;
         }
     }
 
@@ -63,8 +69,6 @@ public class LEDController {
     private LEDController() {
 
         ctrl = new PWM(Constants.LED_CONTROLLER_PORT);
-       //TODO: Fix following line
-        //ctrl.setSafetyEnabled(false);
 
         Thread monitorThread = new Thread(new Runnable() {
             @Override
@@ -86,31 +90,21 @@ public class LEDController {
         monitorThread.start();
     }
 
-    /*
-     * This is a Utility Function to tell the updater what alliance color we are
-     */
-
-    public void teamColor(){
-        curAlliance = DriverStation.getAlliance();
-    }
-
     public void ledUpdater() {
         double matchTime = DriverStation.getMatchTime();
+        LEDPatterns curPattern = LEDPatterns.DisabledPattern;
+
         if (matchTime <= 30 && matchTime >= 0) {
-            ctrl.setSpeed(1.0);
-        } else if (curAlliance == DriverStation.Alliance.Blue) {
-            if (DriverStation.isAutonomous() == true) {
-                ctrl.setSpeed(-0.5);
-            } else {
-                ctrl.setSpeed(0.25);
-            }
+            curPattern = LEDPatterns.YellowColorSparkle;
         } else {
-            if (DriverStation.isAutonomous() == true) {
-                ctrl.setSpeed(-1.0);
+            if(Elevator.getInstance().isFull()){
+                curPattern = LEDPatterns.GreenAlert;
             } else {
-                ctrl.setSpeed(0.5);
+                curPattern = LEDPatterns.CasseroleStripes;
             }
         }
+        
+        ctrl.setSpeed((curPattern.getPeriod() - 2.0));
 
     }
 }

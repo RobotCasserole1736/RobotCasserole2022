@@ -51,13 +51,13 @@ void loop()
   else if ((pulseLen_us > 1200) && (pulseLen_us <= 1400))
   {
     // Case - pulse length nominal 1.3 ms
-    ColorSparkle_update(0, 0, 255);
-    //blue color sparkle
+    ColorSparkle_update(255, 255, 0);
+    //yellow color sparkle
   }
   else if ((pulseLen_us > 1400) && (pulseLen_us <= 1600))
   {
     // Case - pulse length nominal 1.5 ms
-    Blue_Fade();
+    Green_Alert();
   }
   else if ((pulseLen_us > 1600) && (pulseLen_us <= 1800))
   {
@@ -297,6 +297,44 @@ void Blue_Fade(){
     }
     else{
       led[i] = CRGB(b, b, b);
+    }
+  }
+}
+
+//**************************************************************
+// Pattern:Green Alert
+//**************************************************************
+void Green_Alert(){
+  static double g = 0;
+  static int greenmode = 0;
+  static boolean greenFade;
+  
+  if(g<=0){
+    greenFade = true;
+    greenmode++;
+    if(greenmode == 2){
+      greenmode = 0;
+    }
+    g = 0.1;
+  }
+  else if(254.0<=g){
+    greenFade = false;
+    g = 254.0;
+  }
+  
+  if (greenFade==true){
+    g+=4.0;
+  }
+  else if(greenFade==false){
+    g-=4.0;
+  }
+    
+  for (int i = 0; i < NUM_LEDS; i++){
+    if((greenmode%2)==1){
+      led[i] = CRGB(g, 0, 0);
+    }
+    else{
+      led[i] = CRGB(g, g, g);
     }
   }
 }
