@@ -71,7 +71,7 @@ public class DrivetrainControl {
     PIDController hdc_fwdrev;
     PIDController hdc_leftright;
     ProfiledPIDController hdc_rotate;
-    HolonomicDriveController hdc;
+    CasseroleHolonomicDriveController hdc;
 
     // Current chassis speed commands, based on desired pose or driver command inputs
     ChassisSpeeds desChSpd = new ChassisSpeeds(0, 0, 0);
@@ -98,11 +98,11 @@ public class DrivetrainControl {
         moduleAzmth_kI = new Calibration("Drivetrain Module Azmth kI", "", 0.0);
         moduleAzmth_kD = new Calibration("Drivetrain Module Azmth kD", "", 0.00001);
 
-        hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 5.0);
-        hdc_translate_kI = new Calibration("Drivetrain HDC Translation kI", "", 0.0);
+        hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 0.0); //5.0
+        hdc_translate_kI = new Calibration("Drivetrain HDC Translation kI", "", 0.0); //0.1
         hdc_translate_kD = new Calibration("Drivetrain HDC Translation kD", "", 0.0);
-        hdc_rotation_kP  = new Calibration("Drivetrain HDC Rotation kP", "", 7.0);
-        hdc_rotation_kI  = new Calibration("Drivetrain HDC Rotation kI", "", 0.0);
+        hdc_rotation_kP  = new Calibration("Drivetrain HDC Rotation kP", "", 0.0); //7.0
+        hdc_rotation_kI  = new Calibration("Drivetrain HDC Rotation kI", "", 0.0); //0.5
         hdc_rotation_kD  = new Calibration("Drivetrain HDC Rotation kD", "", 0.0);
 
         //Component PID controllers of the autonomous holonomic drive controller 
@@ -113,7 +113,7 @@ public class DrivetrainControl {
                                                     Constants.MAX_ROTATE_ACCEL_RAD_PER_SEC_2 * 0.8));
         hdc_rotate.enableContinuousInput(-1.0 * Math.PI, Math.PI);
 
-        hdc = new HolonomicDriveController(hdc_fwdrev, hdc_leftright, hdc_rotate);
+        hdc = new CasseroleHolonomicDriveController(hdc_fwdrev, hdc_leftright, hdc_rotate);
 
         hdc.setEnabled(true);
 

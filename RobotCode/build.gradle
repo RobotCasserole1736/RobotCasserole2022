@@ -112,31 +112,6 @@ wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Path .json copy
-///////////////////////////////////////////////////////////////////////////////////////////////////
-def PATH_JSON_SRC_DIR = "$projectDir/../AutoPaths/deploy/pathplanner"
-def PATH_JSON_OUTPUT_DIR = "$projectDir/src/main/deploy/pathplanner"
-
-tasks.register('cleanPathFiles', Delete) {
-    delete fileTree(PATH_JSON_OUTPUT_DIR).matching {
-        include "**/*.path"
-    }
-}
-
-tasks.register('copyPathFiles', Copy) {
-    from layout.buildDirectory.dir(PATH_JSON_SRC_DIR)
-    include "*.path"
-    into layout.buildDirectory.dir(PATH_JSON_OUTPUT_DIR)
-}
-
-copyPathFiles.dependsOn cleanPathFiles
-
-// Add the file generation task to the standard build
-build.dependsOn copyPathFiles
-simulateExternalJavaDebug.dependsOn copyPathFiles
-simulateExternalJavaRelease.dependsOn copyPathFiles
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
 // Build Meta-data file generation
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 def BUILD_INFO_FILE = "$projectDir/src/main/deploy/www/buildinfo.html"
