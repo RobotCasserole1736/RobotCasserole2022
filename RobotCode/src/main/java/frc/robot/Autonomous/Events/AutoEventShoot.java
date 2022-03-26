@@ -46,7 +46,7 @@ public class AutoEventShoot extends AutoEvent {
 			Shooter.getInstance().setFeed(ShooterFeedCmd.STOP);
 		}
 
-		completed = (curTime > endTime);
+		completed = (curTime > endTime) || Elevator.getInstance().isEmpty();
 		if (completed){
 			Shooter.getInstance().setRun(ShooterLaunchCmd.STOP);
 			Shooter.getInstance().setFeed(ShooterFeedCmd.STOP);

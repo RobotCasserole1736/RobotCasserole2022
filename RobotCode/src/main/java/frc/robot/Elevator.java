@@ -21,6 +21,9 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.Constants;
@@ -52,6 +55,11 @@ public class Elevator {
     Calibration vertEjectSpeed;
 	@Signal(units = "cmd")
 	elevatorCmdState cmdState = elevatorCmdState.STOP;
+
+	
+    @Signal
+    boolean isEmpty = false;
+    Debouncer emptyDebounce = new Debouncer(0.25, DebounceType.kRising);
 
 
 	private static Elevator elevator = null;
@@ -131,12 +139,22 @@ public class Elevator {
 		lowerElevatorMotor.set(ControlMode.PercentOutput,lowerElevatorMotorCmd);
 		vertIntakeMotor.set(vertIntakeMotorCmd);
 
+		isEmpty = emptyDebounce.calculate(upperBallPresent == false && lowerBallPresent == false && cmdState == elevatorCmdState.SHOOT);
 
 
 	}
 
 	public boolean isFull(){
 		return upperBallPresent && lowerBallPresent;
+	}
+
+	public boolean hasSomething(){
+		return upperBallPresent;
+	}
+
+
+	public boolean isEmpty(){
+		return isEmpty;
 	}
 
 }

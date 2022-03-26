@@ -274,8 +274,6 @@ public class Shooter {
             break;
             case ACCELERATE:
                 shooterMotor.setVoltageCmd(14.0); //max volts
-                isStable = false;
-                stableDebounce.calculate(false);
             break;
             case STABILIZE:
             case HOLD:
@@ -303,6 +301,8 @@ public class Shooter {
 
         feedMotor.set(ControlMode.PercentOutput, feedMotorCmd);
         shooterMotor.update();
+
+
 
     }
 

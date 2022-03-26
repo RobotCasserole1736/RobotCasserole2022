@@ -345,7 +345,7 @@ public class Robot extends CasseroleTimedRobot {
         in.setCmd(intakeCmdState.STOP);     
       }
 
-      if(elevator.isFull()) {
+      if(elevator.hasSomething()) {
         shooter.setRun(ShooterLaunchCmd.HIGH_GOAL);
       } else {
         shooter.setRun(ShooterLaunchCmd.STOP);
