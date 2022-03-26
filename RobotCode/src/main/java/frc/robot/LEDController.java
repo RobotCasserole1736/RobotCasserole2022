@@ -104,7 +104,7 @@ public class LEDController {
             }
         }
         
-        ctrl.setSpeed((curPattern.getPeriod() - 2.0));
+        ctrl.setSpeed((curPattern.getPeriod() - 1.5)*2.0);
 
     }
 }
