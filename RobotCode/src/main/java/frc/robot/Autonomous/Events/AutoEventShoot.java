@@ -3,10 +3,8 @@ package frc.robot.Autonomous.Events;
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.AutoSequencer.AutoEvent;
 import frc.robot.Elevator;
-import frc.robot.Intake;
 import frc.robot.Shooter;
 import frc.robot.Elevator.elevatorCmdState;
-import frc.robot.Intake.intakeCmdState;
 import frc.robot.Shooter.ShooterFeedCmd;
 import frc.robot.Shooter.ShooterLaunchCmd;
 
