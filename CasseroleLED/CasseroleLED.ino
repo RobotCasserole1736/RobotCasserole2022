@@ -37,6 +37,13 @@ void setup()
  */
 void loop()
 {
+
+  // do some periodic updates
+  EVERY_N_MILLISECONDS(200)
+  {
+    pulseLen_us = pulseIn(ROBORIO_DATA_PIN, HIGH, 50000);
+  }
+  
   if (pulseLen_us == 0)
   {
     // No pulse recieved - robot must be disabled
@@ -75,12 +82,7 @@ void loop()
   // insert a delay to keep the framerate modest
   FastLED.delay(1000 / FRAMES_PER_SECOND);
 
-  // do some periodic updates
-  EVERY_N_MILLISECONDS(200)
-  {
-    pulseLen_us = pulseIn(ROBORIO_DATA_PIN, HIGH, 50000);
-    Serial.println(pulseLen_us);
-  }
+
 }
 
 //**************************************************************
@@ -177,7 +179,7 @@ void Rainbow_Fade_Chase()
 //**************************************************************
 // Pattern: Particle Fire
 //**************************************************************
-#define NUM_PARTICLES 20
+#define NUM_PARTICLES 30
 double particle_locations[NUM_PARTICLES];
 double particle_velocities[NUM_PARTICLES];
 double particle_temperatures[NUM_PARTICLES];
@@ -189,9 +191,9 @@ double randFloat(double minVal, double maxVal){
 
 void Fire_init_particle(int idx){
   particle_locations[idx] = 1;
-  particle_velocities[idx] = randFloat(0.3,0.8);
+  particle_velocities[idx] = randFloat(0.5,2.2);
   particle_temperatures[idx] = randFloat(0.8,1);
-  particle_cooling_rates[idx] = randFloat(0.015,0.04);
+  particle_cooling_rates[idx] = randFloat(0.03,0.05);
 }
 
 void Fire_init()
@@ -323,19 +325,14 @@ void Green_Alert(){
   }
   
   if (greenFade==true){
-    g+=4.0;
+    g+=20.0;
   }
   else if(greenFade==false){
-    g-=4.0;
+    g-=20.0;
   }
     
   for (int i = 0; i < NUM_LEDS; i++){
-    if((greenmode%2)==1){
-      led[i] = CRGB(g, 0, 0);
-    }
-    else{
-      led[i] = CRGB(g, g, g);
-    }
+    led[i] = CRGB(0,g,0);
   }
 }
 

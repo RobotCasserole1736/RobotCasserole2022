@@ -30,8 +30,6 @@ public class LEDController {
 
     PWM ctrl;
 
-    private DriverStation.Alliance curAlliance;
-
     public static synchronized LEDController getInstance() {
         if (ledCtrl == null)
             ledCtrl = new LEDController();
@@ -76,7 +74,7 @@ public class LEDController {
                 try {
                     while (!Thread.currentThread().isInterrupted()) {
                         ledUpdater();
-                        Thread.sleep(200);
+                        Thread.sleep(100);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -94,7 +92,7 @@ public class LEDController {
         double matchTime = DriverStation.getMatchTime();
         LEDPatterns curPattern = LEDPatterns.DisabledPattern;
 
-        if (matchTime <= 30 && matchTime >= 0) {
+        if (matchTime <= 30 && matchTime >= 5) {
             curPattern = LEDPatterns.YellowColorSparkle;
         } else {
             if(Elevator.getInstance().isFull()){
@@ -103,7 +101,7 @@ public class LEDController {
                 curPattern = LEDPatterns.CasseroleStripes;
             }
         }
-        
+
         ctrl.setSpeed((curPattern.getPeriod() - 2.0));
 
     }
