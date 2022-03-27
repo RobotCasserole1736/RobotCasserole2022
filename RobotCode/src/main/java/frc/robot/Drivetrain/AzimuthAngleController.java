@@ -11,14 +11,14 @@ public class AzimuthAngleController{
     final double MAX_AZMTH_SPEED_DEG_PER_SEC = 720.0; // TODO, maybe go faster?
 
     PIDController azmthPIDCtrl = new PIDController(0,0,0);
-    SlewRateLimiter setpointRateLimiter = new SlewRateLimiter(MAX_AZMTH_SPEED_DEG_PER_SEC);
 
     double desAng = 0;
 
+    @Signal(units="deg")
     double actAng = 0;
+
     @Signal(units = "deg")
     double angSetpoint = 0;
-
     @Signal(units = "deg")
     double desAngleRateLimit = 0;
 
@@ -35,6 +35,8 @@ public class AzimuthAngleController{
 
 
     public AzimuthAngleController(){
+
+        azmthPIDCtrl.enableContinuousInput(-180, 180);
 
         azmthCmdLimitTbl = new MapLookup2D();
         azmthCmdLimitTbl.insertNewPoint(0.0, 1.0);
@@ -56,7 +58,7 @@ public class AzimuthAngleController{
 
     public void update(){
 
-        desAngleRateLimit = setpointRateLimiter.calculate(desAng);
+        desAngleRateLimit = desAng; //todo - fancy rate limiting... needed?
 
         azmthMotorCmd = azmthPIDCtrl.calculate(actAng, desAngleRateLimit);
         azmthMotorCmd = limitMag(azmthMotorCmd, azmthCmdLimitTbl.lookupVal(netSpeed));

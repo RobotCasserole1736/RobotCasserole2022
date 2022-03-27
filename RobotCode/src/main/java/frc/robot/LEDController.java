@@ -92,7 +92,7 @@ public class LEDController {
         double matchTime = DriverStation.getMatchTime();
         LEDPatterns curPattern = LEDPatterns.DisabledPattern;
 
-        if (matchTime <= 30 && matchTime >= 5) {
+        if (matchTime <= 30 && matchTime >= 5 && DriverStation.isTeleop()) {
             curPattern = LEDPatterns.YellowColorSparkle;
         } else {
             if(Elevator.getInstance().isFull()){
@@ -101,8 +101,8 @@ public class LEDController {
                 curPattern = LEDPatterns.CasseroleStripes;
             }
         }
-
-        ctrl.setSpeed((curPattern.getPeriod() - 2.0));
+        
+        ctrl.setSpeed((curPattern.getPeriod() - 1.5)*2.0);
 
     }
 }

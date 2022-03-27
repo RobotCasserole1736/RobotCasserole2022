@@ -98,11 +98,11 @@ public class DrivetrainControl {
         moduleAzmth_kI = new Calibration("Drivetrain Module Azmth kI", "", 0.0);
         moduleAzmth_kD = new Calibration("Drivetrain Module Azmth kD", "", 0.00001);
 
-        hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 2.0); //5.0
-        hdc_translate_kI = new Calibration("Drivetrain HDC Translation kI", "", 0.0); //0.1
+        hdc_translate_kP = new Calibration("Drivetrain HDC Translation kP", "", 4.0); 
+        hdc_translate_kI = new Calibration("Drivetrain HDC Translation kI", "", 2.0); 
         hdc_translate_kD = new Calibration("Drivetrain HDC Translation kD", "", 0.0);
-        hdc_rotation_kP  = new Calibration("Drivetrain HDC Rotation kP", "", 2.0); //7.0
-        hdc_rotation_kI  = new Calibration("Drivetrain HDC Rotation kI", "", 0.0); //0.5
+        hdc_rotation_kP  = new Calibration("Drivetrain HDC Rotation kP", "", 6.5); 
+        hdc_rotation_kI  = new Calibration("Drivetrain HDC Rotation kI", "", 0.0); 
         hdc_rotation_kD  = new Calibration("Drivetrain HDC Rotation kD", "", 0.0);
 
         //Component PID controllers of the autonomous holonomic drive controller 
