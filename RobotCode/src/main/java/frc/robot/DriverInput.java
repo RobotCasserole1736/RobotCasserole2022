@@ -22,6 +22,9 @@ public class DriverInput {
     Calibration fwdRevSlewRate;
     Calibration rotSlewRate;
     Calibration sideToSideSlewRate;
+    Calibration translateCmdScalar;
+    Calibration rotateCmdScalar;
+    
 
     @Signal(units="cmd")
     double curFwdRevCmd;
@@ -39,6 +42,8 @@ public class DriverInput {
     double rotSlewCmd;
     @Signal (units="cmd")
     double sideToSideSlewCmd;
+
+
     @Signal(units="bool")
     boolean shootHighGoal;
     @Signal(units="bool")
@@ -68,16 +73,21 @@ public class DriverInput {
 
     Debouncer resetOdoDbnc = new Debouncer(0.25, DebounceType.kRising);
 
+    String getName(int idx){
+        return "Driver Ctrl " + Integer.toString(idx) + " ";
+    }
 
     public DriverInput(int controllerIdx){
 
         driverController = new XboxController(controllerIdx);
 
-        stickDeadband = new Calibration("StickDeadBand", "", 0.1);
+        stickDeadband = new Calibration(getName(controllerIdx) + "StickDeadBand", "", 0.1);
 
-        fwdRevSlewRate = new Calibration("fwdRevSlewRate", "", 3);
-        rotSlewRate = new Calibration("rotSlewRate", "", 3);
-        sideToSideSlewRate = new Calibration("sideToSideSlewRate", "", 3);
+        fwdRevSlewRate = new Calibration(getName(controllerIdx) + "fwdRevSlewRate_", "", 1);
+        rotSlewRate = new Calibration(getName(controllerIdx) + "rotSlewRate", "", 1);
+        sideToSideSlewRate = new Calibration(getName(controllerIdx) + "sideToSideSlewRate", "", 1);
+        translateCmdScalar = new Calibration(getName(controllerIdx) + "translateCmdScalar", "", 0.8);
+        rotateCmdScalar = new Calibration(getName(controllerIdx) + "rotateCmdScalar", "", 0.8);
 
         fwdRevSlewLimiter = new SlewRateLimiter(fwdRevSlewRate.get());
         rotSlewLimiter = new SlewRateLimiter(rotSlewRate.get());
@@ -96,9 +106,9 @@ public class DriverInput {
             curRotCmd = -1.0 * driverController.getRightX();
             curSideToSideCmd = -1.0 * driverController.getLeftX();
 
-            curFwdRevCmd = MathUtil.applyDeadband( curFwdRevCmd,stickDeadband.get()); 
-            curRotCmd = MathUtil.applyDeadband( curRotCmd,stickDeadband.get());
-            curSideToSideCmd = MathUtil.applyDeadband( curSideToSideCmd,stickDeadband.get());
+            curFwdRevCmd = MathUtil.applyDeadband( curFwdRevCmd,stickDeadband.get()) * translateCmdScalar.get(); 
+            curRotCmd = MathUtil.applyDeadband( curRotCmd,stickDeadband.get())  * rotateCmdScalar.get();
+            curSideToSideCmd = MathUtil.applyDeadband( curSideToSideCmd,stickDeadband.get())  * translateCmdScalar.get();
 
             if(driverController.getLeftStickButton()){
                 curFwdRevCmd = curFwdRevCmd / 2.0;

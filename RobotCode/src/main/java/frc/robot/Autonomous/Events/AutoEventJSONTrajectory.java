@@ -83,9 +83,12 @@ public class AutoEventJSONTrajectory extends AutoEvent {
 
             // Extract current step
             PathPlannerState curState = (PathPlannerState)  path.sample(curTime - trajStartTime);
+            PathPlannerState nextState = (PathPlannerState)  path.sample(curTime - trajStartTime + Constants.Ts);
             Rotation2d curHeading = curState.holonomicRotation;
+            Rotation2d nextHeading = nextState.holonomicRotation;
+            Rotation2d curHeadingVel = nextHeading.minus(curHeading).times(1.0 / (Constants.Ts));
 
-            dt_inst.setCmdTrajectory(curState, curHeading, false);
+            dt_inst.setCmdTrajectory(curState, curHeading, curHeadingVel, false);
 
             //Populate desired pose from path plan.
             PoseTelemetry.getInstance().setDesiredPose(curState.poseMeters);
@@ -97,13 +100,13 @@ public class AutoEventJSONTrajectory extends AutoEvent {
             PathPlannerState curState = (PathPlannerState)  path.sample(0.0);
             Rotation2d curHeading = curState.holonomicRotation;
 
-            dt_inst.setCmdTrajectory(curState, curHeading, true);
+            dt_inst.setCmdTrajectory(curState, curHeading, new Rotation2d(), true);
 
             //Populate desired pose from path plan.
             PoseTelemetry.getInstance().setDesiredPose(curState.poseMeters);
 
         }
-
+        
 
     }
 

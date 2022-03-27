@@ -38,12 +38,13 @@ public class AutoEventShoot extends AutoEvent {
 		var curTime =Timer.getFPGATimestamp();
 
 		Shooter.getInstance().setRun(ShooterLaunchCmd.HIGH_GOAL);
-		Elevator.getInstance().setCmd(elevatorCmdState.INTAKE);
 
 		if(curTime > spoolupEnd  && Shooter.getInstance().getSpooledUp()){
 			Shooter.getInstance().setFeed(ShooterFeedCmd.FEED);
+			Elevator.getInstance().setCmd(elevatorCmdState.SHOOT);
 		} else {
 			Shooter.getInstance().setFeed(ShooterFeedCmd.STOP);
+			Elevator.getInstance().setCmd(elevatorCmdState.INTAKE);
 		}
 
 		completed = (curTime > endTime) || Elevator.getInstance().isEmpty();
@@ -69,6 +70,6 @@ public class AutoEventShoot extends AutoEvent {
 
 	@Override
 	public boolean isDone() {
-		return Timer.getFPGATimestamp() >= endTime;
+		return Timer.getFPGATimestamp() >= spoolupEnd && completed;
 	}
 }
