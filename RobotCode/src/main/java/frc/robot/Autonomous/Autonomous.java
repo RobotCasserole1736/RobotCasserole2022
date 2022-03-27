@@ -21,6 +21,7 @@ import frc.robot.Autonomous.Modes.ShootAndTaxi;
 import frc.robot.Autonomous.Modes.Wait;
 import frc.robot.Autonomous.Modes.blue_Pickup;
 import frc.robot.Autonomous.Modes.Steak;
+import frc.robot.Autonomous.Modes.SwTest3;
 import frc.robot.Autonomous.Modes.TwoBallAuto;
 import frc.robot.Autonomous.Modes.salisburrySteak;
 import frc.robot.Autonomous.Modes.steakAndGravy;
@@ -94,6 +95,8 @@ public class Autonomous extends LocalClient  {
         mainModeList.add(new DoNothing());
         mainModeList.add(new steakAndGravy());
         mainModeList.add(new salisburrySteak());
+        mainModeList.add(new SwTest3());
+        
 
         // Create and subscribe to NT4 topics
         curDelayModeTopic = NT4Server.getInstance().publishTopic(delayModeList.getCurModeTopicName(), NT4TypeStr.INT, this);
