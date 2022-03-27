@@ -22,8 +22,8 @@ public class Constants {
     static public final double MAX_FWD_REV_SPEED_MPS = Units.feetToMeters(16.0);
     static public final double MAX_STRAFE_SPEED_MPS = Units.feetToMeters(16.0);
     static public final double MAX_ROTATE_SPEED_RAD_PER_SEC = Units.degreesToRadians(360.0);
-    static public final double MAX_TRANSLATE_ACCEL_MPS2 = MAX_FWD_REV_SPEED_MPS/0.25; //0-full time of 0.25 second
-    static public final double MAX_ROTATE_ACCEL_RAD_PER_SEC_2 = MAX_ROTATE_SPEED_RAD_PER_SEC/0.25; //0-full time of 0.25 second
+    static public final double MAX_TRANSLATE_ACCEL_MPS2 = MAX_FWD_REV_SPEED_MPS/1.00; //0-full time of 0.25 second
+    static public final double MAX_ROTATE_ACCEL_RAD_PER_SEC_2 = MAX_ROTATE_SPEED_RAD_PER_SEC/.25; //0-full time of 0.25 second
 
     // See https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=39598777172081
     static public final double WHEEL_GEAR_RATIO = 6.75;

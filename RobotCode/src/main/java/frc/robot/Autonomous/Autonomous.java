@@ -87,6 +87,7 @@ public class Autonomous extends LocalClient  {
         delayModeList.add(new Wait(9.0));
 
         mainModeList.add(new Steak());
+        mainModeList.add(new SwTest3());
         mainModeList.add(new blue_Pickup());
         mainModeList.add(new TwoBallAuto());
         mainModeList.add(new ShootAndTaxi());
@@ -95,7 +96,6 @@ public class Autonomous extends LocalClient  {
         mainModeList.add(new DoNothing());
         mainModeList.add(new steakAndGravy());
         mainModeList.add(new salisburrySteak());
-        mainModeList.add(new SwTest3());
         
 
         // Create and subscribe to NT4 topics

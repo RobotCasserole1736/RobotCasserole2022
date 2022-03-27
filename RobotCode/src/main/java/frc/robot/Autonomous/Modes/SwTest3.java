@@ -10,7 +10,7 @@ public class SwTest3 extends AutoMode {
 
     @Override
     public void addStepsToSequencer(AutoSequencer seq) {
-        driveEvent1 = new AutoEventJSONTrajectory("tune_test_3x3_spin", 0.5);
+        driveEvent1 = new AutoEventJSONTrajectory("tune_test_3x3_spin", 0.8);
         seq.addEvent(driveEvent1);
     }
 
