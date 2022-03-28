@@ -3,7 +3,7 @@
 //Constants related to hardware setup
 #define NUM_LEDS 47
 #define LED_PIN 7
-#define ROBORIO_DATA_PIN 9
+#define ROBORIO_DATA_PIN 2
 
 // Overall brigness control
 #define BRIGHTNESS 70
