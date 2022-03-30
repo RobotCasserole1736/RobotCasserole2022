@@ -44,7 +44,7 @@ public class Shooter {
     private VictorSPX feedMotor; // AKA Upper Elevator Motor
 
     LinearFilter shooterAccelFilter = LinearFilter.movingAverage(15);
-    LinearFilter shooterVelFilter = LinearFilter.movingAverage(4);
+    LinearFilter shooterVelFilter = LinearFilter.singlePoleIIR(1.0/(2*Math.PI * 8.0), Constants.Ts);
 
     PIDController shooterPID;
 
@@ -94,7 +94,7 @@ public class Shooter {
     boolean isStable = false;
     @Signal 
     boolean isStableRaw = false;
-    Debouncer stableDebounce = new Debouncer(0.35, DebounceType.kRising);
+    Debouncer stableDebounce = new Debouncer(0.3, DebounceType.kRising);
 
 	public static synchronized Shooter getInstance() {
 		if(shooter == null)
