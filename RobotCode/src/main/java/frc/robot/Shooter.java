@@ -44,6 +44,7 @@ public class Shooter {
     private VictorSPX feedMotor; // AKA Upper Elevator Motor
 
     LinearFilter shooterAccelFilter = LinearFilter.movingAverage(15);
+    LinearFilter shooterVelFilter = LinearFilter.movingAverage(4);
 
     PIDController shooterPID;
 
@@ -51,6 +52,8 @@ public class Shooter {
 
     @Signal (units = "RPM")
     double actualSpeed;
+    @Signal (units = "RPM")
+    double actualSpeedFilt;
     double actualSpeedPrev;
     @Signal (units="RPM")
     double motorActualSpeed;
@@ -89,7 +92,9 @@ public class Shooter {
 
     @Signal
     boolean isStable = false;
-    Debouncer stableDebounce = new Debouncer(0.25, DebounceType.kRising);
+    @Signal 
+    boolean isStableRaw = false;
+    Debouncer stableDebounce = new Debouncer(0.35, DebounceType.kRising);
 
 	public static synchronized Shooter getInstance() {
 		if(shooter == null)
@@ -118,8 +123,8 @@ public class Shooter {
         yeetCargo = new Calibration("Yeet Cargo", "RPM", 5200);
 
 
-        shooterStableError = new Calibration("shooter stable error","RPM", 500.0);
-        shooterAccelerateError = new Calibration("shooter accelerate error","RPM", 800.0);
+        shooterStableError = new Calibration("shooter stable error","RPM", 300.0);
+        shooterAccelerateError = new Calibration("shooter accelerate error","RPM", 700.0);
         feedSpeed = new Calibration("shooter feed speed","Cmd",0.75);
         ejectSpeed = new Calibration("shooter eject speed","Cmd",0.5);
         intakeSpeed = new Calibration("shooter intake speed","Cmd",0.75);
@@ -206,9 +211,10 @@ public class Shooter {
         var curSampleTime = Timer.getFPGATimestamp();
         feedWheelSpeed = feedWheelEncoder.getRate() * 60.0; //rev per sec to rev per min conversion
         actualSpeed = launchWheelEncoder.getRate() * 60.0 * Constants.SHOOTER_TO_ENC_RATIO; //rev per sec to rev per min conversion, back to the motor speed
+        actualSpeedFilt = shooterVelFilter.calculate(actualSpeed);
         actualAccel = shooterAccelFilter.calculate( (actualSpeed - actualSpeedPrev) / (curSampleTime - prevSampleTime) );
         motorActualSpeed = Units.radiansPerSecondToRotationsPerMinute(shooterMotor.getVelocity_radpersec());
-        var speedErr =  desiredSpeed - actualSpeed; //Positive for too-slow, negative for too-fast
+        var speedErr =  desiredSpeed - actualSpeedFilt; //Positive for too-slow, negative for too-fast
 
         prevSampleTime = curSampleTime;
         actualSpeedPrev = actualSpeed;
@@ -249,10 +255,8 @@ public class Shooter {
                     }
                 break;
                 case HOLD:
-                    if( speedErr >= shooterAccelerateError.get()){
+                    if( !isStable){
                         nextState = ShooterState.ACCELERATE; //shooter speed way too slow, go right to full battery
-                    } else if(speedErr >= shooterStableError.get() && actualAccel > 0){
-                        nextState = ShooterState.ACCELERATE; //shooter speed slower that setpoint and we have started to turn around (ball has left)
                     }
                 break;
                 case STOP:
@@ -266,23 +270,26 @@ public class Shooter {
 
         /////////////////////////////////////////////////
         // Perform during-state updates
+        isStableRaw = false;
         switch(curState){
             case STOP:
                 shooterMotor.setVoltageCmd(0);
-                isStable = false;
-                stableDebounce.calculate(false);
+                isStableRaw = false;
             break;
             case ACCELERATE:
                 shooterMotor.setVoltageCmd(14.0); //max volts
+                isStableRaw = false;
             break;
             case STABILIZE:
             case HOLD:
                 shooterPID.setSetpoint(desiredSpeed);
                 var closedLoopVoltage = shooterPID.calculate(actualSpeed);
                 shooterMotor.setVoltageCmd(shooter_F.get() * desiredSpeed + closedLoopVoltage);
-                isStable = stableDebounce.calculate(Math.abs(speedErr) < shooterStableError.get());
+                isStableRaw = Math.abs(speedErr) < shooterStableError.get();
             break;
         }
+
+        isStable = stableDebounce.calculate(isStableRaw);
         
 
         /////////////////////////////////////////////////
