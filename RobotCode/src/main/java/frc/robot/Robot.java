@@ -16,6 +16,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.Constants;
 import frc.lib.Calibration.CalWrangler;
+import frc.lib.Calibration.Calibration;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.lib.LoadMon.SegmentTimeTracker;
 import frc.lib.Signal.SignalWrangler;
@@ -90,20 +91,16 @@ public class Robot extends CasseroleTimedRobot {
   @Signal(units = "sec")
   double mainLoopPeriod;
 
-  final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
-  final double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
-  // Angle between horizontal and the camera.
-  final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
-
-  // How far from the target we want to be
-  final double GOAL_RANGE_METERS = Units.feetToMeters(3);
-
   // Change this to match the name of your camera
-  PhotonCamera camera = new PhotonCamera("photonvision");
+  PhotonCamera camera = new PhotonCamera("mmal_service_16.1");
 
-  final double ANGULAR_P = 0.1;
-  final double ANGULAR_D = 0.0;
-  PIDController turnController = new PIDController(ANGULAR_P, 0, ANGULAR_D);
+  Calibration camYawPGain = new Calibration("Ball Cam Yaw kP", "radPerSec per Degree Vision error", 0.05);
+
+  @Signal
+  boolean coloredBallVisible = false;
+  @Signal
+  double coloredBallYaw = 0.0;
+
   // ... 
   // But before here
   ///////////////////////////////////////////////////////////////////
@@ -269,15 +266,25 @@ public class Robot extends CasseroleTimedRobot {
     double leftRightSpdCmd_mps = di.getSideToSideCmd_mps();
     double rotateCmd_radpersec = 0;
 
+
+    var result = camera.getLatestResult();
+    if(result.hasTargets()){
+      coloredBallYaw = result.getBestTarget().getYaw();
+      coloredBallVisible = true;
+    } else {
+      coloredBallVisible = false;
+      coloredBallYaw = 0.0;
+    }
+
+
     if (di.getPhotonAlign()) {
       // Vision-alignment mode
       // Query the latest result from PhotonVision
-      var result = camera.getLatestResult();
 
-      if (result.hasTargets()) {
+      if (coloredBallVisible) {
           // Calculate angular turn power
           // -1.0 required to ensure positive PID controller effort _increases_ yaw
-          rotateCmd_radpersec = turnController.calculate(result.getBestTarget().getYaw(), 0)* Constants.MAX_FWD_REV_SPEED_MPS;
+          rotateCmd_radpersec = coloredBallYaw * Constants.MAX_ROTATE_SPEED_RAD_PER_SEC * camYawPGain.get();
       } else {
           // If we have no targets, stay still.
           rotateCmd_radpersec = 0;
